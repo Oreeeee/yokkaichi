@@ -1,28 +1,50 @@
 # Import modules
 from threading import Thread, Lock
+from mcstatus import BedrockServer
+from mcstatus import JavaServer
 import colorama as clr
 import IP2Location
+import threading
 import platform
 import argparse
+import random
 import csv
+
 
 def load_file():
     ips = []
     # Load file
     try:
         with open(args.ip_list_file, "r") as f:
-            ip_list = f.read()
-            for line in ip_list:
-                line.strip()
-                ips.append(line)
+            ip_list = f.readlines()
+            ips = []
+            for ip in ip_list:
+                ips.append(ip.strip())
     except FileNotFoundError:
         print(clr.Back.RED + clr.Fore.WHITE + "ERROR! FILE NOT FOUND!")
         exit(1)
 
     return ips
 
+
 def scan_server(lock, ips):
-    pass
+    try:
+        ip = ips[0]
+        ips.pop(0)
+    except IndexError:
+        print(clr.Fore.WHITE +
+              f"No more IPs, exiting thread {threading.current_thread().name}")
+        return True
+
+    if args.java == True:
+        for port in args.ports:
+            try:
+                server = JavaServer.lookup(f"{ip}:{port}")
+                print(server.status())
+            except Exception:
+                with lock:
+                    print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
+
 
 def main():
     if platform.system() == "Windows":
@@ -38,18 +60,26 @@ def main():
 
     for _ in range(args.thread_count):
         thread = Thread(target=scan_server, args=(lock, ips))
+        thread_list.append(thread)
 
     for thread in thread_list:
+        thread.start()
         thread.join()
+
 
 if __name__ == "__main__":
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-j", "--java", dest="java", help="Scan for Java servers", action="store_true")
-    parser.add_argument("-b", "--bedrock", dest="bedrock", help="Scan for Bedrock servers", action="store_true")
-    parser.add_argument("-l", "--ip-list", dest="ip_list_file", help="Location to a file with IP addresses to scan", type=str)
-    parser.add_argument("-p", "--ports", dest="ports", help="Ports to scan on", type=tuple, default=(25565))
-    parser.add_argument("-t", "--threads", dest="thread_count", help="Number of threads (default: 100)", type=int, default=100)
+    parser.add_argument("-j", "--java", dest="java",
+                        help="Scan for Java servers", action="store_true")
+    parser.add_argument("-b", "--bedrock", dest="bedrock",
+                        help="Scan for Bedrock servers", action="store_true")
+    parser.add_argument("-l", "--ip-list", dest="ip_list_file",
+                        help="Location to a file with IP addresses to scan", type=str)
+    parser.add_argument("-p", "--ports", dest="ports",
+                        help="Ports to scan on", type=tuple, default=(25565,))
+    parser.add_argument("-t", "--threads", dest="thread_count",
+                        help="Number of threads (default: 100)", type=int, default=100)
     parser.set_defaults(java=False, bedrock=False)
     args = parser.parse_args()
 

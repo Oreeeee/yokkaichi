@@ -7,7 +7,6 @@ import IP2Location
 import threading
 import platform
 import argparse
-import random
 import csv
 
 
@@ -17,7 +16,6 @@ def load_file():
     try:
         with open(args.ip_list_file, "r") as f:
             ip_list = f.readlines()
-            ips = []
             for ip in ip_list:
                 ips.append(ip.strip())
     except FileNotFoundError:
@@ -40,7 +38,29 @@ def scan_server(lock, ips):
         for port in args.ports:
             try:
                 server = JavaServer.lookup(f"{ip}:{port}")
-                print(server.status())
+                motd = server.status().description
+                players_online = server.status().players.online
+                players_max = server.status().players.max
+                ping = round(server.status().latency)
+                version = server.status().version.name
+                with lock:
+                    print(
+                        clr.Fore.GREEN + f"[+] Java server found at {ip}:{port}! Motd: {motd}, players online: {players_online}/{players_max}, ping {ping}ms, version {version}.")
+            except Exception:
+                with lock:
+                    print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
+    if args.bedrock == True:
+        for port in args.ports:
+            try:
+                server = BedrockServer.lookup(f"{ip}:{port}")
+                motd = server.status().description
+                players_online = server.status().players.online
+                players_max = server.status().players.max
+                ping = round(server.status().latency)
+                version = server.status().version.name
+                with lock:
+                    print(
+                        clr.Fore.GREEN + f"[+] Bedrock server found at {ip}:{port}! Motd: {motd}, players online: {players_online}/{players_max}, ping {ping}ms, version {version}.")
             except Exception:
                 with lock:
                     print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
@@ -76,8 +96,8 @@ if __name__ == "__main__":
                         help="Scan for Bedrock servers", action="store_true")
     parser.add_argument("-l", "--ip-list", dest="ip_list_file",
                         help="Location to a file with IP addresses to scan", type=str)
-    parser.add_argument("-p", "--ports", dest="ports",
-                        help="Ports to scan on", type=tuple, default=(25565,))
+    parser.add_argument("-p", "--ports", dest="ports", action="append",
+                        help="Ports to scan on")
     parser.add_argument("-t", "--threads", dest="thread_count",
                         help="Number of threads (default: 100)", type=int, default=100)
     parser.set_defaults(java=False, bedrock=False)

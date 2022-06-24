@@ -3,7 +3,6 @@ from threading import Thread, Lock
 from mcstatus import BedrockServer
 from mcstatus import JavaServer
 import colorama as clr
-import IP2Location
 import threading
 import platform
 import argparse

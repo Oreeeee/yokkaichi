@@ -38,38 +38,67 @@ def scan_server(lock, ips):
         for port in args.ports:
             try:
                 server = JavaServer.lookup(f"{ip}:{port}")
-                motd = server.status().description
-                players_online = server.status().players.online
-                players_max = server.status().players.max
-                ping = round(server.status().latency)
-                version = server.status().version.name
+
+                server_info = []
+                server_info.append(f"{ip}:{port}")
+                server_info.append(server.status().description)
+                server_info.append(
+                    f"{server.status().players.online}/{server.status().players.max}")
+                server_info.append(f"{round(server.status().latency)}ms")
+                server_info.append(server.status().version.name)
+                server_info.append("Java")
+
+                file = open(args.output_file, "a")
                 with lock:
                     print(
-                        clr.Fore.GREEN + f"[+] Java server found at {ip}:{port}! Motd: {motd}, players online: {players_online}/{players_max}, ping {ping}ms, version {version}.")
-            except Exception:
+                        clr.Fore.GREEN + f"[+] Java server found at {server_info[0]}! Motd: {server_info[1]}, players online: {server_info[2]}, ping {server_info[3]}, version {server_info[4]}.")
+                    with file as f:
+                        write = csv.writer(file)
+                        write.writerow(server_info)
+            except Exception as e:
                 with lock:
                     print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
+                    print(e)
     if args.bedrock == True:
         for port in args.ports:
             try:
                 server = BedrockServer.lookup(f"{ip}:{port}")
-                motd = server.status().description
-                players_online = server.status().players.online
-                players_max = server.status().players.max
-                ping = round(server.status().latency)
-                version = server.status().version.name
+
+                server_info = []
+                server_info.append(f"{ip}:{port}")
+                server_info.append(server.status().description)
+                server_info.append(
+                    f"{server.status().players.online}/{server.status().players.max}")
+                server_info.append(f"{round(server.status().latency)}ms")
+                server_info.append(server.status().version.name)
+                server_info.append("Bedrock")
+
+                file = open(args.output_file, "a")
                 with lock:
                     print(
-                        clr.Fore.GREEN + f"[+] Bedrock server found at {ip}:{port}! Motd: {motd}, players online: {players_online}/{players_max}, ping {ping}ms, version {version}.")
-            except Exception:
+                        clr.Fore.GREEN + f"[+] Bedrock server found at {server_info[0]}! Motd: {server_info[1]}, players online: {server_info[2]}, ping {server_info[3]}, version {server_info[4]}.")
+                    with file as f:
+                        write = csv.writer(file)
+                        write.writerow(server_info)
+            except Exception as e:
                 with lock:
                     print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
+                    print(e)
 
 
 def main():
     if platform.system() == "Windows":
         # Init colorama if on Windows
         clr.init()
+
+    # Check does output file exists
+    if args.output_file != None:
+        try:
+            csv_file = open(args.output_file, "r")
+            csv_file.close()
+        except FileNotFoundError:
+            print(clr.Fore.RED + "Given output file doesn't exist!")
+            exit(1)
 
     print(clr.Fore.CYAN + "Loading IPs")
     ips = load_file()
@@ -100,6 +129,8 @@ if __name__ == "__main__":
                         help="Ports to scan on")
     parser.add_argument("-t", "--threads", dest="thread_count",
                         help="Number of threads (default: 100)", type=int, default=100)
+    parser.add_argument("-o", "--output", dest="output_file",
+                        help="Output CSV file", default=None)
     parser.set_defaults(java=False, bedrock=False)
     args = parser.parse_args()
 

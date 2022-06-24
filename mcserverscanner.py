@@ -6,6 +6,7 @@ import colorama as clr
 import threading
 import platform
 import argparse
+import random
 import csv
 
 
@@ -26,8 +27,9 @@ def load_file():
 
 def scan_server(lock, ips):
     try:
-        ip = ips[0]
-        ips.pop(0)
+        ip_index = random.randint(0, len(ips) - 1)
+        ip = ips[ip_index]
+        ips.pop(ip_index)
     except IndexError:
         print(clr.Fore.WHITE +
               f"No more IPs, exiting thread {threading.current_thread().name}")
@@ -112,7 +114,6 @@ def main():
 
     for thread in thread_list:
         thread.start()
-        thread.join()
 
 
 if __name__ == "__main__":

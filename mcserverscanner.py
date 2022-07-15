@@ -33,7 +33,7 @@ def scan_server(lock, ips):
                 ips.pop(0)
         except IndexError:
             print(clr.Fore.WHITE +
-                f"No more IPs, exiting thread {threading.current_thread().name}")
+                  f"No more IPs, exiting thread {threading.current_thread().name}")
             return True
 
         if args.java == True:

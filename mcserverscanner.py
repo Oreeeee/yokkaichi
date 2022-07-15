@@ -26,66 +26,66 @@ def load_file():
 
 
 def scan_server(lock, ips):
-    try:
-        with lock:
-            ip_index = random.randint(0, len(ips) - 1)
-            ip = ips[ip_index]
-            ips.pop(ip_index)
-    except IndexError:
-        print(clr.Fore.WHITE +
-              f"No more IPs, exiting thread {threading.current_thread().name}")
-        return True
+    while True:
+        try:
+            with lock:
+                ip = ips[0]
+                ips.pop(0)
+        except IndexError:
+            print(clr.Fore.WHITE +
+                f"No more IPs, exiting thread {threading.current_thread().name}")
+            return True
 
-    if args.java == True:
-        for port in args.ports:
-            try:
-                server = JavaServer.lookup(f"{ip}:{port}")
+        if args.java == True:
+            for port in args.ports:
+                try:
+                    server = JavaServer.lookup(f"{ip}:{port}")
 
-                server_info = []
-                server_info.append(f"{ip}:{port}")
-                server_info.append(server.status().description)
-                server_info.append(
-                    f"{server.status().players.online}/{server.status().players.max}")
-                server_info.append(f"{round(server.status().latency)}ms")
-                server_info.append(server.status().version.name)
-                server_info.append("Java")
+                    server_info = []
+                    server_info.append(f"{ip}:{port}")
+                    server_info.append(server.status().description)
+                    server_info.append(
+                        f"{server.status().players.online}/{server.status().players.max}")
+                    server_info.append(f"{round(server.status().latency)}ms")
+                    server_info.append(server.status().version.name)
+                    server_info.append("Java")
 
-                file = open(args.output_file, "a")
-                with lock:
-                    print(
-                        clr.Fore.GREEN + f"[+] Java server found at {server_info[0]}! Motd: {server_info[1]}, players online: {server_info[2]}, ping {server_info[3]}, version {server_info[4]}.")
-                    with file as f:
-                        write = csv.writer(file)
-                        write.writerow(server_info)
-            except Exception as e:
-                with lock:
-                    print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
-                    print(e)
-    if args.bedrock == True:
-        for port in args.ports:
-            try:
-                server = BedrockServer.lookup(f"{ip}:{port}")
+                    file = open(args.output_file, "a")
+                    with lock:
+                        print(
+                            clr.Fore.GREEN + f"[+] Java server found at {server_info[0]}! Motd: {server_info[1]}, players online: {server_info[2]}, ping {server_info[3]}, version {server_info[4]}.")
+                        with file as f:
+                            write = csv.writer(file)
+                            write.writerow(server_info)
+                except Exception as e:
+                    with lock:
+                        print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
+                        print(e)
+        if args.bedrock == True:
+            for port in args.ports:
+                try:
+                    server = BedrockServer.lookup(f"{ip}:{port}")
 
-                server_info = []
-                server_info.append(f"{ip}:{port}")
-                server_info.append(server.status().description)
-                server_info.append(
-                    f"{server.status().players.online}/{server.status().players.max}")
-                server_info.append(f"{round(server.status().latency)}ms")
-                server_info.append(server.status().version.name)
-                server_info.append("Bedrock")
+                    server_info = []
+                    server_info.append(f"{ip}:{port}")
+                    server_info.append(server.status().description)
+                    server_info.append(
+                        f"{server.status().players.online}/{server.status().players.max}")
+                    server_info.append(f"{round(server.status().latency)}ms")
+                    server_info.append(server.status().version.name)
+                    server_info.append("Bedrock")
 
-                file = open(args.output_file, "a")
-                with lock:
-                    print(
-                        clr.Fore.GREEN + f"[+] Bedrock server found at {server_info[0]}! Motd: {server_info[1]}, players online: {server_info[2]}, ping {server_info[3]}, version {server_info[4]}.")
-                    with file as f:
-                        write = csv.writer(file)
-                        write.writerow(server_info)
-            except Exception as e:
-                with lock:
-                    print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
-                    print(e)
+                    file = open(args.output_file, "a")
+                    with lock:
+                        print(
+                            clr.Fore.GREEN + f"[+] Bedrock server found at {server_info[0]}! Motd: {server_info[1]}, players online: {server_info[2]}, ping {server_info[3]}, version {server_info[4]}.")
+                        with file as f:
+                            write = csv.writer(file)
+                            write.writerow(server_info)
+                except Exception as e:
+                    with lock:
+                        print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
+                        print(e)
 
 
 def main():

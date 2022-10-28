@@ -1,7 +1,7 @@
 # Import modules
+from .ServerScan import ServerScan
 from threading import Thread, Lock
-from mcstatus import BedrockServer
-from mcstatus import JavaServer
+
 import colorama as clr
 import threading
 import platform
@@ -25,67 +25,7 @@ def load_file():
     return ips
 
 
-def scan_server(lock, ips):
-    while True:
-        try:
-            with lock:
-                ip = ips[0]
-                ips.pop(0)
-        except IndexError:
-            print(clr.Fore.WHITE +
-                  f"No more IPs, exiting thread {threading.current_thread().name}")
-            return True
 
-        if args.java == True:
-            for port in args.ports:
-                try:
-                    server = JavaServer.lookup(f"{ip}:{port}")
-
-                    server_info = []
-                    server_info.append(f"{ip}:{port}")
-                    server_info.append(server.status().description)
-                    server_info.append(
-                        f"{server.status().players.online}/{server.status().players.max}")
-                    server_info.append(f"{round(server.status().latency)}ms")
-                    server_info.append(server.status().version.name)
-                    server_info.append("Java")
-
-                    file = open(args.output_file, "a")
-                    with lock:
-                        print(
-                            clr.Fore.GREEN + f"[+] Java server found at {server_info[0]}! Motd: {server_info[1]}, players online: {server_info[2]}, ping {server_info[3]}, version {server_info[4]}.")
-                        with file as f:
-                            write = csv.writer(file)
-                            write.writerow(server_info)
-                except Exception as e:
-                    with lock:
-                        print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
-                        print(e)
-        if args.bedrock == True:
-            for port in args.ports:
-                try:
-                    server = BedrockServer.lookup(f"{ip}:{port}")
-
-                    server_info = []
-                    server_info.append(f"{ip}:{port}")
-                    server_info.append(server.status().description)
-                    server_info.append(
-                        f"{server.status().players.online}/{server.status().players.max}")
-                    server_info.append(f"{round(server.status().latency)}ms")
-                    server_info.append(server.status().version.name)
-                    server_info.append("Bedrock")
-
-                    file = open(args.output_file, "a")
-                    with lock:
-                        print(
-                            clr.Fore.GREEN + f"[+] Bedrock server found at {server_info[0]}! Motd: {server_info[1]}, players online: {server_info[2]}, ping {server_info[3]}, version {server_info[4]}.")
-                        with file as f:
-                            write = csv.writer(file)
-                            write.writerow(server_info)
-                except Exception as e:
-                    with lock:
-                        print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
-                        print(e)
 
 
 def main():
@@ -102,19 +42,20 @@ def main():
             print(clr.Fore.RED + "Given output file doesn't exist!")
             exit(1)
 
+    # Add platforms to a list
+    platforms = []
+    if args.java:
+        platforms.append("Java")
+    if args.bedrock:
+        platforms.append("Bedrock")
+
     print(clr.Fore.CYAN + "Loading IPs")
     ips = load_file()
 
-    print(clr.Fore.CYAN + f"Loading {args.thread_count} threads!")
-    lock = Lock()
-    thread_list = []
+    
+    ServerScan(ips, args.ports, platforms, args.output_file).start_scan(args.thread_count)
 
-    for _ in range(args.thread_count):
-        thread = Thread(target=scan_server, args=(lock, ips))
-        thread_list.append(thread)
-
-    for thread in thread_list:
-        thread.start()
+    
 
 
 if __name__ == "__main__":

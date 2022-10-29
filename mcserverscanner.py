@@ -43,7 +43,7 @@ def main():
     print(clr.Fore.CYAN + "Loading IPs")
     ips = load_file()
 
-    ServerScan(ips, args.ports, platforms,
+    ServerScan(ips, args.ports, platforms, args.query,
                args.output_file).start_scan(args.thread_count)
 
 
@@ -58,11 +58,13 @@ if __name__ == "__main__":
                         help="Location to a file with IP addresses to scan", type=str)
     parser.add_argument("-p", "--ports", dest="ports", action="append",
                         help="Ports to scan on")
+    parser.add_argument("-q", "--query", dest="query",
+                        help="Query servers, required for player list but slows down the script", action="store_true")
     parser.add_argument("-t", "--threads", dest="thread_count",
                         help="Number of threads (default: 100)", type=int, default=100)
     parser.add_argument("-o", "--output", dest="output_file",
-                        help="Output CSV file", default=None)
-    parser.set_defaults(java=False, bedrock=False)
+                        help="Output JSON file", default=None)
+    parser.set_defaults(java=False, bedrock=False, query=False)
     args = parser.parse_args()
 
     # if args.java and args.bedrock == False:

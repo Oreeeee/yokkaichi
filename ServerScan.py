@@ -6,10 +6,11 @@ import json
 
 
 class ServerScan:
-    def __init__(self, ips, ports, platforms, output_file):
+    def __init__(self, ips, ports, platforms, query, output_file):
         self.ips = ips
         self.ports = ports
         self.platforms = platforms
+        self.query = query
         self.output_file = output_file
 
         self.results = {"server_list": []}
@@ -53,11 +54,14 @@ class ServerScan:
                 print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
 
         # Get player list
-        try:
-            player_list = server_lookup.query().players.names
-        except Exception as e:
+        if self.query:
+            try:
+                player_list = server_lookup.query().players.names
+            except Exception as e:
+                print(clr.Fore.YELLOW + f"[!] Query failed for {ip}:{port} - {e}")
+                player_list = None
+        else:
             player_list = None
-            print(clr.Fore.YELLOW + f"[!] Query failed for {ip}:{port} - {e}")
 
         server_info = {
             "ip": ip,
@@ -86,11 +90,14 @@ class ServerScan:
                 print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
 
         # Get player list
-        try:
-            player_list = server_lookup.query().players.names
-        except Exception as e:
+        if self.query:
+            try:
+                player_list = server_lookup.query().players.names
+            except Exception as e:
+                print(clr.Fore.YELLOW + f"[!] Query failed for {ip}:{port} - {e}")
+                player_list = None
+        else:
             player_list = None
-            print(clr.Fore.YELLOW + f"[!] Query failed for {ip}:{port} - {e}")
 
         server_info = {
             "ip": ip,
@@ -113,6 +120,5 @@ class ServerScan:
 
     def add_to_file(self, server_info):
         self.results["server_list"].append(server_info)
-        print(self.results)
         with open(self.output_file, "w") as f:
             f.write(json.dumps(self.results, indent=4))

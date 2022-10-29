@@ -35,7 +35,7 @@ class ServerScan:
                     self.ips.pop(0)
             except IndexError:
                 print(clr.Fore.WHITE +
-                    f"No more IPs, exiting thread {threading.current_thread().name}")
+                      f"No more IPs, exiting thread {threading.current_thread().name}")
                 return True
 
             for port in self.ports:
@@ -70,14 +70,13 @@ class ServerScan:
             "max_players": server_lookup.status().players.max,
             "player_list": player_list,
             "whitelist": "TODO",
-            "cracked": "TODO" 
+            "cracked": "TODO"
         }
 
         with self.lock:
             print(
                 clr.Fore.GREEN + f"[+] Java server found at {ip}:{port}!")
             self.add_to_file(server_info)
-        
 
     def connect_bedrock(self, ip, port):
         try:
@@ -86,30 +85,30 @@ class ServerScan:
             with self.lock:
                 print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
 
+        # Get player list
         try:
-            server_query = server_lookup.query(f"{ip}:{port}")
-            query_successful = True
+            player_list = server_lookup.query().players.names
         except Exception as e:
+            player_list = None
             print(clr.Fore.YELLOW + f"[!] Query failed for {ip}:{port} - {e}")
-            query_successful = False
 
         server_info = {
             "ip": ip,
             "port": port,
-            "ping": server_lookup.status().latency,
-            "platform": "Bedrock",
+            "ping": round(server_lookup.status().latency),
+            "platform": "Java",
             "motd": server_lookup.status().description,
             "version": server_lookup.status().version.name,
             "online_players": server_lookup.status().players.online,
             "max_players": server_lookup.status().players.max,
-            "player_list": lambda: server_query.players.names if (query_successful) else None,
+            "player_list": player_list,
             "whitelist": "TODO",
-            "cracked": "TODO" 
+            "cracked": "TODO"
         }
 
         with self.lock:
             print(
-                clr.Fore.GREEN + f"[+] Bedrock server found at {server_info[0]}! Motd: {server_info[1]}, players online: {server_info[2]}, ping {server_info[3]}, version {server_info[4]}.")
+                clr.Fore.GREEN + f"[+] Bedrock server found at {ip}:{port}!")
             self.add_to_file(server_info)
 
     def add_to_file(self, server_info):

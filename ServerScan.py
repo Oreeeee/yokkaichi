@@ -1,7 +1,8 @@
-from mcstatus import BedrockServer
-from mcstatus import JavaServer
+# Import modules
+from mcstatus import BedrockServer, JavaServer
 import colorama as clr
 import threading
+import json
 
 
 class ServerScan:
@@ -11,24 +12,25 @@ class ServerScan:
         self.platforms = platforms
         self.output_file = output_file
 
+        self.results = {"server_list": []}
         self.lock = threading.Lock()
 
-    def start_scan(self, thread_count, ips):
-        print(clr.Fore.CYAN + f"Loading {self.thread_count} threads!")
+    def start_scan(self, thread_count):
+        print(clr.Fore.CYAN + f"Loading {thread_count} threads!")
 
         thread_list = []
 
         for _ in range(thread_count):
-            thread = threading.Thread(target=self.scan_server, args=(self.lock, ips))
+            thread = threading.Thread(target=self.scan_server)
             thread_list.append(thread)
 
         for thread in thread_list:
             thread.start()
 
-    def scan_server(self, lock):
+    def scan_server(self):
         while True:
             try:
-                with lock:
+                with self.lock:
                     ip = self.ips[0]
                     self.ips.pop(0)
             except IndexError:
@@ -36,63 +38,82 @@ class ServerScan:
                     f"No more IPs, exiting thread {threading.current_thread().name}")
                 return True
 
-            if "Java" in self.platforms:
-                for port in self.ports:
-                    self.scan_java(ip, port)
+            for port in self.ports:
+                if "Java" in self.platforms:
+                    self.connect_java(ip, port)
 
-            if "Bedrock" in self.platforms:
-                for port in self.ports:
+                if "Bedrock" in self.platforms:
                     self.connect_bedrock(ip, port)
 
     def connect_java(self, ip, port):
         try:
-            server = JavaServer.lookup(f"{ip}:{port}")
-
-            server_info = []
-            server_info.append(f"{ip}:{port}")
-            server_info.append(server.status().description)
-            server_info.append(
-                f"{server.status().players.online}/{server.status().players.max}")
-            server_info.append(f"{round(server.status().latency)}ms")
-            server_info.append(server.status().version.name)
-            server_info.append("Java")
-
-            file = open(args.output_file, "a")
-            with self.lock:
-                print(
-                    clr.Fore.GREEN + f"[+] Java server found at {server_info[0]}! Motd: {server_info[1]}, players online: {server_info[2]}, ping {server_info[3]}, version {server_info[4]}.")
-                with file as f:
-                    write = csv.writer(file)
-                    write.writerow(server_info)
+            server_lookup = JavaServer.lookup(f"{ip}:{port}")
         except Exception as e:
             with self.lock:
                 print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
-                print(e)
+
+        # Get player list
+        try:
+            player_list = server_lookup.query().players.names
+        except Exception as e:
+            player_list = None
+            print(clr.Fore.YELLOW + f"[!] Query failed for {ip}:{port} - {e}")
+
+        server_info = {
+            "ip": ip,
+            "port": port,
+            "ping": round(server_lookup.status().latency),
+            "platform": "Java",
+            "motd": server_lookup.status().description,
+            "version": server_lookup.status().version.name,
+            "online_players": server_lookup.status().players.online,
+            "max_players": server_lookup.status().players.max,
+            "player_list": player_list,
+            "whitelist": "TODO",
+            "cracked": "TODO" 
+        }
+
+        with self.lock:
+            print(
+                clr.Fore.GREEN + f"[+] Java server found at {ip}:{port}!")
+            self.add_to_file(server_info)
+        
 
     def connect_bedrock(self, ip, port):
         try:
-            server = BedrockServer.lookup(f"{ip}:{port}")
-
-            server_info = []
-            server_info.append(f"{ip}:{port}")
-            server_info.append(server.status().description)
-            server_info.append(
-                f"{server.status().players.online}/{server.status().players.max}")
-            server_info.append(f"{round(server.status().latency)}ms")
-            server_info.append(server.status().version.name)
-            server_info.append("Bedrock")
-
-            file = open(args.output_file, "a")
-            with lock:
-                print(
-                    clr.Fore.GREEN + f"[+] Bedrock server found at {server_info[0]}! Motd: {server_info[1]}, players online: {server_info[2]}, ping {server_info[3]}, version {server_info[4]}.")
-                with file as f:
-                    write = csv.writer(file)
-                    write.writerow(server_info)
+            server_lookup = BedrockServer.lookup(f"{ip}:{port}")
         except Exception as e:
-            with lock:
+            with self.lock:
                 print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
-                print(e)
 
-    def save_to_file(self, ip, port):
-        pass
+        try:
+            server_query = server_lookup.query(f"{ip}:{port}")
+            query_successful = True
+        except Exception as e:
+            print(clr.Fore.YELLOW + f"[!] Query failed for {ip}:{port} - {e}")
+            query_successful = False
+
+        server_info = {
+            "ip": ip,
+            "port": port,
+            "ping": server_lookup.status().latency,
+            "platform": "Bedrock",
+            "motd": server_lookup.status().description,
+            "version": server_lookup.status().version.name,
+            "online_players": server_lookup.status().players.online,
+            "max_players": server_lookup.status().players.max,
+            "player_list": lambda: server_query.players.names if (query_successful) else None,
+            "whitelist": "TODO",
+            "cracked": "TODO" 
+        }
+
+        with self.lock:
+            print(
+                clr.Fore.GREEN + f"[+] Bedrock server found at {server_info[0]}! Motd: {server_info[1]}, players online: {server_info[2]}, ping {server_info[3]}, version {server_info[4]}.")
+            self.add_to_file(server_info)
+
+    def add_to_file(self, server_info):
+        self.results["server_list"].append(server_info)
+        print(self.results)
+        with open(self.output_file, "w") as f:
+            f.write(json.dumps(self.results, indent=4))

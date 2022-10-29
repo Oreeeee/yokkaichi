@@ -1,13 +1,8 @@
 # Import modules
-from .ServerScan import ServerScan
-from threading import Thread, Lock
-
+from ServerScan import ServerScan
 import colorama as clr
-import threading
 import platform
 import argparse
-import random
-import csv
 
 
 def load_file():
@@ -25,9 +20,6 @@ def load_file():
     return ips
 
 
-
-
-
 def main():
     if platform.system() == "Windows":
         # Init colorama if on Windows
@@ -36,8 +28,7 @@ def main():
     # Check does output file exists
     if args.output_file != None:
         try:
-            csv_file = open(args.output_file, "r")
-            csv_file.close()
+            open(args.output_file, "r").close()
         except FileNotFoundError:
             print(clr.Fore.RED + "Given output file doesn't exist!")
             exit(1)
@@ -52,10 +43,8 @@ def main():
     print(clr.Fore.CYAN + "Loading IPs")
     ips = load_file()
 
-    
-    ServerScan(ips, args.ports, platforms, args.output_file).start_scan(args.thread_count)
-
-    
+    ServerScan(ips, args.ports, platforms,
+               args.output_file).start_scan(args.thread_count)
 
 
 if __name__ == "__main__":

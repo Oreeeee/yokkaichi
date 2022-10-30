@@ -1,4 +1,5 @@
 # Import modules
+from http import server
 from mcstatus import BedrockServer, JavaServer
 import colorama as clr
 import threading
@@ -40,61 +41,27 @@ class ServerScan:
                 return True
 
             for port in self.ports:
-                if "Java" in self.platforms:
-                    self.connect_java(ip, port)
+                for server_platform in self.platforms:
+                    try:
+                        self.check_server(ip, port, server_platform)
+                    except Exception as e:
+                        with self.lock:
+                            print(
+                                clr.Fore.RED + f"[-] {ip}:{port} for {server_platform} is offline!")
 
-                if "Bedrock" in self.platforms:
-                    self.connect_bedrock(ip, port)
-
-    def connect_java(self, ip, port):
-        try:
+    def check_server(self, ip, port, server_platform):
+        if server_platform == "Java":
             server_lookup = JavaServer.lookup(f"{ip}:{port}")
-        except Exception as e:
-            with self.lock:
-                print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
-
-        # Get player list
-        if self.query:
-            try:
-                player_list = server_lookup.query().players.names
-            except Exception as e:
-                print(clr.Fore.YELLOW + f"[!] Query failed for {ip}:{port} - {e}")
-                player_list = None
-        else:
-            player_list = None
-
-        server_info = {
-            "ip": ip,
-            "port": port,
-            "ping": round(server_lookup.status().latency),
-            "platform": "Java",
-            "motd": server_lookup.status().description,
-            "version": server_lookup.status().version.name,
-            "online_players": server_lookup.status().players.online,
-            "max_players": server_lookup.status().players.max,
-            "player_list": player_list,
-            "whitelist": "TODO",
-            "cracked": "TODO"
-        }
-
-        with self.lock:
-            print(
-                clr.Fore.GREEN + f"[+] Java server found at {ip}:{port}!")
-            self.add_to_file(server_info)
-
-    def connect_bedrock(self, ip, port):
-        try:
+        if server_platform == "Bedrock":
             server_lookup = BedrockServer.lookup(f"{ip}:{port}")
-        except Exception as e:
-            with self.lock:
-                print(clr.Fore.RED + f"[-] {ip}:{port} is offline!")
 
         # Get player list
         if self.query:
             try:
                 player_list = server_lookup.query().players.names
             except Exception as e:
-                print(clr.Fore.YELLOW + f"[!] Query failed for {ip}:{port} - {e}")
+                print(clr.Fore.YELLOW +
+                      f"[!] Query failed for {ip}:{port}")
                 player_list = None
         else:
             player_list = None
@@ -103,19 +70,29 @@ class ServerScan:
             "ip": ip,
             "port": port,
             "ping": round(server_lookup.status().latency),
-            "platform": "Java",
-            "motd": server_lookup.status().description,
-            "version": server_lookup.status().version.name,
-            "online_players": server_lookup.status().players.online,
-            "max_players": server_lookup.status().players.max,
+            "platform": server_platform,
+            "motd": "",
+            "version": "",
+            "online_players": 0,
+            "max_players": 0,
             "player_list": player_list,
             "whitelist": "TODO",
             "cracked": "TODO"
         }
+        if server_platform == "Java":
+            server_info["motd"] = server_lookup.status().description
+            server_info["version"] = server_lookup.status().version.name
+            server_info["online_players"] = server_lookup.status().players.online
+            server_info["max_players"] = server_lookup.status().players.max
+        if server_platform == "Bedrock":
+            server_info["motd"] = server_lookup.status().motd
+            server_info["version"] = ""
+            server_info["online_players"] = server_lookup.status().players_online
+            server_info["max_players"] = server_lookup.status().players_max
 
         with self.lock:
             print(
-                clr.Fore.GREEN + f"[+] Bedrock server found at {ip}:{port}!")
+                clr.Fore.GREEN + f"[+] {server_platform} server found at {ip}:{port}!")
             self.add_to_file(server_info)
 
     def add_to_file(self, server_info):

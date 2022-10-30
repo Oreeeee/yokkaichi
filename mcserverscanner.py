@@ -43,7 +43,7 @@ def main():
     print(clr.Fore.CYAN + "Loading IPs")
     ips = load_file()
 
-    ServerScan(ips, args.ports, platforms, args.query,
+    ServerScan(ips, args.ports, platforms, args.query, args.check_country,
                args.output_file).start_scan(args.thread_count)
 
 
@@ -55,15 +55,17 @@ if __name__ == "__main__":
     parser.add_argument("-b", "--bedrock", dest="bedrock",
                         help="Scan for Bedrock servers", action="store_true")
     parser.add_argument("-l", "--ip-list", dest="ip_list_file",
-                        help="Location to a file with IP addresses to scan", type=str)
+                        help="Location to a file with IP addresses to scan", type=str, required=True)
     parser.add_argument("-p", "--ports", dest="ports", action="append",
                         help="Ports to scan on")
     parser.add_argument("-q", "--query", dest="query",
                         help="Query servers, required for player list but slows down the script", action="store_true")
+    parser.add_argument("-c", "--check-country", dest="check_country",
+                        help="Check server location, provide IP2Location BIN database location", type=str, default="")
     parser.add_argument("-t", "--threads", dest="thread_count",
                         help="Number of threads (default: 100)", type=int, default=100)
     parser.add_argument("-o", "--output", dest="output_file",
-                        help="Output JSON file", default=None)
+                        help="Output JSON file", default=None, required=True)
     parser.set_defaults(java=False, bedrock=False, query=False)
     args = parser.parse_args()
 

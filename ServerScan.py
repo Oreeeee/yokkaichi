@@ -1,23 +1,28 @@
 # Import modules
-from http import server
 from mcstatus import BedrockServer, JavaServer
 import colorama as clr
+import IP2Location
 import threading
 import json
 
 
 class ServerScan:
-    def __init__(self, ips, ports, platforms, query, output_file):
+    def __init__(self, ips, ports, platforms, query, check_country, output_file):
         self.ips = ips
         self.ports = ports
         self.platforms = platforms
         self.query = query
+        self.check_country = check_country
         self.output_file = output_file
 
         self.results = {"server_list": []}
         self.lock = threading.Lock()
 
     def start_scan(self, thread_count):
+        if self.check_country != "":
+            print(clr.Fore.CYAN + "Loading IP2Location database")
+            self.ip2location_db = IP2Location.IP2Location(self.check_country)
+
         print(clr.Fore.CYAN + f"Loading {thread_count} threads!")
 
         thread_list = []
@@ -66,9 +71,16 @@ class ServerScan:
         else:
             player_list = None
 
+        # Check server country
+        if self.check_country != "":
+            server_country = self.ip2location_db.get_country_short(ip)
+        else:
+            server_country = None
+
         server_info = {
             "ip": ip,
             "port": port,
+            "country": server_country,
             "ping": round(server_lookup.status().latency),
             "platform": server_platform,
             "motd": "",
@@ -76,8 +88,6 @@ class ServerScan:
             "online_players": 0,
             "max_players": 0,
             "player_list": player_list,
-            "whitelist": "TODO",
-            "cracked": "TODO"
         }
         if server_platform == "Java":
             server_info["motd"] = server_lookup.status().description

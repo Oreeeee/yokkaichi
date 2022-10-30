@@ -19,3 +19,5 @@ options:
   -o OUTPUT_FILE, --output OUTPUT_FILE
                         Output JSON file
 ```
+## Example
+`python mcserverscanner.py --java --ip-list data/ips.txt --ports 25565 --ports 25566 --check-country data/IP2LOCATION-LITE-DB1.BIN --output data/servers.json`

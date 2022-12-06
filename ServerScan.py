@@ -7,8 +7,18 @@ import json
 
 
 class ServerScan:
-    def __init__(self, ips, ports, platforms, query, check_country, output_file):
-        self.ips = ips
+    def __init__(
+        self,
+        ports,
+        platforms,
+        query,
+        check_country,
+        output_file,
+        ip_list=None,
+        masscan_list=None,
+    ):
+        self.ip_list = ip_list
+        self.masscan_list = masscan_list
         self.ports = ports
         self.platforms = platforms
         self.query = query
@@ -35,17 +45,52 @@ class ServerScan:
             thread.start()
 
     def scan_server(self):
+        # Scan servers from masscan list
+        if self.masscan_list != None:
+            self.scan_masscan()
+        if self.ip_list != None:
+            self.scan_ip_list()
+
+    def scan_masscan(self):
+        while True:
+            # Select the first IP from the list and get the port list
+            with self.lock:
+                try:
+                    ip = list(self.masscan_list["scan"].keys())[0]
+                except IndexError:
+                    print(
+                        clr.Fore.WHITE
+                        + f"No more IPs in masscan in thread {threading.current_thread().name}"
+                    )
+                    return
+                ports = []
+                for port_info in self.masscan_list["scan"][ip]:
+                    ports.append(port_info["port"])
+                self.masscan_list["scan"].pop(ip)
+
+            for port in ports:
+                for server_platform in self.platforms:
+                    try:
+                        self.check_server(ip, port, server_platform)
+                    except Exception:
+                        with self.lock:
+                            print(
+                                clr.Fore.RED
+                                + f"[-] {ip}:{port} for {server_platform} is offline!"
+                            )
+
+    def scan_ip_list(self):
         while True:
             try:
                 with self.lock:
-                    ip = self.ips[0]
-                    self.ips.pop(0)
+                    ip = self.ip_list[0]
+                    self.ip_list.pop(0)
             except IndexError:
                 print(
                     clr.Fore.WHITE
-                    + f"No more IPs, exiting thread {threading.current_thread().name}"
+                    + f"No more IPs in IP list in thread {threading.current_thread().name}"
                 )
-                return True
+                return
 
             for port in self.ports:
                 for server_platform in self.platforms:

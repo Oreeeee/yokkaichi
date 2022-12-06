@@ -51,7 +51,13 @@ def main():
     # ips = load_file()
 
     ServerScan(
-        ips, args.ports, platforms, args.query, args.check_country, args.output_file
+        ip_list=None,
+        masscan_list=masscan_results,
+        ports=args.ports,
+        platforms=platforms,
+        query=args.query,
+        check_country=args.check_country,
+        output_file=args.output_file,
     ).start_scan(args.thread_count)
 
 

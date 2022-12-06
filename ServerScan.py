@@ -41,8 +41,10 @@ class ServerScan:
                     ip = self.ips[0]
                     self.ips.pop(0)
             except IndexError:
-                print(clr.Fore.WHITE +
-                      f"No more IPs, exiting thread {threading.current_thread().name}")
+                print(
+                    clr.Fore.WHITE
+                    + f"No more IPs, exiting thread {threading.current_thread().name}"
+                )
                 return True
 
             for port in self.ports:
@@ -52,7 +54,9 @@ class ServerScan:
                     except Exception as e:
                         with self.lock:
                             print(
-                                clr.Fore.RED + f"[-] {ip}:{port} for {server_platform} is offline!")
+                                clr.Fore.RED
+                                + f"[-] {ip}:{port} for {server_platform} is offline!"
+                            )
 
     def check_server(self, ip, port, server_platform):
         if server_platform == "Java":
@@ -65,8 +69,7 @@ class ServerScan:
             try:
                 player_list = server_lookup.query().players.names
             except Exception as e:
-                print(clr.Fore.YELLOW +
-                      f"[!] Query failed for {ip}:{port}")
+                print(clr.Fore.YELLOW + f"[!] Query failed for {ip}:{port}")
                 player_list = None
         else:
             player_list = None
@@ -102,7 +105,8 @@ class ServerScan:
 
         with self.lock:
             print(
-                clr.Fore.GREEN + f"[+] {server_platform} server found at {ip}:{port}!")
+                clr.Fore.GREEN + f"[+] {server_platform} server found at {ip}:{port}!"
+            )
             self.add_to_file(server_info)
 
     def add_to_file(self, server_info):

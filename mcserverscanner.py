@@ -50,30 +50,78 @@ def main():
     # print(clr.Fore.CYAN + "Loading IPs")
     # ips = load_file()
 
-    ServerScan(ips, args.ports, platforms, args.query, args.check_country,
-               args.output_file).start_scan(args.thread_count)
+    ServerScan(
+        ips, args.ports, platforms, args.query, args.check_country, args.output_file
+    ).start_scan(args.thread_count)
 
 
 if __name__ == "__main__":
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-j", "--java", dest="java",
-                        help="Scan for Java servers", action="store_true")
-    parser.add_argument("-b", "--bedrock", dest="bedrock",
-                        help="Scan for Bedrock servers", action="store_true")
-    parser.add_argument("--masscan-ip-list", dest="masscan_ip_list", help="Location to IP (or CIDR) list to scan by masscan before scanning with mcserver scanner", type=str, default="")
-    parser.add_argument("--masscan-country", dest="masscan_country", help="Country to scan in 2-letter format", type=str)
-    parser.add_argument("--masscan-args", dest="masscan_args", help="Arguments for masscan (example: --max-rate 1000)", type=str, default="")
-    parser.add_argument("-p", "--ports", dest="ports",
-                        help="Ports to scan on", nargs="+")
-    parser.add_argument("-q", "--query", dest="query",
-                        help="Query servers, required for player list but slows down the script", action="store_true")
-    parser.add_argument("-c", "--check-country", dest="check_country",
-                        help="Check server location, provide IP2Location BIN database location", type=str, default="")
-    parser.add_argument("-t", "--threads", dest="thread_count",
-                        help="Number of threads (default: 100)", type=int, default=100)
-    parser.add_argument("-o", "--output", dest="output_file",
-                        help="Output JSON file", default=None, required=True)
+    parser.add_argument(
+        "-j", "--java", dest="java", help="Scan for Java servers", action="store_true"
+    )
+    parser.add_argument(
+        "-b",
+        "--bedrock",
+        dest="bedrock",
+        help="Scan for Bedrock servers",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--masscan-ip-list",
+        dest="masscan_ip_list",
+        help="Location to IP (or CIDR) list to scan by masscan before scanning with mcserver scanner",
+        type=str,
+        default="",
+    )
+    parser.add_argument(
+        "--masscan-country",
+        dest="masscan_country",
+        help="Country to scan in 2-letter format",
+        type=str,
+    )
+    parser.add_argument(
+        "--masscan-args",
+        dest="masscan_args",
+        help="Arguments for masscan (example: --max-rate 1000)",
+        type=str,
+        default="",
+    )
+    parser.add_argument(
+        "-p", "--ports", dest="ports", help="Ports to scan on", nargs="+"
+    )
+    parser.add_argument(
+        "-q",
+        "--query",
+        dest="query",
+        help="Query servers, required for player list but slows down the script",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-c",
+        "--check-country",
+        dest="check_country",
+        help="Check server location, provide IP2Location BIN database location",
+        type=str,
+        default="",
+    )
+    parser.add_argument(
+        "-t",
+        "--threads",
+        dest="thread_count",
+        help="Number of threads (default: 100)",
+        type=int,
+        default=100,
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        dest="output_file",
+        help="Output JSON file",
+        default=None,
+        required=True,
+    )
     parser.set_defaults(java=False, bedrock=False, query=False)
     args = parser.parse_args()
 

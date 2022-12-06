@@ -27,12 +27,11 @@ def main():
         clr.init()
 
     # Check does output file exists
-    if args.output_file != None:
-        try:
-            open(args.output_file, "r").close()
-        except FileNotFoundError:
-            print(clr.Fore.RED + "Given output file doesn't exist!")
-            exit(1)
+    try:
+        open(args.output_file, "r").close()
+    except FileNotFoundError:
+        print(clr.Fore.RED + "Given output file doesn't exist!")
+        exit(1)
 
     # Add platforms to a list
     platforms = []
@@ -41,11 +40,21 @@ def main():
     if args.bedrock:
         platforms.append("Bedrock")
 
-    # Load masscan IP list
-    masscan_ips = load_ip_list(args.masscan_ip_list)
-    # Start masscan
-    masscan_scanner = MasscanScan(masscan_ips, args.ports, args.masscan_args)
-    masscan_results = masscan_scanner.start_scan()
+    if args.ip_list != "":
+        print(clr.Fore.CYAN + "Loading IPs")
+        ip_list = load_ip_list(args.ip_list)
+        print(clr.Fore.GREEN + f"Loaded {len(ip_list)} IPs")
+    else:
+        ip_list = None
+
+    if args.masscan:
+        # Load masscan IP list
+        masscan_ips = load_ip_list(args.masscan_ip_list)
+        # Start masscan
+        masscan_scanner = MasscanScan(masscan_ips, args.ports, args.masscan_args)
+        masscan_results = masscan_scanner.start_scan()
+    else:
+        masscan_results = None
 
     # print(clr.Fore.CYAN + "Loading IPs")
     # ips = load_file()
@@ -72,6 +81,15 @@ if __name__ == "__main__":
         "--bedrock",
         dest="bedrock",
         help="Scan for Bedrock servers",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--ip-list", dest="ip_list", help="Location to IP List", type=str, default=""
+    )
+    parser.add_argument(
+        "--masscan",
+        dest="masscan",
+        help="Enable scanning with masscan",
         action="store_true",
     )
     parser.add_argument(

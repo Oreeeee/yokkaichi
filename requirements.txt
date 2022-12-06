@@ -1,3 +1,4 @@
 colorama
 mcstatus
 ip2location
+python-masscan

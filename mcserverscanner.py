@@ -94,7 +94,7 @@ def main():
         ports=args.ports,
         platforms=platforms,
         query=args.query,
-        ip2location_db_file=args.ip2location,
+        ip2location_db_file=args.ip2location_db,
         output_file=args.output_file,
     ).start_scan(args.thread_count)
 
@@ -152,8 +152,8 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--ip2location-db",
-        dest="check_country",
-        help="Check server location, provide IP2Location BIN database location",
+        dest="ip2location_db",
+        help="IP2Location BIN database location, required for providing geolocation info",
         type=str,
         default="",
     )

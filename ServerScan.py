@@ -119,16 +119,10 @@ class ServerScan:
         else:
             player_list = None
 
-        # Check server country
-        if self.check_country != "":
-            server_country = self.ip2location_db.get_country_short(ip)
-        else:
-            server_country = None
-
         server_info = {
             "ip": ip,
             "port": port,
-            "country": server_country,
+            "info": self.ip2location_db.get_all(ip),
             "ping": round(server_lookup.status().latency),
             "platform": server_platform,
             "motd": "",

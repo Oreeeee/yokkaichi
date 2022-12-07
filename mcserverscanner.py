@@ -4,6 +4,25 @@ from ServerScan import ServerScan
 import colorama as clr
 import platform
 import argparse
+import requests
+
+
+def get_country_ips(countries):
+    country_ip_list = []
+    for country in countries:
+        # Download CIDRs for country
+        cidr_list = requests.get(
+            f"https://raw.githubusercontent.com/herrbischoff/country-ip-blocks/master/ipv4/{country.lower()}.cidr"
+        )
+        # Check is the country valid
+        if cidr_list.text == "404: Not Found":
+            print(clr.Fore.RED + f"{country} is not a proper 2-letter code!")
+            continue
+        # Add IPs to IP list
+        for ip in cidr_list.text.splitlines():
+            country_ip_list.append(ip)
+
+    return country_ip_list
 
 
 def load_ip_list(ip_list_location):
@@ -48,8 +67,18 @@ def main():
         ip_list = None
 
     if args.masscan:
-        # Load masscan IP list
-        masscan_ips = load_ip_list(args.masscan_ip_list)
+        masscan_ips_from_file = []
+        masscan_ips_for_countries = []
+        if args.masscan_ip_list != "":
+            # Load masscan IP list
+            masscan_ips_from_file = load_ip_list(args.masscan_ip_list)
+        if args.masscan_countries != []:
+            # Get CIDR ranges for countries
+            masscan_ips_for_countries = get_country_ips(args.masscan_countries)
+
+        # Combine two sources of masscan IPs together
+        masscan_ips = masscan_ips_from_file + masscan_ips_for_countries
+
         # Start masscan
         masscan_scanner = MasscanScan(masscan_ips, args.ports, args.masscan_args)
         masscan_results = masscan_scanner.start_scan()
@@ -100,10 +129,10 @@ if __name__ == "__main__":
         default="",
     )
     parser.add_argument(
-        "--masscan-country",
-        dest="masscan_country",
-        help="Country to scan in 2-letter format",
-        type=str,
+        "--masscan-countries",
+        dest="masscan_countries",
+        help="Countries to scan in 2-letter format",
+        nargs="+",
     )
     parser.add_argument(
         "--masscan-args",

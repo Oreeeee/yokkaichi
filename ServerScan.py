@@ -12,26 +12,26 @@ class ServerScan:
         ports,
         platforms,
         query,
-        check_country,
+        ip2location_db_file,
         output_file,
-        ip_list=None,
-        masscan_list=None,
+        ip_list,
+        masscan_list,
     ):
         self.ip_list = ip_list
         self.masscan_list = masscan_list
         self.ports = ports
         self.platforms = platforms
         self.query = query
-        self.check_country = check_country
+        self.ip2location_db_file = ip2location_db_file
         self.output_file = output_file
 
         self.results = {"server_list": []}
         self.lock = threading.Lock()
 
     def start_scan(self, thread_count):
-        if self.check_country != "":
+        if self.ip2location_db_file != "":
             print(clr.Fore.CYAN + "Loading IP2Location database")
-            self.ip2location_db = IP2Location.IP2Location(self.check_country)
+            self.ip2location_db = IP2Location.IP2Location(self.ip2location_db_file)
 
         print(clr.Fore.CYAN + f"Loading {thread_count} threads!")
 

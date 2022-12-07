@@ -94,7 +94,7 @@ def main():
         ports=args.ports,
         platforms=platforms,
         query=args.query,
-        check_country=args.check_country,
+        ip2location_db_file=args.ip2location,
         output_file=args.output_file,
     ).start_scan(args.thread_count)
 
@@ -145,15 +145,13 @@ if __name__ == "__main__":
         "-p", "--ports", dest="ports", help="Ports to scan on", nargs="+"
     )
     parser.add_argument(
-        "-q",
         "--query",
         dest="query",
         help="Query servers, required for player list but slows down the script",
         action="store_true",
     )
     parser.add_argument(
-        "-c",
-        "--check-country",
+        "--ip2location-db",
         dest="check_country",
         help="Check server location, provide IP2Location BIN database location",
         type=str,

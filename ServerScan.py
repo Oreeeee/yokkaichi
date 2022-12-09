@@ -4,6 +4,7 @@ import colorama as clr
 import IP2Location
 import threading
 import json
+import ast
 
 
 class ServerScan:
@@ -122,7 +123,7 @@ class ServerScan:
         server_info = {
             "ip": ip,
             "port": port,
-            "info": self.ip2location_db.get_all(ip),
+            "info": self.get_location_data(ip),
             "ping": round(server_lookup.status().latency),
             "platform": server_platform,
             "motd": "",
@@ -147,6 +148,18 @@ class ServerScan:
                 clr.Fore.GREEN + f"[+] {server_platform} server found at {ip}:{port}!"
             )
             self.add_to_file(server_info)
+
+    def get_location_data(self, ip):
+        if self.ip2location_db_file == "":
+            # Return None if the database doesn't exist
+            return None
+
+        # Make the data be a string
+        ip2location_data_str = str(self.ip2location_db.get_all(ip))
+        # Convert the data to dict
+        ip2location_data_dict = ast.literal_eval(ip2location_data_str)
+
+        return ip2location_data_dict
 
     def add_to_file(self, server_info):
         self.results["server_list"].append(server_info)

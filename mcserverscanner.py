@@ -72,7 +72,7 @@ def main():
         if args.masscan_ip_list != "":
             # Load masscan IP list
             masscan_ips_from_file = load_ip_list(args.masscan_ip_list)
-        if args.masscan_countries != []:
+        if args.masscan_countries != None:
             # Get CIDR ranges for countries
             masscan_ips_for_countries = get_country_ips(args.masscan_countries)
 

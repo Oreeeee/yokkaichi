@@ -5,6 +5,7 @@ import colorama as clr
 import platform
 import argparse
 import requests
+import pathlib
 
 
 def get_country_ips(countries):
@@ -46,11 +47,18 @@ def main():
         clr.init()
 
     # Check does output file exists
-    try:
-        open(args.output_file, "r").close()
-    except FileNotFoundError:
-        print(clr.Fore.RED + "Given output file doesn't exist!")
-        exit(1)
+    if pathlib.Path(args.output_file).is_file():
+        if (
+            input(
+                clr.Fore.YELLOW
+                + "Output file exists. Continuing will overwrite this file. Proceed? (y/n) "
+            )
+            == "n"
+        ):
+            exit(0)
+    else:
+        # Touch the file
+        pathlib.Path(args.output_file).touch()
 
     # Add platforms to a list
     platforms = []

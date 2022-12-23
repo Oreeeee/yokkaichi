@@ -52,6 +52,10 @@ class ServerScan:
         if self.ip_list != None:
             self.scan_ip_list()
 
+        # Show results
+        server_count = len(self.results["server_list"])
+        print(clr.Fore.CYAN + f"{server_count} servers found")
+
     def scan_masscan(self):
         while True:
             # Select the first IP from the list and get the port list

@@ -45,16 +45,16 @@ class ServerScan:
         for thread in thread_list:
             thread.start()
 
+        # Show results
+        server_count = len(self.results["server_list"])
+        print(clr.Fore.CYAN + f"{server_count} servers found")
+
     def scan_server(self):
         # Scan servers from masscan list
         if self.masscan_list != None:
             self.scan_masscan()
         if self.ip_list != None:
             self.scan_ip_list()
-
-        # Show results
-        server_count = len(self.results["server_list"])
-        print(clr.Fore.CYAN + f"{server_count} servers found")
 
     def scan_masscan(self):
         while True:

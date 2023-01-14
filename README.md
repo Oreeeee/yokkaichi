@@ -1,8 +1,10 @@
-## Minecraft server scanner - Shodan-like server scanner for Minecraft 
+## Yokkaichi (formely mcserverscanner) - Shodan-like server scanner for Minecraft.
+## Renaming notice!
+This project used to be named mcserverscanner, but on 2022-01-15 due to the old name being "too generic" it got renamed to Yokkaichi.
 ### Usage
 ```
-usage: mcserverscanner.py [-h] [-j] [-b] [--ip-list IP_LIST] [--masscan] [--masscan-ip-list MASSCAN_IP_LIST] [--masscan-countries MASSCAN_COUNTRIES [MASSCAN_COUNTRIES ...]]
-                          [--masscan-args MASSCAN_ARGS] [-p PORTS [PORTS ...]] [--query] [--ip2location-db IP2LOCATION_DB] [-t THREAD_COUNT] -o OUTPUT_FILE
+usage: __main__.py [-h] [-j] [-b] [--ip-list IP_LIST] [--masscan] [--masscan-ip-list MASSCAN_IP_LIST] [--masscan-countries MASSCAN_COUNTRIES [MASSCAN_COUNTRIES ...]]
+                   [--masscan-args MASSCAN_ARGS] [-p PORTS [PORTS ...]] [--query] [--ip2location-db IP2LOCATION_DB] [-t THREAD_COUNT] -o OUTPUT_FILE
 
 options:
   -h, --help            show this help message and exit
@@ -27,7 +29,7 @@ options:
                         Output JSON file
 ```
 ### Example
-`python mcserverscanner.py --java --masscan --masscan-countries US CA CN -p 25565 25566 --ip2location data/IP2LOCATION-LITE-DB11.BIN --output data/servers.json`
+`python -m yokkaichi --java --masscan --masscan-countries US CA CN -p 25565 25566 --ip2location data/IP2LOCATION-LITE-DB11.BIN --output data/servers.json`
 
 ### Big Thanks
 - [herrbischoff/country-ip-blocks](https://github.com/herrbischoff/country-ip-blocks) for providing CIDR blocks for countries

@@ -1,9 +1,9 @@
 from setuptools import setup
 
 setup(
-    name="mcserverscanner",
+    name="yokkaichi",
     version="1.0",
-    description="Shodan-like server scanner for Minecraft",
+    description="Shodan-like server scanner for Minecraft (Formely mcserverscanner)",
     install_requires=[
         "colorama",
         "mcstatus",
@@ -23,5 +23,5 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
-    packages=["mcserverscanner"],
+    packages=["yokkaichi"],
 )

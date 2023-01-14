@@ -1,5 +1,5 @@
-# Minecraft server scanner - find Minecraft servers with port scanning!
-## Usage
+## Minecraft server scanner - Shodan-like server scanner for Minecraft 
+### Usage
 ```
 usage: mcserverscanner.py [-h] [-j] [-b] [--ip-list IP_LIST] [--masscan] [--masscan-ip-list MASSCAN_IP_LIST] [--masscan-countries MASSCAN_COUNTRIES [MASSCAN_COUNTRIES ...]]
                           [--masscan-args MASSCAN_ARGS] [-p PORTS [PORTS ...]] [--query] [--ip2location-db IP2LOCATION_DB] [-t THREAD_COUNT] -o OUTPUT_FILE
@@ -26,9 +26,9 @@ options:
   -o OUTPUT_FILE, --output OUTPUT_FILE
                         Output JSON file
 ```
-## Example
+### Example
 `python mcserverscanner.py --java --masscan --masscan-countries US CA CN -p 25565 25566 --ip2location data/IP2LOCATION-LITE-DB11.BIN --output data/servers.json`
 
-## Big Thanks
+### Big Thanks
 - [herrbischoff/country-ip-blocks](https://github.com/herrbischoff/country-ip-blocks) for providing CIDR blocks for countries
 - [IP2Location](https://www.ip2location.com/) and [IP2Location Lite](https://lite.ip2location.com/) for providing accurate offline IP to Location service.

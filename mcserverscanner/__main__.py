@@ -1,6 +1,6 @@
 # Import modules
-from MasscanScan import MasscanScan
-from ServerScan import ServerScan
+from .MasscanScan import MasscanScan
+from .ServerScan import ServerScan
 import colorama as clr
 import platform
 import argparse

@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name="mcserverscanner",
     version="1.0",
-    description="Shodan for Minecraft",
+    description="Shodan-like server scanner for Minecraft",
     install_requires=[
         "colorama",
         "mcstatus",

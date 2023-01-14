@@ -1,9 +1,17 @@
 from setuptools import setup
+from pathlib import Path
+
+# Load README from README.md
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="yokkaichi",
-    version="1.0",
+    version="0.9.1",
     description="Shodan-like server scanner for Minecraft (Formely mcserverscanner)",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author="Oreeeee",
     install_requires=[
         "colorama",
         "mcstatus",

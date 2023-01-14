@@ -1,6 +1,6 @@
 ## Yokkaichi (formely mcserverscanner) - Shodan-like server scanner for Minecraft.
 ## Renaming notice!
-This project used to be named mcserverscanner, but on 2022-01-15 due to the old name being "too generic" it got renamed to Yokkaichi.
+This project used to be named mcserverscanner, but on 2022-01-15 it got renamed to Yokkaichi.
 ### Usage
 ```
 usage: __main__.py [-h] [-j] [-b] [--ip-list IP_LIST] [--masscan] [--masscan-ip-list MASSCAN_IP_LIST] [--masscan-countries MASSCAN_COUNTRIES [MASSCAN_COUNTRIES ...]]

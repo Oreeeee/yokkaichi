@@ -14,6 +14,7 @@ class ServerScan:
         platforms,
         query,
         ip2location_db_file,
+        ip2location_cache,
         output_file,
         ip_list,
         masscan_list,
@@ -24,6 +25,7 @@ class ServerScan:
         self.platforms = platforms
         self.query = query
         self.ip2location_db_file = ip2location_db_file
+        self.ip2location_cache = ip2location_cache
         self.output_file = output_file
 
         self.results = {"server_list": []}
@@ -32,7 +34,12 @@ class ServerScan:
     def start_scan(self, thread_count):
         if self.ip2location_db_file != "":
             print(clr.Fore.CYAN + "Loading IP2Location database")
-            self.ip2location_db = IP2Location.IP2Location(self.ip2location_db_file)
+            if self.ip2location_cache:
+                self.ip2location_db = IP2Location.IP2Location(
+                    self.ip2location_db_file, "SHARED_MEMORY"
+                )
+            else:
+                self.ip2location_db = IP2Location.IP2Location(self.ip2location_db_file)
 
         print(clr.Fore.CYAN + f"Loading {thread_count} threads!")
 

@@ -103,13 +103,14 @@ def main():
         platforms=platforms,
         query=args.query,
         ip2location_db_file=args.ip2location_db,
+        ip2location_cache=args.ip2location_cache,
         output_file=args.output_file,
     ).start_scan(args.thread_count)
 
 
 if __name__ == "__main__":
     # Parse arguments
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument(
         "-j", "--java", dest="java", help="Scan for Java servers", action="store_true"
     )
@@ -164,6 +165,12 @@ if __name__ == "__main__":
         help="IP2Location BIN database location, required for providing geolocation info",
         type=str,
         default="",
+    )
+    parser.add_argument(
+        "--ip2location-cache",
+        dest="ip2location_cache",
+        help="Cache IP2Location database to RAM. Make sure you have enough RAM to use this feature",
+        action="store_true",
     )
     parser.add_argument(
         "-t",

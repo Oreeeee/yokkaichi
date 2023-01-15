@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="yokkaichi",
-    version="1.1",
+    version="1.1.1",
     description="Shodan-like server scanner for Minecraft (formely mcserverscanner)",
     long_description=long_description,
     long_description_content_type="text/markdown",

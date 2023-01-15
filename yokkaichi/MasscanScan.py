@@ -44,6 +44,7 @@ class MasscanScan:
         print(
             clr.Fore.BLUE
             + f"Starting masscan with {len(self.ip_list)} entries and {len(self.port_list)} ports"
+            + clr.Fore.RESET
         )
         if platform.system() == "Windows":
             print("If the scanning doesn't work, start this script as admin!")

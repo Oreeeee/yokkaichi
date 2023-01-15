@@ -45,6 +45,13 @@ class ServerScan:
         for thread in thread_list:
             thread.start()
 
+        for thread in thread_list:
+            thread.join()
+
+        # Show results
+        server_count = len(self.results["server_list"])
+        print(clr.Fore.MAGENTA + f"{server_count} servers found")
+
     def scan_server(self):
         # Scan servers from masscan list
         if self.masscan_list != None:

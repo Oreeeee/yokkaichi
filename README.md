@@ -1,7 +1,7 @@
 ## Yokkaichi (formely mcserverscanner) - Shodan-like server scanner for Minecraft.
 
 ## Renaming notice!
-This project used to be named mcserverscanner, but on 2022-01-15 it got renamed to Yokkaichi.
+This project used to be named mcserverscanner, but on 2023-01-15 it got renamed to Yokkaichi.
 
 ### Features
 - Scanning for Java and Bedrock servers

@@ -156,7 +156,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--query",
         dest="query",
-        help="Query servers, required for player list but slows down the script",
+        help="Query servers, required for player list but slows down the script (Note: might be broken at the moment)",
         action="store_true",
     )
     parser.add_argument(

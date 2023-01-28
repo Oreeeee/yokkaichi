@@ -35,7 +35,8 @@ def load_ip_list(ip_list_location):
             for ip in ip_list:
                 ips.append(ip.strip())
     except FileNotFoundError:
-        print(clr.Back.RED + clr.Fore.WHITE + "ERROR! IP LIST/MASSCAN LIST NOT FOUND!")
+        print(clr.Back.RED + clr.Fore.WHITE +
+              "ERROR! IP LIST/MASSCAN LIST NOT FOUND!")
         exit(1)
 
     return ips
@@ -59,6 +60,11 @@ def main():
     else:
         # Touch the file
         pathlib.Path(args.output_file).touch()
+
+    # Check does IP2Location db exist
+    if not pathlib.Path(args.ip2location_db).is_file():
+        print(clr.Fore.RED + "This IP2Location DB doesn't exist")
+        exit(1)
 
     # Add platforms to a list
     platforms = []
@@ -88,7 +94,8 @@ def main():
         masscan_ips = masscan_ips_from_file + masscan_ips_for_countries
 
         # Start masscan
-        masscan_scanner = MasscanScan(masscan_ips, args.ports, args.masscan_args)
+        masscan_scanner = MasscanScan(
+            masscan_ips, args.ports, args.masscan_args)
         masscan_results = masscan_scanner.start_scan()
     else:
         masscan_results = None

@@ -12,7 +12,7 @@ In some cases, you can get in trouble for using this software! Before using it, 
 - IP2Location integration
 - Query integration
 
-### Planned features
+### Planned features (not in a specific order)
 - WWW interface
 - Bot joining the servers
 - Cleaning up the code

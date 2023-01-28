@@ -16,6 +16,7 @@ In some cases, you can get in trouble for using this software! Before using it, 
 - WWW interface
 - Bot joining the servers
 - Cleaning up the code
+- Docker support
 
 ### Installation
 - Easy installation (from PyPI)

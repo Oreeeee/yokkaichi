@@ -34,7 +34,3 @@ You can use this script by invoking `python -m yokkaichi` and passing in argumen
 
 ### Example
 `python -m yokkaichi --java --masscan --masscan-countries US CA CN -p 25565 25566 --ip2location-db data/IP2LOCATION-LITE-DB11.BIN --ip2location-cache --output data/servers.json`
-
-### Big Thanks
-- [herrbischoff/country-ip-blocks](https://github.com/herrbischoff/country-ip-blocks) for providing CIDR blocks for countries
-- [IP2Location](https://www.ip2location.com/) and [IP2Location Lite](https://lite.ip2location.com/) for providing accurate offline IP to Location service.

@@ -61,7 +61,7 @@ def main():
         pathlib.Path(args.output_file).touch()
 
     # Check does IP2Location db exist
-    if not pathlib.Path(args.ip2location_db).is_file():
+    if args.ip2location_db != "" and not pathlib.Path(args.ip2location_db).is_file():
         print(clr.Fore.RED + "This IP2Location DB doesn't exist")
         exit(1)
 
@@ -93,7 +93,9 @@ def main():
         masscan_ips = masscan_ips_from_file + masscan_ips_for_countries
 
         # Start masscan
-        masscan_scanner = MasscanScan(masscan_ips, args.ports, args.masscan_args)
+        masscan_scanner = MasscanScan(
+            masscan_ips, args.ports, args.masscan_args, args.masscan_json_output
+        )
         masscan_results = masscan_scanner.start_scan()
     else:
         masscan_results = None

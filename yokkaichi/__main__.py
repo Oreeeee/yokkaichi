@@ -35,8 +35,7 @@ def load_ip_list(ip_list_location):
             for ip in ip_list:
                 ips.append(ip.strip())
     except FileNotFoundError:
-        print(clr.Back.RED + clr.Fore.WHITE +
-              "ERROR! IP LIST/MASSCAN LIST NOT FOUND!")
+        print(clr.Back.RED + clr.Fore.WHITE + "ERROR! IP LIST/MASSCAN LIST NOT FOUND!")
         exit(1)
 
     return ips
@@ -94,8 +93,7 @@ def main():
         masscan_ips = masscan_ips_from_file + masscan_ips_for_countries
 
         # Start masscan
-        masscan_scanner = MasscanScan(
-            masscan_ips, args.ports, args.masscan_args)
+        masscan_scanner = MasscanScan(masscan_ips, args.ports, args.masscan_args)
         masscan_results = masscan_scanner.start_scan()
     else:
         masscan_results = None
@@ -154,6 +152,13 @@ if __name__ == "__main__":
         "--masscan-args",
         dest="masscan_args",
         help="Arguments for masscan (example: --max-rate 1000)",
+        type=str,
+        default="",
+    )
+    parser.add_argument(
+        "--masscan-output",
+        dest="masscan_json_output",
+        help="Output results to a file. To be used for debugging purposes.",
         type=str,
         default="",
     )

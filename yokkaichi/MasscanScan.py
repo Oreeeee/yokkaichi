@@ -1,3 +1,4 @@
+from pathlib import Path
 import colorama as clr
 import platform
 import masscan
@@ -5,11 +6,12 @@ import json
 
 
 class MasscanScan:
-    def __init__(self, ip_list, port_list, masscan_args):
+    def __init__(self, ip_list, port_list, masscan_args, masscan_output):
         # Declare variables
         self.ip_list = ip_list
         self.port_list = port_list
         self.masscan_args = masscan_args
+        self.masscan_output = masscan_output
 
         # Create masscan object
         self.mas = masscan.PortScanner()
@@ -39,6 +41,16 @@ class MasscanScan:
         mas_port_list = mas_port_list[1:]
 
         return mas_port_list
+
+    def save_output(self, masscan_results):
+        Path(self.masscan_output).touch()
+        with open(self.masscan_output, "w") as f:
+            f.write(json.dumps(masscan_results, indent=4))
+        print(
+            clr.Fore.GREEN
+            + f"Saved masscan results to {self.masscan_output}"
+            + clr.Fore.RESET
+        )
 
     def start_scan(self):
         print(
@@ -71,5 +83,9 @@ class MasscanScan:
         print(
             clr.Fore.GREEN + f"{open_port_amount} ports open on {online_ip_amount} IPs"
         )
+
+        # Save the results if provided
+        if self.masscan_output != "":
+            self.save_output(masscan_results)
 
         return masscan_results

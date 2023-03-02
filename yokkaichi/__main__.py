@@ -41,6 +41,38 @@ def load_ip_list(ip_list_location):
     return ips
 
 
+def parse_port_range(arg: str) -> list:
+    def verify_ints(port: any) -> None:
+        try:
+            int(port)
+        except TypeError:
+            print(clr.Fore.RED + f"Couldn't parse: {port}" + clr.Fore.RESET)
+            exit(1)
+
+    ports: list[int] = []
+    # Parse all separate port/ranges, separated by commas
+    separate_values: list[str] = arg.split(",")
+    # Parse all ranges
+    for value in separate_values:
+        # Check if it's a range
+        if "-" in value:
+            # Parse the range
+            port_range: list[str] = value.split("-")
+            range_start: str = port_range[0]
+            range_end: str = port_range[1]
+            for port in (range_start, range_end):
+                verify_ints(port)
+            for port in range(
+                int(range_start), int(range_end) + 1
+            ):  # Range end needs to be offset by 1 to make the range inclusive
+                ports.append(port)
+        else:
+            verify_ints(value)
+            ports.append(int(value))
+
+    return list(set(ports))
+
+
 def main():
     if platform.system() == "Windows":
         # Init colorama if on Windows
@@ -64,6 +96,8 @@ def main():
     if args.ip2location_db != "" and not pathlib.Path(args.ip2location_db).is_file():
         print(clr.Fore.RED + "This IP2Location DB doesn't exist")
         exit(1)
+
+    ports = parse_port_range(args.ports)
 
     # Add platforms to a list
     platforms = []
@@ -94,7 +128,7 @@ def main():
 
         # Start masscan
         masscan_scanner = MasscanScan(
-            masscan_ips, args.ports, args.masscan_args, args.masscan_json_output
+            masscan_ips, ports, args.masscan_args, args.masscan_json_output
         )
         masscan_results = masscan_scanner.start_scan()
     else:
@@ -106,7 +140,7 @@ def main():
     ServerScan(
         ip_list=None,
         masscan_list=masscan_results,
-        ports=args.ports,
+        ports=ports,
         platforms=platforms,
         query=args.query,
         ip2location_db_file=args.ip2location_db,
@@ -165,7 +199,12 @@ if __name__ == "__main__":
         default="",
     )
     parser.add_argument(
-        "-p", "--ports", dest="ports", help="Ports to scan on", nargs="+"
+        "-p",
+        "--ports",
+        dest="ports",
+        help="Ports to scan on. Example format: 25560-25569,42069. Uses 25565 by default",
+        type=str,
+        default="25565",
     )
     parser.add_argument(
         "--query",

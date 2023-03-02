@@ -41,7 +41,7 @@ def load_ip_list(ip_list_location):
     return ips
 
 
-def parse_port_range(arg: str) -> list:
+def parse_port_range(unparsed_args: str) -> list:
     def verify_ints(port: any) -> None:
         try:
             int(port)
@@ -51,7 +51,7 @@ def parse_port_range(arg: str) -> list:
 
     ports: list[int] = []
     # Parse all separate port/ranges, separated by commas
-    separate_values: list[str] = arg.split(",")
+    separate_values: list[str] = unparsed_args.split(",")
     # Parse all ranges
     for value in separate_values:
         # Check if it's a range

@@ -138,7 +138,7 @@ def main():
     # ips = load_file()
 
     ServerScan(
-        ip_list=None,
+        ip_list=ip_list,
         masscan_list=masscan_results,
         ports=ports,
         platforms=platforms,

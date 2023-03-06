@@ -1,5 +1,6 @@
 # Import modules
 from mcstatus import BedrockServer, JavaServer
+from datetime import datetime
 import colorama as clr
 import IP2Location
 import threading
@@ -145,6 +146,7 @@ class ServerScan:
             "online_players": 0,
             "max_players": 0,
             "player_list": player_list,
+            "time_discovered": datetime.now().isoformat(),
         }
         if server_platform == "Java":
             server_info["motd"] = server_lookup.status().description

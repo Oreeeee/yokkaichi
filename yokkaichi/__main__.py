@@ -238,8 +238,7 @@ if __name__ == "__main__":
         "--output",
         dest="output_file",
         help="Output JSON file",
-        default=None,
-        required=True,
+        default="out.json",
     )
     parser.set_defaults(java=False, bedrock=False, query=False)
     args = parser.parse_args()

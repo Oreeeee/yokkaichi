@@ -1,4 +1,4 @@
-## Yokkaichi (formely mcserverscanner) - Shodan-like server scanner for Minecraft.
+# Yokkaichi (formely mcserverscanner) - Shodan-like server scanner for Minecraft.
 ![total lines](https://img.shields.io/tokei/lines/github/Oreeeee/yokkaichi) ![downloads](https://img.shields.io/pypi/dm/yokkaichi) ![issues](https://img.shields.io/github/issues/Oreeeee/yokkaichi) ![pull requests](https://img.shields.io/github/issues-pr/Oreeeee/yokkaichi) ![license](https://img.shields.io/github/license/Oreeeee/yokkaichi) ![release](https://img.shields.io/github/v/release/Oreeeee/yokkaichi) ![commits since release](https://img.shields.io/github/commits-since/Oreeeee/yokkaichi/latest) ![code style](https://img.shields.io/badge/code%20style-black-black) ![stars](https://img.shields.io/github/stars/Oreeeee/yokkaichi?style=social)
 
 ## Renaming notice!

@@ -1,6 +1,7 @@
 # Import modules
 from .MasscanScan import MasscanScan
 from .ServerScan import ServerScan
+from ._version import __version__
 import colorama as clr
 import platform
 import argparse
@@ -74,6 +75,13 @@ def parse_port_range(unparsed_args: str) -> list:
 
 
 def main():
+    if args.show_version:
+        # Show the version and exit
+        print(
+            f"yokkaichi {__version__} on {platform.python_implementation()} {platform.python_version()}"
+        )
+        exit()
+
     if platform.system() == "Windows":
         # Init colorama if on Windows
         clr.init()
@@ -239,6 +247,13 @@ if __name__ == "__main__":
         dest="output_file",
         help="Output JSON file",
         default="out.json",
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        dest="show_version",
+        help="Show version and quit",
+        action="store_true",
     )
     parser.set_defaults(java=False, bedrock=False, query=False)
     args = parser.parse_args()

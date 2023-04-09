@@ -1,7 +1,7 @@
 # Import modules
 from mcstatus import BedrockServer, JavaServer
+from .rich_console import console
 from datetime import datetime
-import colorama as clr
 import IP2Location
 import threading
 import json
@@ -34,7 +34,7 @@ class ServerScan:
 
     def start_scan(self, thread_count):
         if self.ip2location_db_file != "":
-            print(clr.Fore.CYAN + "Loading IP2Location database")
+            console.print("Loading IP2Location database", style="cyan")
             if self.ip2location_cache:
                 self.ip2location_db = IP2Location.IP2Location(
                     self.ip2location_db_file, "SHARED_MEMORY"
@@ -42,7 +42,9 @@ class ServerScan:
             else:
                 self.ip2location_db = IP2Location.IP2Location(self.ip2location_db_file)
 
-        print(clr.Fore.CYAN + f"Loading {thread_count} threads!")
+        console.print(
+            f"Loading [bold white]{thread_count}[/bold white] threads!", style="cyan"
+        )
 
         thread_list = []
 
@@ -58,7 +60,9 @@ class ServerScan:
 
         # Show results
         server_count = len(self.results["server_list"])
-        print(clr.Fore.MAGENTA + f"{server_count} servers found")
+        console.print(
+            f"[bold white]{server_count}[/bold white] servers found", style="magenta"
+        )
 
     def scan_server(self):
         # Scan servers from masscan list
@@ -75,8 +79,7 @@ class ServerScan:
                     ip = list(self.masscan_list["scan"].keys())[0]
                 except IndexError:
                     print(
-                        clr.Fore.WHITE
-                        + f"No more IPs in masscan in thread {threading.current_thread().name}"
+                        f"No more IPs in masscan in thread {threading.current_thread().name}"
                     )
                     return
                 ports = []
@@ -90,9 +93,9 @@ class ServerScan:
                         self.check_server(ip, port, server_platform)
                     except Exception:
                         with self.lock:
-                            print(
-                                clr.Fore.RED
-                                + f"[-] {ip}:{port} for {server_platform} is offline!"
+                            console.print(
+                                f"[-] {ip}:{port} for {server_platform} is offline!",
+                                style="red",
                             )
 
     def scan_ip_list(self):
@@ -103,8 +106,7 @@ class ServerScan:
                     self.ip_list.pop(0)
             except IndexError:
                 print(
-                    clr.Fore.WHITE
-                    + f"No more IPs in IP list in thread {threading.current_thread().name}"
+                    f"No more IPs in IP list in thread {threading.current_thread().name}"
                 )
                 return
 
@@ -114,9 +116,9 @@ class ServerScan:
                         self.check_server(ip, port, server_platform)
                     except Exception as e:
                         with self.lock:
-                            print(
-                                clr.Fore.RED
-                                + f"[-] {ip}:{port} for {server_platform} is offline!"
+                            console.print(
+                                f"[-] {ip}:{port} for {server_platform} is offline!",
+                                style="red",
                             )
 
     def check_server(self, ip, port, server_platform):
@@ -130,7 +132,7 @@ class ServerScan:
             try:
                 player_list = server_lookup.query().players.names
             except Exception as e:
-                print(clr.Fore.YELLOW + f"[!] Query failed for {ip}:{port}")
+                console.print(f"[!] Query failed for {ip}:{port}", style="yellow")
                 player_list = None
         else:
             player_list = None
@@ -160,8 +162,8 @@ class ServerScan:
             server_info["max_players"] = server_lookup.status().players_max
 
         with self.lock:
-            print(
-                clr.Fore.GREEN + f"[+] {server_platform} server found at {ip}:{port}!"
+            console.print(
+                f"[+] {server_platform} server found at {ip}:{port}!", style="green"
             )
             self.add_to_file(server_info)
 

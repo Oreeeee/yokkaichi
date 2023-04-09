@@ -2,7 +2,7 @@
 from .MasscanScan import MasscanScan
 from .ServerScan import ServerScan
 from ._version import __version__
-import colorama as clr
+from .rich_console import console
 import platform
 import argparse
 import requests
@@ -18,7 +18,10 @@ def get_country_ips(countries):
         )
         # Check is the country valid
         if cidr_list.text == "404: Not Found":
-            print(clr.Fore.RED + f"{country} is not a proper 2-letter code!")
+            console.print(
+                f"[bold white]{country}[/bold white] is not a proper 2-letter code!",
+                style="red",
+            )
             continue
         # Add IPs to IP list
         for ip in cidr_list.text.splitlines():
@@ -36,7 +39,7 @@ def load_ip_list(ip_list_location):
             for ip in ip_list:
                 ips.append(ip.strip())
     except FileNotFoundError:
-        print(clr.Back.RED + clr.Fore.WHITE + "ERROR! IP LIST/MASSCAN LIST NOT FOUND!")
+        console.print("ERROR! IP LIST/MASSCAN LIST NOT FOUND!", style="red")
         exit(1)
 
     return ips
@@ -47,7 +50,9 @@ def parse_port_range(unparsed_args: str) -> list:
         try:
             int(port)
         except TypeError:
-            print(clr.Fore.RED + f"Couldn't parse: {port}" + clr.Fore.RESET)
+            console.print(
+                f"Couldn't parse: [bold white]{port}[/bold white]", style="red"
+            )
             exit(1)
 
     ports: list[int] = []
@@ -77,24 +82,20 @@ def parse_port_range(unparsed_args: str) -> list:
 def main():
     if args.show_version:
         # Show the version and exit
-        print(
-            f"yokkaichi {__version__} on {platform.python_implementation()} {platform.python_version()}"
+        console.print(
+            f"yokkaichi [bold cyan]{__version__}[/bold cyan] on [bold cyan]{platform.python_implementation()} {platform.python_version()}[/bold cyan]",
+            style="green",
         )
         exit()
 
-    if platform.system() == "Windows":
-        # Init colorama if on Windows
-        clr.init()
-
     # Check does output file exists
     if pathlib.Path(args.output_file).is_file():
-        if (
-            input(
-                clr.Fore.YELLOW
-                + "Output file exists. Continuing will overwrite this file. Proceed? (y/n) "
-            )
-            == "n"
-        ):
+        console.print(
+            "Output file exists. Continuing will overwrite this file. Proceed? (y/n) ",
+            style="yellow",
+            end="",
+        )
+        if input() == "n":
             exit(0)
     else:
         # Touch the file
@@ -102,7 +103,7 @@ def main():
 
     # Check does IP2Location db exist
     if args.ip2location_db != "" and not pathlib.Path(args.ip2location_db).is_file():
-        print(clr.Fore.RED + "This IP2Location DB doesn't exist")
+        console.print("This IP2Location DB doesn't exist", style="bold red")
         exit(1)
 
     ports = parse_port_range(args.ports)
@@ -115,9 +116,9 @@ def main():
         platforms.append("Bedrock")
 
     if args.ip_list != "":
-        print(clr.Fore.CYAN + "Loading IPs")
+        console.print("Loading IPs", style="cyan")
         ip_list = load_ip_list(args.ip_list)
-        print(clr.Fore.GREEN + f"Loaded {len(ip_list)} IPs")
+        console.print(f"Loaded {len(ip_list)} IPs", style="green")
     else:
         ip_list = None
 

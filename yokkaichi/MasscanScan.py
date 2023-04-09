@@ -1,5 +1,5 @@
+from .rich_console import console
 from pathlib import Path
-import colorama as clr
 import platform
 import masscan
 import json
@@ -46,20 +46,21 @@ class MasscanScan:
         Path(self.masscan_output).touch()
         with open(self.masscan_output, "w") as f:
             f.write(json.dumps(masscan_results, indent=4))
-        print(
-            clr.Fore.GREEN
-            + f"Saved masscan results to {self.masscan_output}"
-            + clr.Fore.RESET
+        console.print(
+            f"Saved masscan results to [bold cyan]{self.masscan_output}[/bold cyan]",
+            style="green",
         )
 
     def start_scan(self):
-        print(
-            clr.Fore.BLUE
-            + f"Starting masscan with {len(self.ip_list)} entries and {len(self.port_list)} ports"
-            + clr.Fore.RESET
+        console.print(
+            f"Starting masscan with [bold white]{len(self.ip_list)}[/bold white] entries and [bold white]{len(self.port_list)}[/bold white] ports",
+            style="cyan",
         )
         if platform.system() == "Windows":
-            print("If the scanning doesn't work, start this script as admin!")
+            console.print(
+                "If the scanning doesn't work, start this script as admin!",
+                style="bold yellow",
+            )
             self.mas.scan(
                 self.mas_ip_list, ports=self.mas_port_list, arguments=self.masscan_args
             )
@@ -80,8 +81,9 @@ class MasscanScan:
         for online_ip in masscan_results["scan"]:
             open_port_amount += len(masscan_results["scan"][online_ip])
 
-        print(
-            clr.Fore.GREEN + f"{open_port_amount} ports open on {online_ip_amount} IPs"
+        console.print(
+            f"[bold white]{open_port_amount}[/bold white] ports open on [bold white]{online_ip_amount}[/bold white] IPs",
+            style="green",
         )
 
         # Save the results if provided

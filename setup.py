@@ -20,7 +20,7 @@ setup(
     author="Oreeeee",
     url="https://github.com/Oreeeee/yokkaichi",
     install_requires=[
-        "colorama",
+        "rich",
         "mcstatus",
         "ip2location",
         "python-masscan",

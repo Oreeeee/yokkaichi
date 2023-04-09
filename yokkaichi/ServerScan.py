@@ -100,15 +100,15 @@ class ServerScan:
 
     def scan_ip_list(self):
         while True:
-            try:
-                with self.lock:
+            with self.lock:
+                try:
                     ip = self.ip_list[0]
                     self.ip_list.pop(0)
-            except IndexError:
-                print(
-                    f"No more IPs in IP list in thread {threading.current_thread().name}"
-                )
-                return
+                except IndexError:
+                    print(
+                        f"No more IPs in IP list in thread {threading.current_thread().name}"
+                    )
+                    return
 
             for port in self.ports:
                 for server_platform in self.platforms:

@@ -1,8 +1,13 @@
-.venv/
-.vscode/
-data/
+# Python stuff
+.venv*/
 __pycache__/
-paused.conf
 build/
 *.egg-info/
 dist/
+
+# IDE
+.vscode/
+
+# Yokkaichi data
+data/
+paused.conf

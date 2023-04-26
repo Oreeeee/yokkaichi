@@ -25,6 +25,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Oreeeee",
+    license="MIT",
     url="https://github.com/Oreeeee/yokkaichi",
     install_requires=[
         "rich",

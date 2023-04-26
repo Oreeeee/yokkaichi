@@ -3,10 +3,17 @@ from .MasscanScan import MasscanScan
 from .ServerScan import ServerScan
 from ._version import __version__
 from .rich_console import console
+from . import config_loader
 import platform
 import argparse
 import requests
 import pathlib
+
+try:
+    import tomllib
+except ModuleNotFoundError:
+    # Use tomli instead (Python versions before 3.11)
+    import tomli as tomllib
 
 
 def get_country_ips(countries):
@@ -87,6 +94,26 @@ def main():
             style="green",
         )
         exit()
+
+    # Load the config file
+    try:
+        cfg = config_loader.parse_cfg(args.config_file)
+        # TODO: Make use of it
+    except tomllib.TOMLDecodeError:
+        console.print("Config file is invalid! (Failed parsing TOML)", style="bold red")
+    except FileNotFoundError:
+        console.print(
+            f"[bold white]{args.config_file}[/bold white] doesn't exist. Create a sample config in this location? (y/n) ",
+            style="yellow",
+            end="",
+        )
+        if input() == "y":
+            config_loader.write_cfg(args.config_file)
+            console.print(
+                f"Created a new config file at [bold white]{args.config_file}[/bold white]. Adjust it to your preferences",
+                style="green",
+            )
+            exit(0)
 
     # Check does output file exists
     if pathlib.Path(args.output_file).is_file():
@@ -248,6 +275,13 @@ if __name__ == "__main__":
         dest="output_file",
         help="Output JSON file",
         default="out.json",
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        dest="config_file",
+        help="Configuration file (example one will be created if it doesn't exist)",
+        default="yokkaichi.toml",
     )
     parser.add_argument(
         "-v",

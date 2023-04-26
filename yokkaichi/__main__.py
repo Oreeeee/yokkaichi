@@ -108,7 +108,7 @@ def main():
                 style="yellow",
                 end="",
             )
-            if input() == "y":
+            if input().lower() == "y":
                 config_loader.write_cfg(args.config_file)
                 console.print(
                     f"Created a new config file at [bold white]{args.config_file}[/bold white]. Adjust it to your preferences",
@@ -123,7 +123,7 @@ def main():
             style="yellow",
             end="",
         )
-        if input() == "n":
+        if input().lower() == "n":
             exit(0)
     else:
         # Touch the file

@@ -1,5 +1,6 @@
 from setuptools import setup
 from pathlib import Path
+import sys
 
 # Load README from README.md
 this_directory = Path(__file__).parent
@@ -10,6 +11,12 @@ with open("yokkaichi/_version.py", "r") as f:
     file_contents = f.read().strip()
     no_var_name = file_contents.replace("__version__ = ", "")
     version = no_var_name.replace('"', "")
+
+# Enforce Python version (3.7+)
+if sys.version_info[1] < 7:
+    sys.exit(
+        "Yokkaichi will NOT run on Python 3.6 and older. You can build the package yourself and remove the check, but don't report bugs that happen!"
+    )
 
 setup(
     name="yokkaichi",

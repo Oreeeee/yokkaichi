@@ -15,6 +15,8 @@ This project used to be named mcserverscanner, but on 2023-01-15 it got renamed 
 - Bot joining the servers
 - Cleaning up the code
 - Docker support
+- Optimization
+- Scanning for pre-Netty (<1.7) servers
 
 ### Installation
 - Easy installation (from PyPI)

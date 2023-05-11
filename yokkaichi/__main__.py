@@ -1,5 +1,6 @@
 # Import modules
 from .port_parser import parse_port_range
+from .args_to_cfg import args_to_cfg
 from .MasscanScan import MasscanScan
 from .ServerScan import ServerScan
 from ._version import __version__
@@ -160,7 +161,6 @@ def main():
 
 
 if __name__ == "__main__":
-    # Parse arguments
     parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument(
         "-j", "--java", dest="java", help="Scan for Java servers", action="store_true"
@@ -173,6 +173,12 @@ if __name__ == "__main__":
         action="store_true",
     )
     parser.add_argument(
+        "--ip-list-scan",
+        dest="ip_list_scan",
+        help="Scan from IP list (slow and outdated, use masscan instead)",
+        action="store_true",
+    )
+    parser.add_argument(
         "--ip-list", dest="ip_list", help="Location to IP List", type=str, default=""
     )
     parser.add_argument(
@@ -180,6 +186,13 @@ if __name__ == "__main__":
         dest="masscan",
         help="Enable scanning with masscan",
         action="store_true",
+    )
+    parser.add_argument(
+        "--masscan-method",
+        dest="masscan_method",
+        help="Where to look for IPs for masscan? Possible values: countries, list",
+        type=str,
+        default="countries",
     )
     parser.add_argument(
         "--masscan-ip-list",
@@ -268,6 +281,8 @@ if __name__ == "__main__":
     )
     parser.set_defaults(java=False, bedrock=False, query=False)
     args = parser.parse_args()
+
+    cfg = args_to_cfg(args)
 
     # if args.java and args.bedrock == False:
     #     print("You need to choose either Java or Bedrock")

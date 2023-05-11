@@ -6,12 +6,10 @@ import json
 
 
 class MasscanScan:
-    def __init__(self, ip_list, port_list, masscan_args, masscan_output):
+    def __init__(self, cfg, ip_list):
         # Declare variables
+        self.cfg = cfg
         self.ip_list = ip_list
-        self.port_list = port_list
-        self.masscan_args = masscan_args
-        self.masscan_output = masscan_output
 
         # Create masscan object
         self.mas = masscan.PortScanner()
@@ -33,7 +31,7 @@ class MasscanScan:
 
     def convert_port_list(self):
         mas_port_list = ""
-        for port in self.port_list:
+        for port in self.cfg.ports:
             # Add a comma every port in the list
             mas_port_list += f",{port}"
 
@@ -43,17 +41,17 @@ class MasscanScan:
         return mas_port_list
 
     def save_output(self, masscan_results):
-        Path(self.masscan_output).touch()
-        with open(self.masscan_output, "w") as f:
+        Path(self.cfg.masscan_output_location).touch()
+        with open(self.cfg.masscan_output_location, "w") as f:
             f.write(json.dumps(masscan_results, indent=4))
         console.print(
-            f"Saved masscan results to [bold cyan]{self.masscan_output}[/bold cyan]",
+            f"Saved masscan results to [bold cyan]{self.cfg.masscan_output_location}[/bold cyan]",
             style="green",
         )
 
     def start_scan(self):
         console.print(
-            f"Starting masscan with [bold white]{len(self.ip_list)}[/bold white] entries and [bold white]{len(self.port_list)}[/bold white] ports",
+            f"Starting masscan with [bold white]{len(self.ip_list)}[/bold white] entries and [bold white]{len(self.cfg.ports)}[/bold white] ports",
             style="cyan",
         )
         if platform.system() == "Windows":
@@ -62,13 +60,13 @@ class MasscanScan:
                 style="bold yellow",
             )
             self.mas.scan(
-                self.mas_ip_list, ports=self.mas_port_list, arguments=self.masscan_args
+                self.mas_ip_list, ports=self.mas_port_list, arguments=self.cfg.masscan_args
             )
         else:
             self.mas.scan(
                 self.mas_ip_list,
                 ports=self.mas_port_list,
-                arguments=self.masscan_args,
+                arguments=self.cfg.masscan_args,
                 sudo=True,
             )
 
@@ -87,7 +85,7 @@ class MasscanScan:
         )
 
         # Save the results if provided
-        if self.masscan_output != "":
+        if self.cfg.masscan_output:
             self.save_output(masscan_results)
 
         return masscan_results

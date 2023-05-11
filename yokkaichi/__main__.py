@@ -62,7 +62,7 @@ def load_ip_list(ip_list_location):
     return ips
 
 
-def main():
+def main(cfg):
     if args.show_version:
         # Show the version and exit
         display_version()
@@ -91,7 +91,7 @@ def main():
                 exit(0)
 
     # Check does output file exists
-    if pathlib.Path(args.output_file).is_file():
+    if pathlib.Path(cfg.output).is_file():
         console.print(
             "Output file exists. Continuing will overwrite this file. Proceed? (y/n) ",
             style="yellow",
@@ -101,45 +101,37 @@ def main():
             exit(0)
     else:
         # Touch the file
-        pathlib.Path(args.output_file).touch()
+        pathlib.Path(cfg.output).touch()
 
     # Check does IP2Location db exist
-    if args.ip2location_db != "" and not pathlib.Path(args.ip2location_db).is_file():
+    if cfg.use_ip2location and not pathlib.Path(cfg.ip2location_db).is_file():
         console.print("This IP2Location DB doesn't exist", style="bold red")
         exit(1)
 
-    ports = parse_port_range(args.ports)
-
-    # Add platforms to a list
-    platforms = []
-    if args.java:
-        platforms.append("Java")
-    if args.bedrock:
-        platforms.append("Bedrock")
-
-    if args.ip_list != "":
+    if cfg.ip_list_scan:
         console.print("Loading IPs", style="cyan")
-        ip_list = load_ip_list(args.ip_list)
+        ip_list = load_ip_list(cfg.ip_list)
         console.print(f"Loaded {len(ip_list)} IPs", style="green")
     else:
         ip_list = None
 
-    if args.masscan:
+    if cfg.masscan_scan:
         masscan_ips_from_file = []
         masscan_ips_for_countries = []
-        if args.masscan_ip_list != "":
-            # Load masscan IP list
-            masscan_ips_from_file = load_ip_list(args.masscan_ip_list)
-        if args.masscan_countries != None:
+        if cfg.masscan_ip_source == "countries":
             # Get CIDR ranges for countries
-            masscan_ips_for_countries = get_country_ips(args.masscan_countries)
+            masscan_ips = get_country_ips(cfg.masscan_country_list)
+        elif cfg.masscan_ip_source == "list":
+            # Load masscan IP list
+            masscan_ips = load_ip_list(cfg.masscan_ip_list)
+            
 
         # Combine two sources of masscan IPs together
-        masscan_ips = masscan_ips_from_file + masscan_ips_for_countries
+        # masscan_ips = masscan_ips_from_file + masscan_ips_for_countries
 
         # Start masscan
         masscan_scanner = MasscanScan(
-            masscan_ips, ports, args.masscan_args, args.masscan_json_output
+            cfg, masscan_ips
         )
         masscan_results = masscan_scanner.start_scan()
     else:
@@ -149,15 +141,10 @@ def main():
     # ips = load_file()
 
     ServerScan(
-        ip_list=ip_list,
-        masscan_list=masscan_results,
-        ports=ports,
-        platforms=platforms,
-        query=args.query,
-        ip2location_db_file=args.ip2location_db,
-        ip2location_cache=args.ip2location_cache,
-        output_file=args.output_file,
-    ).start_scan(args.thread_count)
+        cfg=cfg,
+        masscan_list = masscan_results,
+        ip_list=ip_list
+    ).start_scan()
 
 
 if __name__ == "__main__":
@@ -288,4 +275,4 @@ if __name__ == "__main__":
     #     print("You need to choose either Java or Bedrock")
     #     exit(1)
 
-    main()
+    main(cfg)

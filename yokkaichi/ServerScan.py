@@ -9,46 +9,31 @@ import ast
 
 
 class ServerScan:
-    def __init__(
-        self,
-        ports,
-        platforms,
-        query,
-        ip2location_db_file,
-        ip2location_cache,
-        output_file,
-        ip_list,
-        masscan_list,
-    ):
-        self.ip_list = ip_list
+    def __init__(self, cfg, masscan_list, ip_list):
+        self.cfg = cfg
         self.masscan_list = masscan_list
-        self.ports = ports
-        self.platforms = platforms
-        self.query = query
-        self.ip2location_db_file = ip2location_db_file
-        self.ip2location_cache = ip2location_cache
-        self.output_file = output_file
+        self.ip_list = ip_list
 
         self.results = {"server_list": []}
         self.lock = threading.Lock()
 
-    def start_scan(self, thread_count):
-        if self.ip2location_db_file != "":
+    def start_scan(self):
+        if self.cfg.use_ip2location:
             console.print("Loading IP2Location database", style="cyan")
-            if self.ip2location_cache:
+            if self.cfg.ip2location_cache:
                 self.ip2location_db = IP2Location.IP2Location(
-                    self.ip2location_db_file, "SHARED_MEMORY"
+                    self.cfg.ip2location_db, "SHARED_MEMORY"
                 )
             else:
-                self.ip2location_db = IP2Location.IP2Location(self.ip2location_db_file)
+                self.ip2location_db = IP2Location.IP2Location(self.cfg.ip2location_db)
 
         console.print(
-            f"Loading [bold white]{thread_count}[/bold white] threads!", style="cyan"
+            f"Loading [bold white]{self.cfg.threads}[/bold white] threads!", style="cyan"
         )
 
         thread_list = []
 
-        for _ in range(thread_count):
+        for _ in range(self.cfg.threads):
             thread = threading.Thread(target=self.scan_server)
             thread_list.append(thread)
 
@@ -88,7 +73,7 @@ class ServerScan:
                 self.masscan_list["scan"].pop(ip)
 
             for port in ports:
-                for server_platform in self.platforms:
+                for server_platform in self.cfg.platforms:
                     try:
                         self.check_server(ip, port, server_platform)
                     except Exception:
@@ -110,8 +95,8 @@ class ServerScan:
                     )
                     return
 
-            for port in self.ports:
-                for server_platform in self.platforms:
+            for port in self.cfg.ports:
+                for server_platform in self.cfg.platforms:
                     try:
                         self.check_server(ip, port, server_platform)
                     except Exception as e:
@@ -128,7 +113,7 @@ class ServerScan:
             server_lookup = BedrockServer.lookup(f"{ip}:{port}")
 
         # Get player list
-        if self.query:
+        if self.cfg.query_java:
             try:
                 player_list = server_lookup.query().players.names
             except Exception as e:
@@ -168,10 +153,6 @@ class ServerScan:
             self.add_to_file(server_info)
 
     def get_location_data(self, ip):
-        if self.ip2location_db_file == "":
-            # Return None if the database doesn't exist
-            return None
-
         # Make the data be a string
         ip2location_data_str = str(self.ip2location_db.get_all(ip))
         # Convert the data to dict
@@ -181,5 +162,5 @@ class ServerScan:
 
     def add_to_file(self, server_info):
         self.results["server_list"].append(server_info)
-        with open(self.output_file, "w", encoding="utf-8") as f:
+        with open(self.cfg.output_file, "w", encoding="utf-8") as f:
             json.dump(self.results, f, indent=4, ensure_ascii=False)

@@ -15,6 +15,12 @@ except ModuleNotFoundError:
     # Use tomli instead (Python versions before 3.11)
     import tomli as tomllib
 
+def display_version():
+    console.print(
+        f"yokkaichi [bold cyan]{__version__}[/bold cyan] on [bold cyan]{platform.python_implementation()} {platform.python_version()}[/bold cyan]",
+        style="green",
+    )
+    exit()
 
 def get_country_ips(countries):
     country_ip_list = []
@@ -89,11 +95,7 @@ def parse_port_range(unparsed_args: str) -> list:
 def main():
     if args.show_version:
         # Show the version and exit
-        console.print(
-            f"yokkaichi [bold cyan]{__version__}[/bold cyan] on [bold cyan]{platform.python_implementation()} {platform.python_version()}[/bold cyan]",
-            style="green",
-        )
-        exit()
+        display_version()
 
     # Load the config file
     if args.config_file != None:

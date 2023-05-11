@@ -1,4 +1,5 @@
 # Import modules
+from .port_parser import parse_port_range
 from .MasscanScan import MasscanScan
 from .ServerScan import ServerScan
 from ._version import __version__
@@ -15,12 +16,14 @@ except ModuleNotFoundError:
     # Use tomli instead (Python versions before 3.11)
     import tomli as tomllib
 
+
 def display_version():
     console.print(
         f"yokkaichi [bold cyan]{__version__}[/bold cyan] on [bold cyan]{platform.python_implementation()} {platform.python_version()}[/bold cyan]",
         style="green",
     )
     exit()
+
 
 def get_country_ips(countries):
     country_ip_list = []
@@ -58,40 +61,6 @@ def load_ip_list(ip_list_location):
     return ips
 
 
-def parse_port_range(unparsed_args: str) -> list:
-    def verify_ints(port: any) -> None:
-        try:
-            int(port)
-        except TypeError:
-            console.print(
-                f"Couldn't parse: [bold white]{port}[/bold white]", style="red"
-            )
-            exit(1)
-
-    ports: list[int] = []
-    # Parse all separate port/ranges, separated by commas
-    separate_values: list[str] = unparsed_args.split(",")
-    # Parse all ranges
-    for value in separate_values:
-        # Check if it's a range
-        if "-" in value:
-            # Parse the range
-            port_range: list[str] = value.split("-")
-            range_start: str = port_range[0]
-            range_end: str = port_range[1]
-            for port in (range_start, range_end):
-                verify_ints(port)
-            for port in range(
-                int(range_start), int(range_end) + 1
-            ):  # Range end needs to be offset by 1 to make the range inclusive
-                ports.append(port)
-        else:
-            verify_ints(value)
-            ports.append(int(value))
-
-    return list(set(ports))
-
-
 def main():
     if args.show_version:
         # Show the version and exit
@@ -103,7 +72,9 @@ def main():
             cfg = config_loader.parse_cfg(args.config_file)
             # TODO: Make use of it
         except tomllib.TOMLDecodeError:
-            console.print("Config file is invalid! (Failed parsing TOML)", style="bold red")
+            console.print(
+                "Config file is invalid! (Failed parsing TOML)", style="bold red"
+            )
         except FileNotFoundError:
             console.print(
                 f"[bold white]{args.config_file}[/bold white] doesn't exist. Create a sample config in this location? (y/n) ",
@@ -286,7 +257,7 @@ if __name__ == "__main__":
         help="Configuration file (example one will be created if it doesn't exist)",
         default=None,
         const="yokkaichi.toml",
-        nargs="?"
+        nargs="?",
     )
     parser.add_argument(
         "-v",

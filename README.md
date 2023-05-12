@@ -31,10 +31,9 @@ pip install .
 ```
 
 ### Usage
-You can use this script by invoking `python -m yokkaichi` and passing in arguments in the CLI. You can get the list of availible options by invoking `python -m yokkaichi -h`
+1. Using a config file
+Instead of passing in arguments, you can pass the configuration file with `--config` argument. When no additional file name is provided, Yokkaichi will use `yokkaichi.toml` for the file name. When the config file name you provided doesn't exist, Yokkaichi will create an example file for you. Modify it how you like and rerun Yokkaichi. Configuration files are not forwards or backwards compatible and you will have to adjust it every major change. 
+2. You can also use this script by passing in arguments in the CLI. You can get the list of availible options by invoking `python -m yokkaichi -h`.
 
 ### Using the masscan integration
 You need to have [masscan](https://github.com/robertdavidgraham/masscan) in your PATH, or in the same directory from which you are running this software. Make sure that the binary is named `masscan` (Unix) or `masscan.exe` (Windows).
-
-### Example
-`python -m yokkaichi --java --masscan --masscan-countries US CA CN -p "25560-25569,34000,19843" --ip2location-db data/IP2LOCATION-LITE-DB11.BIN --ip2location-cache --output data/servers.json`

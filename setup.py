@@ -1,3 +1,4 @@
+from yokkaichi import __version__ as yokkaichi_ver
 from setuptools import setup
 from pathlib import Path
 import sys
@@ -5,12 +6,6 @@ import sys
 # Load README from README.md
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
-
-# Get version from yokkaichi/_version.py
-with open("yokkaichi/constants/_version.py", "r") as f:
-    file_contents = f.read().strip()
-    no_var_name = file_contents.replace("__version__ = ", "")
-    version = no_var_name.replace('"', "")
 
 # Enforce Python version (3.7+)
 if sys.version_info[1] < 7:
@@ -20,7 +15,7 @@ if sys.version_info[1] < 7:
 
 setup(
     name="yokkaichi",
-    version=version,
+    version=yokkaichi_ver,
     description="Shodan-like server scanner for Minecraft (formely mcserverscanner)",
     long_description=long_description,
     long_description_content_type="text/markdown",

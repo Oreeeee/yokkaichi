@@ -1,10 +1,10 @@
 # Import modules
-from .constants._version import __version__
 from .constants.rich_console import console
 from .port_parser import parse_port_range
 from .args_to_cfg import args_to_cfg
 from .MasscanScan import MasscanScan
 from .ServerScan import ServerScan
+from yokkaichi import __version__
 from . import config_loader
 import platform
 import argparse

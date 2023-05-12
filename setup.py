@@ -7,7 +7,7 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
 # Get version from yokkaichi/_version.py
-with open("yokkaichi/_version.py", "r") as f:
+with open("yokkaichi/constants/_version.py", "r") as f:
     file_contents = f.read().strip()
     no_var_name = file_contents.replace("__version__ = ", "")
     version = no_var_name.replace('"', "")

@@ -1,10 +1,10 @@
 # Import modules
+from .constants._version import __version__
+from .constants.rich_console import console
 from .port_parser import parse_port_range
 from .args_to_cfg import args_to_cfg
 from .MasscanScan import MasscanScan
 from .ServerScan import ServerScan
-from ._version import __version__
-from .rich_console import console
 from . import config_loader
 import platform
 import argparse
@@ -124,15 +124,12 @@ def main(cfg):
         elif cfg.masscan_ip_source == "list":
             # Load masscan IP list
             masscan_ips = load_ip_list(cfg.masscan_ip_list)
-            
 
         # Combine two sources of masscan IPs together
         # masscan_ips = masscan_ips_from_file + masscan_ips_for_countries
 
         # Start masscan
-        masscan_scanner = MasscanScan(
-            cfg, masscan_ips
-        )
+        masscan_scanner = MasscanScan(cfg, masscan_ips)
         masscan_results = masscan_scanner.start_scan()
     else:
         masscan_results = None
@@ -140,11 +137,7 @@ def main(cfg):
     # print(clr.Fore.CYAN + "Loading IPs")
     # ips = load_file()
 
-    ServerScan(
-        cfg=cfg,
-        masscan_list = masscan_results,
-        ip_list=ip_list
-    ).start_scan()
+    ServerScan(cfg=cfg, masscan_list=masscan_results, ip_list=ip_list).start_scan()
 
 
 if __name__ == "__main__":

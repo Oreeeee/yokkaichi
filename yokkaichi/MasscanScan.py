@@ -1,4 +1,4 @@
-from .rich_console import console
+from .constants.rich_console import console
 from pathlib import Path
 import platform
 import masscan
@@ -60,7 +60,9 @@ class MasscanScan:
                 style="bold yellow",
             )
             self.mas.scan(
-                self.mas_ip_list, ports=self.mas_port_list, arguments=self.cfg.masscan_args
+                self.mas_ip_list,
+                ports=self.mas_port_list,
+                arguments=self.cfg.masscan_args,
             )
         else:
             self.mas.scan(

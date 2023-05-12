@@ -1,4 +1,4 @@
-from .rich_console import console
+from .constants.rich_console import console
 
 
 def parse_port_range(unparsed_args: str) -> list:

@@ -1,6 +1,6 @@
 # Import modules
 from mcstatus import BedrockServer, JavaServer
-from .rich_console import console
+from .constants.rich_console import console
 from datetime import datetime
 import IP2Location
 import threading
@@ -28,7 +28,8 @@ class ServerScan:
                 self.ip2location_db = IP2Location.IP2Location(self.cfg.ip2location_db)
 
         console.print(
-            f"Loading [bold white]{self.cfg.threads}[/bold white] threads!", style="cyan"
+            f"Loading [bold white]{self.cfg.threads}[/bold white] threads!",
+            style="cyan",
         )
 
         thread_list = []

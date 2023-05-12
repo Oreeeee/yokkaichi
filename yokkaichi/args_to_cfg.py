@@ -1,6 +1,6 @@
+from .constants.rich_console import console
 from .port_parser import parse_port_range
-from .rich_console import console
-from .CFG import CFG
+from .structs.CFG import CFG
 
 
 def args_to_cfg(args):

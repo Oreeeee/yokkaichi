@@ -6,6 +6,7 @@ from .MasscanScan import MasscanScan
 from .ServerScan import ServerScan
 from yokkaichi import __version__
 from . import config_loader
+import IP2Location
 import platform
 import argparse
 import requests
@@ -46,6 +47,17 @@ def get_country_ips(countries):
 
     return country_ip_list
 
+def verify_ip2location(db):
+    if not pathlib.Path(db).is_file():
+        console.print("IP2Location database doesn't exist", style="bold red")
+        exit(1)
+
+    try:
+        IP2Location.IP2Location(db)
+    except ValueError:
+        # IP2Location's default exception messages are okay
+        console.print("The IP2Location database is corrupted", style="bold red")
+        exit(1)
 
 def load_ip_list(ip_list_location):
     ips = []
@@ -103,10 +115,7 @@ def main(cfg):
         # Touch the file
         pathlib.Path(cfg.output).touch()
 
-    # Check does IP2Location db exist
-    if cfg.use_ip2location and not pathlib.Path(cfg.ip2location_db).is_file():
-        console.print("This IP2Location DB doesn't exist", style="bold red")
-        exit(1)
+    verify_ip2location(cfg.ip2location_db)
 
     if cfg.ip_list_scan:
         console.print("Loading IPs", style="cyan")

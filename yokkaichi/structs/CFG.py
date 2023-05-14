@@ -3,9 +3,7 @@ from dataclasses import dataclass, field
 
 @dataclass
 class CFG:
-    platforms: list = field(
-        default_factory=list
-    )  # Possible values: "java", "bedrock"
+    platforms: list = field(default_factory=list)  # Possible values: "java", "bedrock"
     query_java: bool = field(default_factory=bool)
     masscan_scan: bool = field(default_factory=bool)
     ip_list_scan: bool = field(default_factory=bool)

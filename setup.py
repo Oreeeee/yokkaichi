@@ -28,7 +28,7 @@ setup(
         "ip2location",
         "python-masscan",
         "requests",
-        'tomli >= 1.1.0 ; python_version < "3.11"',
+        "tomli >= 1.1.0",
     ],
     classifiers=[
         "Environment :: Console",

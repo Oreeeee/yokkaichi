@@ -2,20 +2,16 @@ from .constants.rich_console import console
 from .port_parser import parse_port_range
 from .structs.CFG import CFG
 import pkgutil
-
-try:
-    import tomllib
-except ModuleNotFoundError:
-    # Use tomli instead (Python versions before 3.11)
-    import tomli as tomllib
+import tomli
 
 CONFIG_VERSION = "1"
 SAMPLE_CFG = pkgutil.get_data(__name__, "assets/example_config.toml").decode("utf-8")
 
+
 def parse_cfg(cfg_location):
     # Read the config file
     with open(cfg_location, "rb") as f:
-        cfg_file = tomllib.load(f)
+        cfg_file = tomli.load(f)
 
     cfg = CFG()
 

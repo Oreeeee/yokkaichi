@@ -11,12 +11,7 @@ import platform
 import argparse
 import requests
 import pathlib
-
-try:
-    import tomllib
-except ModuleNotFoundError:
-    # Use tomli instead (Python versions before 3.11)
-    import tomli as tomllib
+import tomli
 
 
 def display_version():
@@ -47,6 +42,7 @@ def get_country_ips(countries):
 
     return country_ip_list
 
+
 def verify_ip2location(db):
     if not pathlib.Path(db).is_file():
         console.print("IP2Location database doesn't exist", style="bold red")
@@ -58,6 +54,7 @@ def verify_ip2location(db):
         # IP2Location's default exception messages are okay
         console.print("The IP2Location database is corrupted", style="bold red")
         exit(1)
+
 
 def load_ip_list(ip_list_location):
     ips = []
@@ -84,7 +81,7 @@ def main(cfg):
         try:
             cfg = config_loader.parse_cfg(args.config_file)
             # TODO: Make use of it
-        except tomllib.TOMLDecodeError:
+        except tomli.TOMLDecodeError:
             console.print(
                 "Config file is invalid! (Failed parsing TOML)", style="bold red"
             )

@@ -14,7 +14,7 @@ class ServerScan:
         self.masscan_list = masscan_list
         self.ip_list = ip_list
 
-        self.results = {"server_list": []}
+        self.results = []
         self.lock = threading.Lock()
 
     def start_scan(self):
@@ -162,6 +162,6 @@ class ServerScan:
         return ip2location_data_dict
 
     def add_to_file(self, server_info):
-        self.results["server_list"].append(server_info)
+        self.results.append(server_info)
         with open(self.cfg.output_file, "w", encoding="utf-8") as f:
             json.dump(self.results, f, indent=4, ensure_ascii=False)

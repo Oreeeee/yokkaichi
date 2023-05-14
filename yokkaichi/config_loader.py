@@ -97,8 +97,6 @@ def parse_cfg(cfg_location):
     cfg.ip2location_db = cfg_file["ip2location"]["db"]
     cfg.ip2location_cache = cfg_file["ip2location"]["cache"]
 
-    print(cfg)
-
     return cfg
 
 

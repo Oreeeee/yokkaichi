@@ -45,7 +45,7 @@ class ServerScan:
             thread.join()
 
         # Show results
-        server_count = len(self.results["server_list"])
+        server_count = len(self.results)
         console.print(
             f"[bold white]{server_count}[/bold white] servers found", style="magenta"
         )

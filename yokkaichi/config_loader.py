@@ -69,9 +69,9 @@ def parse_cfg(cfg_location):
         exit(1)
 
     if cfg_file["platforms"]["java"]:
-        cfg.platforms.append("java")
+        cfg.platforms.append("Java")
     if cfg_file["platforms"]["bedrock"]:
-        cfg.platforms.append("bedrock")
+        cfg.platforms.append("Bedrock")
 
     cfg.query_java = cfg_file["platforms"]["additional"]["java_query"]
 
@@ -88,6 +88,8 @@ def parse_cfg(cfg_location):
     ]
 
     cfg.masscan_ip_list = cfg_file["type"]["options_masscan"]["list"]["list"]
+
+    cfg.ip_list = cfg_file["type"]["options_ip_list"]["list"]
 
     cfg.ports = parse_port_range(cfg_file["scanner"]["ports"])
     cfg.threads = cfg_file["scanner"]["threads"]

@@ -163,5 +163,5 @@ class ServerScan:
 
     def add_to_file(self, server_info):
         self.results.append(server_info)
-        with open(self.cfg.output_file, "w", encoding="utf-8") as f:
+        with open(self.cfg.output, "w", encoding="utf-8") as f:
             json.dump(self.results, f, indent=4, ensure_ascii=False)

@@ -44,12 +44,6 @@ class ServerScan:
         for thread in thread_list:
             thread.join()
 
-        # Show results
-        server_count = len(self.results)
-        console.print(
-            f"[bold white]{server_count}[/bold white] servers found", style="magenta"
-        )
-
     def scan_server(self):
         # Scan servers from masscan list
         if self.masscan_list != None:

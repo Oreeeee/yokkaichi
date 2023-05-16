@@ -143,7 +143,14 @@ def main(cfg):
     # print(clr.Fore.CYAN + "Loading IPs")
     # ips = load_file()
 
-    ServerScan(cfg=cfg, masscan_list=masscan_results, ip_list=ip_list).start_scan()
+    scanner = ServerScan(cfg=cfg, masscan_list=masscan_results, ip_list=ip_list)
+    scanner.start_scan()
+
+    # Show results
+    console.print(
+        f"[bold white]{len(scanner.results)}[/bold white] servers found",
+        style="magenta",
+    )
 
 
 if __name__ == "__main__":

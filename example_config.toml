@@ -3,6 +3,7 @@
 # Pass the location to this config file with -c as an argument.
 # Example: python -m yokkaichi -c sample.toml
 # You can pass this without the file location and it will look for yokkaichi.toml in your current location.
+# Do not comment any of the config's options, it will currently cause a crash
 
 version = "1" # Changed for every change breaking config compatibility
 
@@ -33,11 +34,11 @@ list = "masscan_ips.txt" # Location to the list of IPs to scan with masscan, sep
 list = "ips.txt" # Location to the list of IPs to scan, separated by newlines
 
 [scanner]
-ports = "25564-25566,25569" # Port list (not TOML's format! Splits ports by commas, sets ranges with hyphens)
+ports = "25564-25566,25569" # Port list (not TOML's format! Similarly to nmap and masscan splits ports by commas and sets ranges with hyphens)
 threads = 100 # Leave this at default unless you have a lot of servers
 output = "out.json" # IMPORTANT! That's where the servers go!
 
 [ip2location]
 enabled = false # Enable getting the location of the server
 db = "IP2LOCATION-LITE-DB11.BIN" # IP2Location .BIN database (get from lite.ip2location.com)
-cache = true # Enable for faster speed at the cost of RAM (doesn't really matter with Lite database)
+cache = true # Enable for faster speed at the cost of RAM

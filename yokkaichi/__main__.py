@@ -5,6 +5,7 @@ from .args_to_cfg import args_to_cfg
 from .MasscanScan import MasscanScan
 from .ServerScan import ServerScan
 from yokkaichi import __version__
+from datetime import datetime
 from . import config_loader
 import IP2Location
 import platform
@@ -12,6 +13,7 @@ import argparse
 import requests
 import pathlib
 import tomli
+import time
 
 
 def display_version():
@@ -114,6 +116,8 @@ def main(cfg):
 
     verify_ip2location(cfg.ip2location_db)
 
+    scan_start = time.time()
+
     if cfg.ip_list_scan:
         console.print("Loading IPs", style="cyan")
         ip_list = load_ip_list(cfg.ip_list)
@@ -146,9 +150,14 @@ def main(cfg):
     scanner = ServerScan(cfg=cfg, masscan_list=masscan_results, ip_list=ip_list)
     scanner.start_scan()
 
+    scan_end = time.time()
+
     # Show results
+    scan_start_time = datetime.fromtimestamp(scan_start).isoformat()
+    scan_end_time = datetime.fromtimestamp(scan_end).isoformat()
+    scan_time = time.strftime("%H:%M:%S", time.gmtime(scan_end - scan_start))
     console.print(
-        f"[bold white]{len(scanner.results)}[/bold white] servers found",
+        f"[bold white]{len(scanner.results)}[/bold white] servers found.\nStarted: [bold white]{scan_start_time}[/bold white].\nEnded: [bold white]{scan_end_time}[/bold white].\nTook [bold white]{scan_time}[/bold white].",
         style="magenta",
     )
 

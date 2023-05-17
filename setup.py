@@ -30,6 +30,7 @@ setup(
         "requests",
         "tomli >= 1.1.0",
     ],
+    extras_require={"testing": ["pytest"]},
     classifiers=[
         "Environment :: Console",
         "License :: OSI Approved :: MIT License",

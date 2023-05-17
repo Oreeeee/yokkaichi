@@ -53,10 +53,15 @@ cache = true # Enable for faster speed at the cost of RAM
 """.strip()
 
 
-def parse_cfg(cfg_location):
-    # Read the config file
+def load_cfg(cfg_location):
     with open(cfg_location, "rb") as f:
         cfg_file = tomli.load(f)
+    return cfg_file
+
+
+def parse_cfg(cfg_location):
+    # Read the config file
+    cfg_file = load_cfg(cfg_location)
 
     cfg = CFG()
 

@@ -32,4 +32,4 @@ def parse_port_range(unparsed_args: str) -> list:
             verify_ints(value)
             ports.append(int(value))
 
-    return list(set(ports))
+    return list(sorted(set(ports)))

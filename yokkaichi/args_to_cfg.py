@@ -30,6 +30,7 @@ def args_to_cfg(args):
     cfg.masscan_output_location = args.masscan_json_output
     cfg.masscan_ip_list = args.masscan_ip_list
     cfg.ip_list = args.ip_list
+    cfg.masscan_country_list = args.masscan_countries
     cfg.ports = parse_port_range(args.ports)
     cfg.threads = args.thread_count
     cfg.output = args.output_file

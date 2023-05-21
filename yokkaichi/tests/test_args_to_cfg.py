@@ -23,27 +23,28 @@ class FakeArgs:
     ip2location_cache: bool
 
 
+example_args = FakeArgs(
+    java=True,
+    bedrock=False,
+    query=False,
+    masscan=True,
+    ip_list_scan=False,
+    masscan_method="countries",
+    masscan_args="",
+    masscan_json_output="masscan_out.json",
+    masscan_ip_list="masscan_ips.txt",
+    masscan_countries=["US", "DE"],
+    ip_list="ips.txt",
+    ports="25564-25566,25569",
+    thread_count=100,
+    output_file="out.json",
+    ip2location_db="IP2LOCATION-LITE-DB11.BIN",
+    ip2location_cache=True,
+)
+
+
 def test_args_to_cfg():
-    args = FakeArgs(
-        java=True,
-        bedrock=False,
-        query=False,
-        masscan=True,
-        ip_list_scan=False,
-        masscan_method="countries",
-        masscan_args="",
-        masscan_json_output="masscan_out.json",
-        masscan_ip_list="masscan_ips.txt",
-        masscan_countries=["US", "DE"],
-        ip_list="ips.txt",
-        ports="25564-25566,25569",
-        thread_count=100,
-        output_file="out.json",
-        ip2location_db="IP2LOCATION-LITE-DB11.BIN",
-        ip2location_cache=True,
-    )
-    print(yokkaichi.args_to_cfg.args_to_cfg(args))
-    assert yokkaichi.args_to_cfg.args_to_cfg(args) == CFG(
+    assert yokkaichi.args_to_cfg.args_to_cfg(example_args) == CFG(
         platforms=["Java"],
         query_java=False,
         masscan_scan=True,

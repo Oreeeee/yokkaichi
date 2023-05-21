@@ -7,9 +7,9 @@ def args_to_cfg(args):
     cfg = CFG()
 
     if args.java:
-        cfg.platforms.append("java")
+        cfg.platforms.append("Java")
     if args.bedrock:
-        cfg.platforms.append("bedrock")
+        cfg.platforms.append("Bedrock")
 
     cfg.query_java = args.query
     cfg.masscan_scan = args.masscan

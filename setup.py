@@ -45,5 +45,10 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
-    packages=["yokkaichi", "yokkaichi.constants", "yokkaichi.structs"],
+    packages=[
+        "yokkaichi",
+        "yokkaichi.constants",
+        "yokkaichi.structs",
+        "yokkaichi.enums",
+    ],
 )

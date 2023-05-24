@@ -1,4 +1,6 @@
 from .constants.rich_console import console
+from .enums.MasscanMethods import MasscanMethods
+from .enums.Platforms import Platforms
 from .port_parser import parse_port_range
 from .structs.CFG import CFG
 
@@ -7,22 +9,26 @@ def args_to_cfg(args):
     cfg = CFG()
 
     if args.java:
-        cfg.platforms.append("Java")
+        cfg.platforms.append(Platforms.JAVA)
     if args.bedrock:
-        cfg.platforms.append("Bedrock")
+        cfg.platforms.append(Platforms.BEDROCK)
 
     cfg.query_java = args.query
     cfg.masscan_scan = args.masscan
     cfg.ip_list_scan = args.ip_list_scan
 
-    if args.masscan_method not in ("countries", "list"):
+    if args.masscan_method == MasscanMethods.COUNTRIES.value:
+        cfg.masscan_ip_source = MasscanMethods.COUNTRIES
+    elif args.masscan_method == MasscanMethods.LIST.value:
+        cfg.masscan_ip_source == MasscanMethods.LIST
+    else:
         console.print(
-            "Proper values for --masscan-method are: countries, list", style="bold red"
+            f"Proper values for --masscan-method are: {[p.value for p in MasscanMethods]}",
+            style="bold red",
         )
         exit(1)
         return True
 
-    cfg.masscan_ip_source = args.masscan_method
     cfg.masscan_args = args.masscan_args
 
     if args.masscan_json_output == "":

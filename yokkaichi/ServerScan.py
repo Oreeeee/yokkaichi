@@ -8,6 +8,7 @@ import IP2Location
 from mcstatus import BedrockServer, JavaServer
 
 from .constants.rich_console import console
+from .enums import Platforms
 
 
 class ServerScan:
@@ -76,7 +77,7 @@ class ServerScan:
                     except Exception:
                         with self.lock:
                             console.print(
-                                f"[-] {ip}:{port} for {server_platform} is offline!",
+                                f"[-] {ip}:{port} for {server_platform.value} is offline!",
                                 style="red",
                             )
 
@@ -99,14 +100,14 @@ class ServerScan:
                     except Exception as e:
                         with self.lock:
                             console.print(
-                                f"[-] {ip}:{port} for {server_platform} is offline!",
+                                f"[-] {ip}:{port} for {server_platform.value} is offline!",
                                 style="red",
                             )
 
     def check_server(self, ip, port, server_platform):
-        if server_platform == "Java":
+        if server_platform == Platforms.JAVA:
             server_lookup = JavaServer.lookup(f"{ip}:{port}")
-        if server_platform == "Bedrock":
+        if server_platform == Platforms.BEDROCK:
             server_lookup = BedrockServer.lookup(f"{ip}:{port}")
 
         # Get player list
@@ -124,7 +125,7 @@ class ServerScan:
             "port": port,
             "info": self.get_location_data(ip),
             "ping": round(server_lookup.status().latency),
-            "platform": server_platform,
+            "platform": server_platform.value,
             "motd": "",
             "version": "",
             "online_players": 0,
@@ -132,12 +133,12 @@ class ServerScan:
             "player_list": player_list,
             "time_discovered": datetime.now().isoformat(),
         }
-        if server_platform == "Java":
+        if server_platform == Platforms.JAVA:
             server_info["motd"] = server_lookup.status().description
             server_info["version"] = server_lookup.status().version.name
             server_info["online_players"] = server_lookup.status().players.online
             server_info["max_players"] = server_lookup.status().players.max
-        if server_platform == "Bedrock":
+        if server_platform == Platforms.BEDROCK:
             server_info["motd"] = server_lookup.status().motd
             server_info["version"] = ""
             server_info["online_players"] = server_lookup.status().players_online
@@ -145,7 +146,8 @@ class ServerScan:
 
         with self.lock:
             console.print(
-                f"[+] {server_platform} server found at {ip}:{port}!", style="green"
+                f"[+] {server_platform.value} server found at {ip}:{port}!",
+                style="green",
             )
             self.add_to_file(server_info)
 

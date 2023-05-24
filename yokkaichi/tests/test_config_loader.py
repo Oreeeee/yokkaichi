@@ -1,6 +1,8 @@
 import tomli
 
 import yokkaichi.config_loader
+from yokkaichi.enums.MasscanMethods import MasscanMethods
+from yokkaichi.enums.Platforms import Platforms
 from yokkaichi.structs.CFG import CFG
 
 DEFAULT_CFG = """
@@ -51,11 +53,11 @@ def test_parse_cfg(monkeypatch):
     monkeypatch.setattr(yokkaichi.config_loader, "load_cfg", default_cfg)
 
     assert yokkaichi.config_loader.parse_cfg("") == CFG(
-        platforms=["Java"],
+        platforms=[Platforms.JAVA],
         query_java=False,
         masscan_scan=True,
         ip_list_scan=False,
-        masscan_ip_source="countries",
+        masscan_ip_source=MasscanMethods.COUNTRIES,
         masscan_args="",
         masscan_output=False,
         masscan_output_location="masscan_out.json",

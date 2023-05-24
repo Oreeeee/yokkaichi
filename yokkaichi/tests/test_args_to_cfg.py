@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
 import yokkaichi.args_to_cfg
+from yokkaichi.enums.MasscanMethods import MasscanMethods
+from yokkaichi.enums.Platforms import Platforms
 from yokkaichi.structs.CFG import CFG
 
 
@@ -46,11 +48,11 @@ example_args = FakeArgs(
 
 def test_args_to_cfg():
     assert yokkaichi.args_to_cfg.args_to_cfg(example_args) == CFG(
-        platforms=["Java"],
+        platforms=[Platforms.JAVA],
         query_java=False,
         masscan_scan=True,
         ip_list_scan=False,
-        masscan_ip_source="countries",
+        masscan_ip_source=MasscanMethods.COUNTRIES,
         masscan_args="",
         masscan_output=False,
         masscan_output_location="masscan_out.json",
@@ -78,6 +80,6 @@ def test_args_to_cfg_improper_method(monkeypatch):
 
 def test_args_to_cfg_proper_method():
     args = example_args
-    for method in ("countries", "list"):
-        args.masscan_method = method
+    for method in MasscanMethods:
+        args.masscan_method = method.value
         assert type(yokkaichi.args_to_cfg.args_to_cfg(args)) == CFG

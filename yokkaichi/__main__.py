@@ -14,6 +14,7 @@ from yokkaichi import __version__
 from . import config_loader
 from .args_to_cfg import args_to_cfg
 from .constants.rich_console import console
+from .enums.MasscanMethods import MasscanMethods
 from .MasscanScan import MasscanScan
 from .port_parser import parse_port_range
 from .ServerScan import ServerScan
@@ -131,10 +132,10 @@ def main(cfg):
     if cfg.masscan_scan:
         masscan_ips_from_file = []
         masscan_ips_for_countries = []
-        if cfg.masscan_ip_source == "countries":
+        if cfg.masscan_ip_source == MasscanMethods.COUNTRIES:
             # Get CIDR ranges for countries
             masscan_ips = get_country_ips(cfg.masscan_country_list)
-        elif cfg.masscan_ip_source == "list":
+        elif cfg.masscan_ip_source == MasscanMethods.LIST:
             # Load masscan IP list
             masscan_ips = load_ip_list(cfg.masscan_ip_list)
 

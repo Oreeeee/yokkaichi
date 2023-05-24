@@ -1,6 +1,8 @@
 import tomli
 
 from .constants.rich_console import console
+from .enums.MasscanMethods import MasscanMethods
+from .enums.Platforms import Platforms
 from .port_parser import parse_port_range
 from .structs.CFG import CFG
 
@@ -77,16 +79,23 @@ def parse_cfg(cfg_location):
         return True
 
     if cfg_file["platforms"]["java"]:
-        cfg.platforms.append("Java")
+        cfg.platforms.append(Platforms.JAVA)
     if cfg_file["platforms"]["bedrock"]:
-        cfg.platforms.append("Bedrock")
+        cfg.platforms.append(Platforms.BEDROCK)
 
     cfg.query_java = cfg_file["platforms"]["additional"]["java_query"]
 
     cfg.masscan_scan = cfg_file["type"]["masscan"]
     cfg.ip_list_scan = cfg_file["type"]["ip_list"]
 
-    cfg.masscan_ip_source = cfg_file["type"]["options_masscan"]["ip_source"]
+    if (
+        cfg_file["type"]["options_masscan"]["ip_source"]
+        == MasscanMethods.COUNTRIES.value
+    ):
+        cfg.masscan_ip_source = MasscanMethods.COUNTRIES
+    elif cfg_file["type"]["options_masscan"]["ip_source"] == MasscanMethods.LIST.value:
+        cfg.masscan_ip_source = MasscanMethods.LIST
+
     cfg.masscan_args = cfg_file["type"]["options_masscan"]["args"]
     cfg.masscan_output = cfg_file["type"]["options_masscan"]["output"]
     cfg.masscan_output_location = cfg_file["type"]["options_masscan"]["output_location"]

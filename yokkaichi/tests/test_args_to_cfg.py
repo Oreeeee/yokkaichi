@@ -63,3 +63,20 @@ def test_args_to_cfg():
         ip2location_db="IP2LOCATION-LITE-DB11.BIN",
         ip2location_cache=True,
     )
+
+
+def test_args_to_cfg_improper_method(monkeypatch):
+    def mockexit(x):
+        pass
+
+    monkeypatch.setattr("builtins.exit", mockexit)
+    args = example_args
+    args.masscan_method = "notarealvalue"
+    assert yokkaichi.args_to_cfg.args_to_cfg(args) == True
+
+
+def test_args_to_cfg_proper_method():
+    args = example_args
+    for method in ("countries", "list"):
+        args.masscan_method = method
+        assert type(yokkaichi.args_to_cfg.args_to_cfg(args)) == CFG

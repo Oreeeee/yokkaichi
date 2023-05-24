@@ -20,6 +20,7 @@ def args_to_cfg(args):
             "Proper values for --masscan-method are: countries, list", style="bold red"
         )
         exit(1)
+        return True
 
     cfg.masscan_ip_source = args.masscan_method
     cfg.masscan_args = args.masscan_args

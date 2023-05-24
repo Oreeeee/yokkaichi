@@ -1,11 +1,13 @@
 # Import modules
-from mcstatus import BedrockServer, JavaServer
-from .constants.rich_console import console
-from datetime import datetime
-import IP2Location
-import threading
-import json
 import ast
+import json
+import threading
+from datetime import datetime
+
+import IP2Location
+from mcstatus import BedrockServer, JavaServer
+
+from .constants.rich_console import console
 
 
 class ServerScan:

@@ -1,7 +1,9 @@
-from yokkaichi import __version__ as yokkaichi_ver
-from setuptools import setup
-from pathlib import Path
 import sys
+from pathlib import Path
+
+from setuptools import setup
+
+from yokkaichi import __version__ as yokkaichi_ver
 
 # Load README from README.md
 this_directory = Path(__file__).parent

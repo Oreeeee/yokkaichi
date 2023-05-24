@@ -1,6 +1,7 @@
-from yokkaichi.structs.CFG import CFG
 from dataclasses import dataclass
+
 import yokkaichi.args_to_cfg
+from yokkaichi.structs.CFG import CFG
 
 
 @dataclass

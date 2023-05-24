@@ -1,8 +1,10 @@
-from .constants.rich_console import console
-from pathlib import Path
-import platform
-import masscan
 import json
+import platform
+from pathlib import Path
+
+import masscan
+
+from .constants.rich_console import console
 
 
 class MasscanScan:

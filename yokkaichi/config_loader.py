@@ -1,7 +1,8 @@
+import tomli
+
 from .constants.rich_console import console
 from .port_parser import parse_port_range
 from .structs.CFG import CFG
-import tomli
 
 CONFIG_VERSION = "1"
 # TODO: Bring this back to a separate file

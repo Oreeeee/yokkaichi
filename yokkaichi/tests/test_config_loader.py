@@ -1,6 +1,7 @@
-from yokkaichi.structs.CFG import CFG
-import yokkaichi.config_loader
 import tomli
+
+import yokkaichi.config_loader
+from yokkaichi.structs.CFG import CFG
 
 DEFAULT_CFG = """
 version = "1"

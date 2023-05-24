@@ -1,19 +1,22 @@
 # Import modules
-from .constants.rich_console import console
-from .port_parser import parse_port_range
-from .args_to_cfg import args_to_cfg
-from .MasscanScan import MasscanScan
-from .ServerScan import ServerScan
-from yokkaichi import __version__
-from datetime import datetime
-from . import config_loader
-import IP2Location
-import platform
 import argparse
-import requests
 import pathlib
-import tomli
+import platform
 import time
+from datetime import datetime
+
+import IP2Location
+import requests
+import tomli
+
+from yokkaichi import __version__
+
+from . import config_loader
+from .args_to_cfg import args_to_cfg
+from .constants.rich_console import console
+from .MasscanScan import MasscanScan
+from .port_parser import parse_port_range
+from .ServerScan import ServerScan
 
 
 def display_version():

@@ -74,6 +74,7 @@ def parse_cfg(cfg_location):
             style="bold red",
         )
         exit(1)
+        return True
 
     if cfg_file["platforms"]["java"]:
         cfg.platforms.append("Java")

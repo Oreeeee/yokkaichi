@@ -69,3 +69,17 @@ def test_parse_cfg(monkeypatch):
         ip2location_db="IP2LOCATION-LITE-DB11.BIN",
         ip2location_cache=True,
     )
+
+
+def test_parse_cfg_config_version_check(monkeypatch):
+    def mockexit(x):
+        pass
+
+    def fake_cfg(x):
+        cfg = DEFAULT_CFG
+        cfg = cfg.replace('version = "1"', 'version = "0"')
+        return tomli.loads(cfg)
+
+    monkeypatch.setattr("builtins.exit", mockexit)
+    monkeypatch.setattr(yokkaichi.config_loader, "load_cfg", fake_cfg)
+    assert yokkaichi.config_loader.parse_cfg("") == True

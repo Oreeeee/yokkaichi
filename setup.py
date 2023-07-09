@@ -11,8 +11,8 @@ long_description = (this_directory / "README.md").read_text()
 
 # Enforce Python version (3.8+)
 if sys.version_info[1] < 8:
-    sys.exit(
-        "Yokkaichi will NOT run on Python 3.7 and older. You can build the package yourself and remove the check, but don't report bugs that happen!"
+    print(
+        "NOTICE: Yokkaichi requires Python 3.8 or newer to run. Python 3.7 and older are not supported, and bugs might happen."
     )
 
 setup(

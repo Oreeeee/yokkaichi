@@ -9,10 +9,10 @@ from yokkaichi import __version__ as yokkaichi_ver
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
-# Enforce Python version (3.7+)
-if sys.version_info[1] < 7:
+# Enforce Python version (3.8+)
+if sys.version_info[1] < 8:
     sys.exit(
-        "Yokkaichi will NOT run on Python 3.6 and older. You can build the package yourself and remove the check, but don't report bugs that happen!"
+        "Yokkaichi will NOT run on Python 3.7 and older. You can build the package yourself and remove the check, but don't report bugs that happen!"
     )
 
 setup(

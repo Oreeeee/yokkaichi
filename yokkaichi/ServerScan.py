@@ -8,7 +8,7 @@ import IP2Location
 from mcstatus import BedrockServer, JavaServer
 
 from .constants.rich_console import console
-from .enums import Platforms
+from .enums.Platforms import Platforms
 
 
 class ServerScan:
@@ -152,6 +152,8 @@ class ServerScan:
             self.add_to_file(server_info)
 
     def get_location_data(self, ip):
+        if not self.cfg.use_ip2location:
+            return None
         # Make the data be a string
         ip2location_data_str = str(self.ip2location_db.get_all(ip))
         # Convert the data to dict

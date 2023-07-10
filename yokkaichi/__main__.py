@@ -118,7 +118,8 @@ def main(cfg):
         # Touch the file
         pathlib.Path(cfg.output).touch()
 
-    verify_ip2location(cfg.ip2location_db)
+    if cfg.use_ip2location:
+        verify_ip2location(cfg.ip2location_db)
 
     scan_start = time.time()
 

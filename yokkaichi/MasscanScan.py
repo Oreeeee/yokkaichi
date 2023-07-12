@@ -4,7 +4,7 @@ from pathlib import Path
 
 import masscan
 
-from .constants.rich_console import console
+from .constants import console
 
 
 class MasscanScan:

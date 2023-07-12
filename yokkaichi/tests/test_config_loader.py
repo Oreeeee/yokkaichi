@@ -1,9 +1,8 @@
 import tomli
 
 import yokkaichi.config_loader
-from yokkaichi.enums.MasscanMethods import MasscanMethods
-from yokkaichi.enums.Platforms import Platforms
-from yokkaichi.structs.CFG import CFG
+from yokkaichi.enums import MasscanMethods, Platforms
+from yokkaichi.structs import CFG
 
 DEFAULT_CFG = """
 version = "1"

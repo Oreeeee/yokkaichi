@@ -7,8 +7,8 @@ from datetime import datetime
 import IP2Location
 from mcstatus import BedrockServer, JavaServer
 
-from .constants.rich_console import console
-from .enums.Platforms import Platforms
+from .constants import console
+from .enums import Platforms
 
 
 class ServerScan:

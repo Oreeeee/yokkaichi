@@ -13,8 +13,8 @@ from yokkaichi import __version__
 
 from . import config_loader
 from .args_to_cfg import args_to_cfg
-from .constants.rich_console import console
-from .enums.MasscanMethods import MasscanMethods
+from .constants import console
+from .enums import MasscanMethods
 from .MasscanScan import MasscanScan
 from .port_parser import parse_port_range
 from .ServerScan import ServerScan

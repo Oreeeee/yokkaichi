@@ -1,10 +1,9 @@
 import tomli
 
-from .constants.rich_console import console
-from .enums.MasscanMethods import MasscanMethods
-from .enums.Platforms import Platforms
+from .constants import console
+from .enums import MasscanMethods, Platforms
 from .port_parser import parse_port_range
-from .structs.CFG import CFG
+from .structs import CFG
 
 CONFIG_VERSION = "1"
 # TODO: Bring this back to a separate file

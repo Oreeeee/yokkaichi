@@ -29,6 +29,10 @@ def display_version():
 
 
 def get_country_ips(countries):
+    console.print(
+        "Note: IP Ranges provided by the tool might be inaccurate or incomplete. This will be fixed in the future releases. Sorry about that.",
+        style="yellow",
+    )
     country_ip_list = []
     for country in countries:
         # Download CIDRs for country

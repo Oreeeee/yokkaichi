@@ -15,12 +15,11 @@ from . import config_loader
 from .args_to_cfg import args_to_cfg
 from .constants import console
 from .enums import MasscanMethods
-from .MasscanScan import MasscanScan
 from .port_parser import parse_port_range
 from .ServerScan import ServerScan
 
 
-def display_version():
+def display_version() -> None:
     console.print(
         f"yokkaichi [bold cyan]{__version__}[/bold cyan] on [bold cyan]{platform.python_implementation()} {platform.python_version()}[/bold cyan]",
         style="green",
@@ -28,7 +27,7 @@ def display_version():
     exit()
 
 
-def get_country_ips(countries):
+def get_country_ips(countries) -> list:
     console.print(
         "Note: IP Ranges provided by the tool might be inaccurate or incomplete. This will be fixed in the future releases. Sorry about that.",
         style="yellow",
@@ -53,7 +52,7 @@ def get_country_ips(countries):
     return country_ip_list
 
 
-def verify_ip2location(db):
+def verify_ip2location(db) -> None:
     if not pathlib.Path(db).is_file():
         console.print("IP2Location database doesn't exist", style="bold red")
         exit(1)
@@ -66,7 +65,7 @@ def verify_ip2location(db):
         exit(1)
 
 
-def load_ip_list(ip_list_location):
+def load_ip_list(ip_list_location) -> list:
     ips = []
     # Load file
     try:
@@ -129,34 +128,30 @@ def main(cfg):
 
     if cfg.ip_list_scan:
         console.print("Loading IPs", style="cyan")
-        ip_list = load_ip_list(cfg.ip_list)
+        ip_list: list = load_ip_list(cfg.ip_list)
         console.print(f"Loaded {len(ip_list)} IPs", style="green")
     else:
-        ip_list = None
+        ip_list: list = None
 
     if cfg.masscan_scan:
-        masscan_ips_from_file = []
-        masscan_ips_for_countries = []
+        masscan_ips_file: list = []
+        masscan_ips_countries: list = []
         if cfg.masscan_ip_source == MasscanMethods.COUNTRIES:
             # Get CIDR ranges for countries
-            masscan_ips = get_country_ips(cfg.masscan_country_list)
-        elif cfg.masscan_ip_source == MasscanMethods.LIST:
+            masscan_ips_file = get_country_ips(cfg.masscan_country_list)
+        if cfg.masscan_ip_source == MasscanMethods.LIST:
             # Load masscan IP list
-            masscan_ips = load_ip_list(cfg.masscan_ip_list)
+            masscan_ips_countries = load_ip_list(cfg.masscan_ip_list)
 
         # Combine two sources of masscan IPs together
-        # masscan_ips = masscan_ips_from_file + masscan_ips_for_countries
-
-        # Start masscan
-        masscan_scanner = MasscanScan(cfg, masscan_ips)
-        masscan_results = masscan_scanner.start_scan()
+        masscan_ips: list = masscan_ips_file + masscan_ips_countries
     else:
-        masscan_results = None
+        masscan_ips: list = None
 
     # print(clr.Fore.CYAN + "Loading IPs")
     # ips = load_file()
 
-    scanner = ServerScan(cfg=cfg, masscan_list=masscan_results, ip_list=ip_list)
+    scanner = ServerScan(cfg=cfg, ip_list=ip_list, masscan_list=masscan_ips)
     scanner.start_scan()
 
     scan_end = time.time()

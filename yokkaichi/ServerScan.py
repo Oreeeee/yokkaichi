@@ -1,26 +1,34 @@
 # Import modules
 import ast
 import json
+import platform
+import queue
 import threading
+import time
 from datetime import datetime
+from queue import Queue
 
 import IP2Location
+import pyScannerWrapper
 from mcstatus import BedrockServer, JavaServer
+from pyScannerWrapper.structs import ServerResult
 
 from .constants import console
 from .enums import Platforms
+from .structs import CFG
 
 
 class ServerScan:
-    def __init__(self, cfg, masscan_list, ip_list):
-        self.cfg = cfg
-        self.masscan_list = masscan_list
-        self.ip_list = ip_list
+    def __init__(self, cfg, ip_list, masscan_list) -> None:
+        self.cfg: CFG = cfg
 
-        self.results = []
-        self.lock = threading.Lock()
+        self.results: list = []
+        self.ip_list: list = ip_list
+        self.masscan_list: list = masscan_list
+        self.lock: threading.Lock = threading.Lock()
+        self.queue: Queue = Queue()
+        self.running: bool = False
 
-    def start_scan(self):
         if self.cfg.use_ip2location:
             console.print("Loading IP2Location database", style="cyan")
             if self.cfg.ip2location_cache:
@@ -30,81 +38,64 @@ class ServerScan:
             else:
                 self.ip2location_db = IP2Location.IP2Location(self.cfg.ip2location_db)
 
+    def start_scan(self) -> None:
         console.print(
             f"Loading [bold white]{self.cfg.threads}[/bold white] threads!",
             style="cyan",
         )
 
-        thread_list = []
+        self.running = True
+
+        thread_list: list = []
 
         for _ in range(self.cfg.threads):
-            thread = threading.Thread(target=self.scan_server)
+            thread: threading.Thread = threading.Thread(target=self.scan_queue)
             thread_list.append(thread)
 
         for thread in thread_list:
             thread.start()
 
+        # masscan
+        if self.cfg.masscan_scan:
+            mas: pyScannerWrapper.scanners.Masscan = pyScannerWrapper.scanners.Masscan()
+            mas.args = self.cfg.masscan_args
+            mas.input_ip_list = self.masscan_list
+            mas.input_port_list = self.cfg.ports
+            if platform.system() == "Linux":
+                mas.sudo = True
+            mas_yielder = mas.scan_yielder()
+            for server in mas_yielder:
+                self.queue.put(server)
+
+        # Servers from the IP List
+        if self.cfg.ip_list_scan:
+            for ip in self.ip_list:
+                for port in self.cfg.ports:
+                    self.queue.put(ServerResult(ip=ip, port=port))
+
+        # Stop the scanning and wait for all threads to stop
+        self.running = False
         for thread in thread_list:
             thread.join()
 
-    def scan_server(self):
-        # Scan servers from masscan list
-        if self.masscan_list != None:
-            self.scan_masscan()
-        if self.ip_list != None:
-            self.scan_ip_list()
+    def scan_queue(self) -> None:
+        while self.running:
+            try:
+                mas_result: ServerResult = self.queue.get(timeout=1)
+            except queue.Empty:
+                continue
 
-    def scan_masscan(self):
-        while True:
-            # Select the first IP from the list and get the port list
-            with self.lock:
+            for server_platform in self.cfg.platforms:
                 try:
-                    ip = list(self.masscan_list["scan"].keys())[0]
-                except IndexError:
-                    print(
-                        f"No more IPs in masscan in thread {threading.current_thread().name}"
-                    )
-                    return
-                ports = []
-                for port_info in self.masscan_list["scan"][ip]:
-                    ports.append(port_info["port"])
-                self.masscan_list["scan"].pop(ip)
+                    self.check_server(mas_result.ip, mas_result.port, server_platform)
+                except Exception as e:
+                    with self.lock:
+                        console.print(
+                            f"[-] {mas_result.ip}:{mas_result.port} for {server_platform.value} is offline!",
+                            style="red",
+                        )
 
-            for port in ports:
-                for server_platform in self.cfg.platforms:
-                    try:
-                        self.check_server(ip, port, server_platform)
-                    except Exception:
-                        with self.lock:
-                            console.print(
-                                f"[-] {ip}:{port} for {server_platform.value} is offline!",
-                                style="red",
-                            )
-
-    def scan_ip_list(self):
-        while True:
-            with self.lock:
-                try:
-                    ip = self.ip_list[0]
-                    self.ip_list.pop(0)
-                except IndexError:
-                    print(
-                        f"No more IPs in IP list in thread {threading.current_thread().name}"
-                    )
-                    return
-
-            for port in self.cfg.ports:
-                for server_platform in self.cfg.platforms:
-                    try:
-                        self.check_server(ip, port, server_platform)
-                    except Exception as e:
-                        with self.lock:
-                            console.print(
-                                f"[-] {ip}:{port} for {server_platform.value} is offline!",
-                                style="red",
-                            )
-
-    def check_server(self, ip, port, server_platform):
+    def check_server(self, ip, port, server_platform) -> None:
         if server_platform == Platforms.JAVA:
             server_lookup = JavaServer.lookup(f"{ip}:{port}")
         if server_platform == Platforms.BEDROCK:
@@ -151,17 +142,17 @@ class ServerScan:
             )
             self.add_to_file(server_info)
 
-    def get_location_data(self, ip):
+    def get_location_data(self, ip) -> dict:
         if not self.cfg.use_ip2location:
             return None
         # Make the data be a string
-        ip2location_data_str = str(self.ip2location_db.get_all(ip))
+        ip2location_data_str: str = str(self.ip2location_db.get_all(ip))
         # Convert the data to dict
-        ip2location_data_dict = ast.literal_eval(ip2location_data_str)
+        ip2location_data_dict: dict = ast.literal_eval(ip2location_data_str)
 
         return ip2location_data_dict
 
-    def add_to_file(self, server_info):
+    def add_to_file(self, server_info) -> None:
         self.results.append(server_info)
         with open(self.cfg.output, "w", encoding="utf-8") as f:
             json.dump(self.results, f, indent=4, ensure_ascii=False)

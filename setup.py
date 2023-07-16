@@ -28,9 +28,9 @@ setup(
         "rich",
         "mcstatus",
         "ip2location",
-        "python-masscan",
         "requests",
         "tomli >= 1.1.0",
+        "pyScannerWrapper == 0.2.0",
     ],
     extras_require={"testing": ["pytest"]},
     classifiers=[

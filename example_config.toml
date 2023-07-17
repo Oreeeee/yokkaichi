@@ -40,5 +40,10 @@ output = "out.json" # IMPORTANT! That's where the servers go!
 
 [ip2location]
 enabled = false # Enable getting the location of the server
-db = "IP2LOCATION-LITE-DB11.BIN" # IP2Location .BIN database (get from lite.ip2location.com)
+databases_location = "ip2location_dbs/" # Where are the databases stored
+token = "" # Insert your download token here for automatic updates
+bin_filename = "IP2LOCATION-LITE-DB11.BIN"
+csv_filename = "IP2LOCATION-LITE-DB1.CSV"
+bin_code = "DB11LITEBIN" # Avoid changing this
+csv_code = "DB1LITECSV" # Avoid changing this
 cache = true # Enable for faster speed at the cost of RAM

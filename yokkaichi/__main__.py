@@ -5,7 +5,6 @@ import platform
 import time
 from datetime import datetime
 
-import IP2Location
 import requests
 import tomli
 
@@ -14,6 +13,7 @@ from yokkaichi import __version__
 from . import config_loader
 from .constants import console
 from .enums import MasscanMethods
+from .IP2L_Manager import IP2L_Manager
 from .port_parser import parse_port_range
 from .ServerScan import ServerScan
 
@@ -49,19 +49,6 @@ def get_country_ips(countries) -> list:
             country_ip_list.append(ip)
 
     return country_ip_list
-
-
-def verify_ip2location(db) -> None:
-    if not pathlib.Path(db).is_file():
-        console.print("IP2Location database doesn't exist", style="bold red")
-        exit(1)
-
-    try:
-        IP2Location.IP2Location(db)
-    except ValueError:
-        # IP2Location's default exception messages are okay
-        console.print("The IP2Location database is corrupted", style="bold red")
-        exit(1)
 
 
 def load_ip_list(ip_list_location) -> list:
@@ -119,7 +106,8 @@ def main():
         pathlib.Path(cfg.output).touch()
 
     if cfg.use_ip2location:
-        verify_ip2location(cfg.ip2location_db)
+        # Initialize IP2Location
+        ip2location = IP2L_Manager(cfg)
 
     scan_start = time.time()
 

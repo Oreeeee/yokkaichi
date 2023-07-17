@@ -67,6 +67,26 @@ def load_ip_list(ip_list_location) -> list:
 
 
 def main():
+    parser = argparse.ArgumentParser(allow_abbrev=False)
+    parser.add_argument(
+        "-c",
+        "--config",
+        dest="config_file",
+        help="Configuration file (example one will be created if it doesn't exist)",
+        default=None,
+        const="yokkaichi.toml",
+        nargs="?",
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        dest="show_version",
+        help="Show version and quit",
+        action="store_true",
+    )
+    parser.set_defaults(config_file="yokkaichi.toml")
+    args = parser.parse_args()
+
     if args.show_version:
         # Show the version and exit
         display_version()
@@ -156,24 +176,4 @@ def main():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(allow_abbrev=False)
-    parser.add_argument(
-        "-c",
-        "--config",
-        dest="config_file",
-        help="Configuration file (example one will be created if it doesn't exist)",
-        default=None,
-        const="yokkaichi.toml",
-        nargs="?",
-    )
-    parser.add_argument(
-        "-v",
-        "--version",
-        dest="show_version",
-        help="Show version and quit",
-        action="store_true",
-    )
-    parser.set_defaults(config_file="yokkaichi.toml")
-    args = parser.parse_args()
-
     main()

@@ -11,15 +11,14 @@ This project used to be named mcserverscanner, but on 2023-01-15 it got renamed 
 - Scanning for Java and Bedrock servers
 - Masscan integration
 - IP2Location integration
-- Query integration
 
 ### Planned features (not in a specific order)
 - WWW interface
 - Bot joining the servers
 - Cleaning up the code
 - Docker support
-- Optimization
 - Scanning for pre-Netty (<1.7) servers
+- Query integration
 
 ### Installation
 - Easy installation (from PyPI)

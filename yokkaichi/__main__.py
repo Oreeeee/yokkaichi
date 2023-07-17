@@ -12,7 +12,6 @@ import tomli
 from yokkaichi import __version__
 
 from . import config_loader
-from .args_to_cfg import args_to_cfg
 from .constants import console
 from .enums import MasscanMethods
 from .port_parser import parse_port_range
@@ -80,16 +79,14 @@ def load_ip_list(ip_list_location) -> list:
     return ips
 
 
-def main(cfg):
+def main():
     if args.show_version:
         # Show the version and exit
         display_version()
-
     # Load the config file
     if args.config_file != None:
         try:
             cfg = config_loader.parse_cfg(args.config_file)
-            # TODO: Make use of it
         except tomli.TOMLDecodeError:
             console.print(
                 "Config file is invalid! (Failed parsing TOML)", style="bold red"
@@ -169,107 +166,6 @@ def main(cfg):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument(
-        "-j", "--java", dest="java", help="Scan for Java servers", action="store_true"
-    )
-    parser.add_argument(
-        "-b",
-        "--bedrock",
-        dest="bedrock",
-        help="Scan for Bedrock servers",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--ip-list-scan",
-        dest="ip_list_scan",
-        help="Scan from IP list (slow and outdated, use masscan instead)",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--ip-list", dest="ip_list", help="Location to IP List", type=str, default=""
-    )
-    parser.add_argument(
-        "--masscan",
-        dest="masscan",
-        help="Enable scanning with masscan",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--masscan-method",
-        dest="masscan_method",
-        help="Where to look for IPs for masscan? Possible values: countries, list",
-        type=str,
-        default="countries",
-    )
-    parser.add_argument(
-        "--masscan-ip-list",
-        dest="masscan_ip_list",
-        help="Location to IP (or CIDR) list to scan by masscan before scanning with mcserver scanner",
-        type=str,
-        default="",
-    )
-    parser.add_argument(
-        "--masscan-countries",
-        dest="masscan_countries",
-        help="Countries to scan in 2-letter format",
-        nargs="+",
-    )
-    parser.add_argument(
-        "--masscan-args",
-        dest="masscan_args",
-        help="Arguments for masscan (example: --max-rate 1000)",
-        type=str,
-        default="",
-    )
-    parser.add_argument(
-        "--masscan-output",
-        dest="masscan_json_output",
-        help="Output results to a file. To be used for debugging purposes.",
-        type=str,
-        default="",
-    )
-    parser.add_argument(
-        "-p",
-        "--ports",
-        dest="ports",
-        help="Ports to scan on. Example format: 25560-25569,42069. Uses 25565 by default",
-        type=str,
-        default="25565",
-    )
-    parser.add_argument(
-        "--query",
-        dest="query",
-        help="Query servers, required for player list but slows down the script (Note: might be broken at the moment)",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--ip2location-db",
-        dest="ip2location_db",
-        help="IP2Location BIN database location, required for providing geolocation info",
-        type=str,
-        default="",
-    )
-    parser.add_argument(
-        "--ip2location-cache",
-        dest="ip2location_cache",
-        help="Cache IP2Location database to RAM. Make sure you have enough RAM to use this feature",
-        action="store_true",
-    )
-    parser.add_argument(
-        "-t",
-        "--threads",
-        dest="thread_count",
-        help="Number of threads (default: 100)",
-        type=int,
-        default=100,
-    )
-    parser.add_argument(
-        "-o",
-        "--output",
-        dest="output_file",
-        help="Output JSON file",
-        default="out.json",
-    )
-    parser.add_argument(
         "-c",
         "--config",
         dest="config_file",
@@ -285,13 +181,7 @@ if __name__ == "__main__":
         help="Show version and quit",
         action="store_true",
     )
-    parser.set_defaults(java=False, bedrock=False, query=False)
+    parser.set_defaults(config_file="yokkaichi.toml")
     args = parser.parse_args()
 
-    cfg = args_to_cfg(args)
-
-    # if args.java and args.bedrock == False:
-    #     print("You need to choose either Java or Bedrock")
-    #     exit(1)
-
-    main(cfg)
+    main()

@@ -34,9 +34,8 @@ pip install .
 ```
 
 ### Usage
-1. Using a config file
-Instead of passing in arguments, you can pass the configuration file with `--config` argument. When no additional file name is provided, Yokkaichi will use `yokkaichi.toml` for the file name. When the config file name you provided doesn't exist, Yokkaichi will create an example file for you. Modify it how you like and rerun Yokkaichi. Configuration files are not forwards or backwards compatible and you will have to adjust it every major change. 
-2. You can also use this script by passing in arguments in the CLI. You can get the list of availible options by invoking `python -m yokkaichi -h`.
+When starting the script for the first time, `yokkaichi.toml` will get created. You will have to adjust it to your preferences. Optionally, you can also pass in `-c` to set a different name or location of the config file.
+
 
 ### Using the masscan integration
 You need to have [masscan](https://github.com/robertdavidgraham/masscan) in your PATH, or in the same directory from which you are running this software. Make sure that the binary is named `masscan` (Unix) or `masscan.exe` (Windows).

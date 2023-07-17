@@ -18,6 +18,7 @@ class CFG:
     ip_list: str = field(default_factory=str)
     ports: list = field(default_factory=list)
     threads: int = field(default_factory=int)
+    offline_printing: str = field(default_factory=str)
     output: str = field(default_factory=str)
     use_ip2location: bool = field(default_factory=bool)
     ip2location_dbs: str = field(default_factory=str)

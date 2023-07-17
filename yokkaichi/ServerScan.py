@@ -5,6 +5,7 @@ import platform
 import queue
 import threading
 import time
+import traceback
 from datetime import datetime
 from queue import Queue
 
@@ -13,7 +14,7 @@ from mcstatus import BedrockServer, JavaServer
 from pyScannerWrapper.structs import ServerResult
 
 from .constants import console
-from .enums import Platforms
+from .enums import OfflinePrintingModes, Platforms
 from .IP2L_Manager import IP2L_Manager
 from .structs import CFG, MinecraftServer
 
@@ -82,10 +83,23 @@ class ServerScan:
                     self.check_server(mas_result.ip, mas_result.port, server_platform)
                 except Exception as e:
                     with self.lock:
-                        console.print(
-                            f"[-] {mas_result.ip}:{mas_result.port} for {server_platform.value} is offline!",
-                            style="red",
-                        )
+                        if (
+                            self.cfg.offline_printing
+                            == OfflinePrintingModes.OFFLINE.value
+                        ):
+                            console.print(
+                                f"[-] {mas_result.ip}:{mas_result.port} for {server_platform.value} is offline!",
+                                style="red",
+                            )
+                        if (
+                            self.cfg.offline_printing
+                            == OfflinePrintingModes.FULL_TRACEBACK.value
+                        ):
+                            console.print(
+                                f"[-] {mas_result.ip}:{mas_result.port} for {server_platform.value} is offline!",
+                                style="red",
+                            )
+                            traceback.print_exc()
 
     def check_server(self, ip: str, port: int, server_platform: Platforms) -> None:
         if server_platform == Platforms.JAVA:

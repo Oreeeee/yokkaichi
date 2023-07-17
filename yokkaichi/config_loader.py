@@ -46,6 +46,7 @@ list = "ips.txt" # Location to the list of IPs to scan, separated by newlines
 [scanner]
 ports = "25564-25566,25569" # Port list (not TOML's format! Similarly to nmap and masscan splits ports by commas and sets ranges with hyphens)
 threads = 100 # Leave this at default unless you have a lot of servers
+offline_printing = "disabled" # Should the script output offline servers. "disabled" will print nothing, "offline" will print offline servers and "full_traceback" will print entire traceback
 output = "out.json" # IMPORTANT! That's where the servers go!
 
 [ip2location]
@@ -114,6 +115,7 @@ def parse_cfg(cfg_location):
 
     cfg.ports = parse_port_range(cfg_file["scanner"]["ports"])
     cfg.threads = cfg_file["scanner"]["threads"]
+    cfg.offline_printing = cfg_file["scanner"]["offline_printing"]
     cfg.output = cfg_file["scanner"]["output"]
 
     cfg.use_ip2location = cfg_file["ip2location"]["enabled"]

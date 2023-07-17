@@ -20,7 +20,7 @@ ip_list = false
 
 [type.options_masscan]
 ip_source = "countries"
-args = ""
+args = "--rate 5000"
 output = false
 output_location = "masscan_out.json"
 
@@ -36,11 +36,17 @@ list = "ips.txt"
 [scanner]
 ports = "25564-25566,25569"
 threads = 100
+offline_printing = "disabled"
 output = "out.json"
 
 [ip2location]
 enabled = false
-db = "IP2LOCATION-LITE-DB11.BIN"
+databases_location = "ip2location_dbs/"
+token = "dummy"
+bin_filename = "IP2LOCATION-LITE-DB11.BIN"
+csv_filename = "IP2LOCATION-LITE-DB1.CSV"
+bin_code = "DB11LITEBIN"
+csv_code = "DB1LITECSV"
 cache = true
 """
 
@@ -57,7 +63,7 @@ def test_parse_cfg(monkeypatch):
         masscan_scan=True,
         ip_list_scan=False,
         masscan_ip_source=MasscanMethods.COUNTRIES,
-        masscan_args="",
+        masscan_args="--rate 5000",
         masscan_output=False,
         masscan_output_location="masscan_out.json",
         masscan_country_list=["US", "DE"],
@@ -65,9 +71,15 @@ def test_parse_cfg(monkeypatch):
         ip_list="ips.txt",
         ports=[25564, 25565, 25566, 25569],
         threads=100,
+        offline_printing="disabled",
         output="out.json",
         use_ip2location=False,
-        ip2location_db="IP2LOCATION-LITE-DB11.BIN",
+        ip2location_dbs="ip2location_dbs/",
+        ip2location_token="dummy",
+        ip2location_db_bin="IP2LOCATION-LITE-DB11.BIN",
+        ip2location_db_csv="IP2LOCATION-LITE-DB1.CSV",
+        ip2location_bin_code="DB11LITEBIN",
+        ip2location_csv_code="DB1LITECSV",
         ip2location_cache=True,
     )
 

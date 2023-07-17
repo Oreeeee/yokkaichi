@@ -5,8 +5,8 @@ import subprocess
 import time
 from shutil import which
 
-import IP2Location
 import requests
+from IP2Location import IP2Location
 
 from .constants import console
 from .enums import IP2LocDBStatus, IP2LocManagerUserAnswers
@@ -36,6 +36,20 @@ class IP2L_Manager:
                 self.get_user_answers(
                     "Your IP2Location database is outdated. [U]pdate? [M]anually update? [S]kip? [E]xit?: "
                 )
+
+        # Load DB
+        try:
+            if self.cfg.ip2location_cache:
+                self.db: IP2Location = IP2Location(
+                    f"{self.ip2l_dbs}/{self.cfg.ip2location_db_bin}", "SHARED_MEMORY"
+                )
+            else:
+                self.db: IP2Location = IP2Location(
+                    f"{self.ip2l_dbs}/{self.cfg.ip2location_db_bin}"
+                )
+        except ValueError:
+            console.print("IP2Location database is broken or corrupted!", style="red")
+            exit(1)
 
     def open_last_updated_file(self) -> IP2LocDBStatus:
         last_updated_file_loc: str = f"{self.ip2l_dbs}/LAST_UPDATED"

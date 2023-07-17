@@ -38,6 +38,7 @@ class IP2L_Manager:
                 )
 
         # Load DB
+        console.print("Loading IP2Location database", style="cyan")
         try:
             if self.cfg.ip2location_cache:
                 self.db: IP2Location = IP2Location(
@@ -50,6 +51,9 @@ class IP2L_Manager:
         except ValueError:
             console.print("IP2Location database is broken or corrupted!", style="red")
             exit(1)
+
+    def get_location(self, ip: str) -> dict:
+        return self.db.get_all(ip).__dict__
 
     def open_last_updated_file(self) -> IP2LocDBStatus:
         last_updated_file_loc: str = f"{self.ip2l_dbs}/LAST_UPDATED"

@@ -107,7 +107,9 @@ def main():
 
     if cfg.use_ip2location:
         # Initialize IP2Location
-        ip2location = IP2L_Manager(cfg)
+        ip2location: IP2L_Manager = IP2L_Manager(cfg)
+    else:
+        ip2location: None = None
 
     scan_start = time.time()
 
@@ -136,7 +138,9 @@ def main():
     # print(clr.Fore.CYAN + "Loading IPs")
     # ips = load_file()
 
-    scanner = ServerScan(cfg=cfg, ip_list=ip_list, masscan_list=masscan_ips)
+    scanner = ServerScan(
+        cfg=cfg, ip_list=ip_list, masscan_list=masscan_ips, ip2location=ip2location
+    )
     scanner.start_scan()
 
     scan_end = time.time()

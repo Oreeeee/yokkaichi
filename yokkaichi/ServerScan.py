@@ -1,5 +1,4 @@
 # Import modules
-import ast
 import dataclasses
 import json
 import platform
@@ -9,18 +8,18 @@ import time
 from datetime import datetime
 from queue import Queue
 
-import IP2Location
 import pyScannerWrapper
 from mcstatus import BedrockServer, JavaServer
 from pyScannerWrapper.structs import ServerResult
 
 from .constants import console
 from .enums import Platforms
+from .IP2L_Manager import IP2L_Manager
 from .structs import CFG, MinecraftServer
 
 
 class ServerScan:
-    def __init__(self, cfg, ip_list, masscan_list) -> None:
+    def __init__(self, cfg, ip_list, masscan_list, ip2location) -> None:
         self.cfg: CFG = cfg
 
         self.results: list = []
@@ -29,15 +28,7 @@ class ServerScan:
         self.lock: threading.Lock = threading.Lock()
         self.queue: Queue = Queue()
         self.running: bool = False
-
-        if self.cfg.use_ip2location:
-            console.print("Loading IP2Location database", style="cyan")
-            if self.cfg.ip2location_cache:
-                self.ip2location_db = IP2Location.IP2Location(
-                    self.cfg.ip2location_db, "SHARED_MEMORY"
-                )
-            else:
-                self.ip2location_db = IP2Location.IP2Location(self.cfg.ip2location_db)
+        self.ip2location: IP2L_Manager = ip2location
 
     def start_scan(self) -> None:
         console.print(
@@ -115,7 +106,9 @@ class ServerScan:
         server_info: MinecraftServer = MinecraftServer(
             ip=ip,
             port=port,
-            location_info=self.get_location_data(ip),
+            location_info=self.ip2location.get_location(ip)
+            if self.ip2location != None
+            else dict(),
             ping=round(server_lookup.status().latency),
             platform=server_platform.value,
             motd="",
@@ -143,16 +136,6 @@ class ServerScan:
                 style="green",
             )
             self.add_to_file(server_info)
-
-    def get_location_data(self, ip) -> dict:
-        if not self.cfg.use_ip2location:
-            return None
-        # Make the data be a string
-        ip2location_data_str: str = str(self.ip2location_db.get_all(ip))
-        # Convert the data to dict
-        ip2location_data_dict: dict = ast.literal_eval(ip2location_data_str)
-
-        return ip2location_data_dict
 
     def add_to_file(self, server_info: MinecraftServer) -> None:
         self.results.append(dataclasses.asdict(server_info))

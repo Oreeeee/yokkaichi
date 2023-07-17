@@ -1,5 +1,6 @@
 # Import modules
 import ast
+import dataclasses
 import json
 import platform
 import queue
@@ -15,7 +16,7 @@ from pyScannerWrapper.structs import ServerResult
 
 from .constants import console
 from .enums import Platforms
-from .structs import CFG
+from .structs import CFG, MinecraftServer
 
 
 class ServerScan:
@@ -95,7 +96,7 @@ class ServerScan:
                             style="red",
                         )
 
-    def check_server(self, ip, port, server_platform) -> None:
+    def check_server(self, ip: str, port: int, server_platform: Platforms) -> None:
         if server_platform == Platforms.JAVA:
             server_lookup = JavaServer.lookup(f"{ip}:{port}")
         if server_platform == Platforms.BEDROCK:
@@ -111,29 +112,30 @@ class ServerScan:
         else:
             player_list = None
 
-        server_info = {
-            "ip": ip,
-            "port": port,
-            "info": self.get_location_data(ip),
-            "ping": round(server_lookup.status().latency),
-            "platform": server_platform.value,
-            "motd": "",
-            "version": "",
-            "online_players": 0,
-            "max_players": 0,
-            "player_list": player_list,
-            "time_discovered": datetime.now().isoformat(),
-        }
+        server_info: MinecraftServer = MinecraftServer(
+            ip=ip,
+            port=port,
+            location_info=self.get_location_data(ip),
+            ping=round(server_lookup.status().latency),
+            platform=server_platform.value,
+            motd="",
+            version="",
+            online_players=0,
+            max_players=0,
+            player_list=player_list,
+            time_discovered=datetime.now().isoformat(),
+        )
+
         if server_platform == Platforms.JAVA:
-            server_info["motd"] = server_lookup.status().description
-            server_info["version"] = server_lookup.status().version.name
-            server_info["online_players"] = server_lookup.status().players.online
-            server_info["max_players"] = server_lookup.status().players.max
+            server_info.motd = server_lookup.status().description
+            server_info.version = server_lookup.status().version.name
+            server_info.online_players = server_lookup.status().players.online
+            server_info.max_players = server_lookup.status().players.max
         if server_platform == Platforms.BEDROCK:
-            server_info["motd"] = server_lookup.status().motd
-            server_info["version"] = ""
-            server_info["online_players"] = server_lookup.status().players_online
-            server_info["max_players"] = server_lookup.status().players_max
+            server_info.motd = server_lookup.status().motd
+            server_info.version = ""
+            server_info.online_players = server_lookup.status().players_online
+            server_info.max_players = server_lookup.status().players_max
 
         with self.lock:
             console.print(
@@ -152,7 +154,7 @@ class ServerScan:
 
         return ip2location_data_dict
 
-    def add_to_file(self, server_info) -> None:
-        self.results.append(server_info)
+    def add_to_file(self, server_info: MinecraftServer) -> None:
+        self.results.append(dataclasses.asdict(server_info))
         with open(self.cfg.output, "w", encoding="utf-8") as f:
             json.dump(self.results, f, indent=4, ensure_ascii=False)

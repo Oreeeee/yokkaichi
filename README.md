@@ -34,7 +34,6 @@ source .venv/bin/activate # for Linux
 pip install yokkaichi
 yokkaichi -v
 ```
-
 #### Development versions (not recommended!)
 Check out [DEVELOPMENT_INSTALL.md](https://github.com/Oreeeee/yokkaichi/blob/master/DEVELOPMENT_INSTALL.md)
 

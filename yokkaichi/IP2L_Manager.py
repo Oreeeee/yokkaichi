@@ -1,11 +1,10 @@
 import datetime
 import os
 import pathlib
-import subprocess
 import time
-from shutil import which
+import urllib
+from zipfile import ZipFile
 
-import requests
 from IP2Location import IP2Location
 
 from .constants import console
@@ -117,51 +116,20 @@ class IP2L_Manager:
             )
             exit(1)
 
-        # Check is 7z or 7za in PATH
-        sevenz: str
-        for sevenz_command in ("7z", "7za"):
-            if which(sevenz_command) != None:
-                sevenz = sevenz_command
-                break
-        if sevenz == None:
-            console.print(
-                "Either 7z or 7za have to be in your PATH to automatically download the database. Either add one of the to PATH, or use manual update.",
-                style="red",
-            )
-            exit(1)
-
         # Download the dbs
         db_zips: tuple = (
             f"{self.ip2l_dbs}/{self.cfg.ip2location_db_bin}.zip",
             f"{self.ip2l_dbs}/{self.cfg.ip2location_db_csv}.zip",
         )
-        with open(db_zips[0], "wb") as f:
-            req: requests.Response = requests.get(
-                f"https://www.ip2location.com/download/?token={self.cfg.ip2location_token}&file={self.cfg.ip2location_bin_code}"
-            )
-            req_status_code: int = req.status_code
-            if req_status_code != 200:
-                console.print(
-                    f"Failed to download BIN database! Error code: {req_status_code}"
-                )
-            f.write(req.content)
-
-        with open(db_zips[1], "wb") as f:
-            req: requests.Response = requests.get(
-                f"https://www.ip2location.com/download/?token={self.cfg.ip2location_token}&file={self.cfg.ip2location_csv_code}"
-            )
-            req_status_code: int = req.status_code
-            if req_status_code != 200:
-                console.print(
-                    f"Failed to download CSV database! Error code: {req_status_code}"
-                )
-            f.write(req.content)
+        
+        urllib.request.urlretrieve(f"https://www.ip2location.com/download/?token={self.cfg.ip2location_token}&file={self.cfg.ip2location_bin_code}", db_zips[0])
+        urllib.request.urlretrieve(f"https://www.ip2location.com/download/?token={self.cfg.ip2location_token}&file={self.cfg.ip2location_csv_code}", db_zips[1])
 
         for db_zip in db_zips:
-            db_zip_filename: str = db_zip.split("/")[-1]
-            pwd: str = "/".join(db_zip.split("/")[:-1])
-            subprocess.run(f"{sevenz} e -o{pwd} {db_zip_filename} -aoa".split())
-            os.remove(db_zip)
+            with ZipFile(db_zip, "r") as f:
+                f.extractall(path=self.ip2l_dbs)
+
+        self.create_last_updated_file()
 
     def get_user_answers(self, message: str) -> None:
         console.print(

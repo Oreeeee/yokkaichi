@@ -39,7 +39,6 @@ Check out [DEVELOPMENT_INSTALL.md](https://github.com/Oreeeee/yokkaichi/blob/mas
 
 ### 3rd party dependencies (optional)
 - `masscan` (for faster scanning)
-- `7z` or `7za` (for automatic IP2Location database updates)
 
 ### Usage
 When starting the script for the first time, `yokkaichi.toml` will get created. You will have to adjust it to your preferences. Optionally, you can also pass in `-c` to set a different name or location of the config file.

@@ -15,22 +15,32 @@ This project used to be named mcserverscanner, but on 2023-01-15 it got renamed 
 ### Planned features (not in a specific order)
 - WWW interface
 - Bot joining the servers
-- Cleaning up the code
 - Docker support
 - Scanning for pre-Netty (<1.7) servers
 - Query integration
 
 ### Installation
-- Easy installation (from PyPI)
+#### Releases
+- Installing the latest version with pipx (recommended)
 ```
+pipx install yokkaichi --include-deps
+yokkaichi -v
+```
+- Installing the latest version in a virtual environment
+```
+virtualenv .venv
+source .venv/bin/activate # for Linux
+.venv\bin\activate.bat # for Windows
 pip install yokkaichi
+yokkaichi -v
 ```
-- Manual installation (from git)
-```
-git clone https://github.com/Oreeeee/yokkaichi
-cd yokkaichi
-pip install .
-```
+
+#### Development versions (not recommended!)
+Check out [DEVELOPMENT_INSTALL.md](https://github.com/Oreeeee/yokkaichi/blob/master/DEVELOPMENT_INSTALL.md)
+
+### 3rd party dependencies (optional)
+- `masscan` (for faster scanning)
+- `7z` or `7za` (for automatic IP2Location database updates)
 
 ### Usage
 When starting the script for the first time, `yokkaichi.toml` will get created. You will have to adjust it to your preferences. Optionally, you can also pass in `-c` to set a different name or location of the config file.

@@ -1,4 +1,6 @@
+import csv
 import datetime
+import ipaddress
 import os
 import pathlib
 import time
@@ -108,6 +110,30 @@ class IP2L_Manager:
         else:
             return True
 
+    def get_country_cidr(self) -> list:
+        IP_START_INDEX: int = 0
+        IP_END_INDEX: int = 1
+        COUNTRY_CODE_INDEX: int = 2
+
+        ip_list: list = []
+        with open(
+            f"{self.ip2l_dbs}/{self.cfg.ip2location_db_csv}", "r", newline=""
+        ) as f:
+            ip2l_reader: csv.reader = csv.reader(f)
+            for row in ip2l_reader:
+                if row[COUNTRY_CODE_INDEX] in self.cfg.masscan_country_list:
+                    ip_list.append(
+                        [
+                            str(ipaddr)
+                            for ipaddr in ipaddress.summarize_address_range(
+                                ipaddress.IPv4Address(int(row[IP_START_INDEX])),
+                                ipaddress.IPv4Address(int(row[IP_END_INDEX])),
+                            )
+                        ][0]
+                    )
+
+        return ip_list
+
     def download_db(self) -> None:
         if self.cfg.ip2location_token == "":
             console.print(
@@ -121,9 +147,15 @@ class IP2L_Manager:
             f"{self.ip2l_dbs}/{self.cfg.ip2location_db_bin}.zip",
             f"{self.ip2l_dbs}/{self.cfg.ip2location_db_csv}.zip",
         )
-        
-        urllib.request.urlretrieve(f"https://www.ip2location.com/download/?token={self.cfg.ip2location_token}&file={self.cfg.ip2location_bin_code}", db_zips[0])
-        urllib.request.urlretrieve(f"https://www.ip2location.com/download/?token={self.cfg.ip2location_token}&file={self.cfg.ip2location_csv_code}", db_zips[1])
+
+        urllib.request.urlretrieve(
+            f"https://www.ip2location.com/download/?token={self.cfg.ip2location_token}&file={self.cfg.ip2location_bin_code}",
+            db_zips[0],
+        )
+        urllib.request.urlretrieve(
+            f"https://www.ip2location.com/download/?token={self.cfg.ip2location_token}&file={self.cfg.ip2location_csv_code}",
+            db_zips[1],
+        )
 
         for db_zip in db_zips:
             with ZipFile(db_zip, "r") as f:

@@ -5,7 +5,6 @@ import platform
 import time
 from datetime import datetime
 
-import requests
 import tomli
 
 from yokkaichi import __version__
@@ -24,31 +23,6 @@ def display_version() -> None:
         style="green",
     )
     exit()
-
-
-def get_country_ips(countries) -> list:
-    console.print(
-        "Note: IP Ranges provided by the tool might be inaccurate or incomplete. This will be fixed in the future releases. Sorry about that.",
-        style="yellow",
-    )
-    country_ip_list = []
-    for country in countries:
-        # Download CIDRs for country
-        cidr_list = requests.get(
-            f"https://raw.githubusercontent.com/herrbischoff/country-ip-blocks/master/ipv4/{country.lower()}.cidr"
-        )
-        # Check is the country valid
-        if cidr_list.text == "404: Not Found":
-            console.print(
-                f"[bold white]{country}[/bold white] is not a proper 2-letter code!",
-                style="red",
-            )
-            continue
-        # Add IPs to IP list
-        for ip in cidr_list.text.splitlines():
-            country_ip_list.append(ip)
-
-    return country_ip_list
 
 
 def load_ip_list(ip_list_location) -> list:
@@ -131,6 +105,13 @@ def main():
     else:
         ip2location: None = None
 
+    if (
+        cfg.use_ip2location
+        and cfg.masscan_scan
+        and cfg.masscan_ip_source == MasscanMethods.COUNTRIES
+    ):
+        masscan_ips: list = ip2location.get_country_cidr()
+
     scan_start = time.time()
 
     if cfg.ip_list_scan:
@@ -140,20 +121,7 @@ def main():
     else:
         ip_list: list = None
 
-    if cfg.masscan_scan:
-        masscan_ips_file: list = []
-        masscan_ips_countries: list = []
-        if cfg.masscan_ip_source == MasscanMethods.COUNTRIES:
-            # Get CIDR ranges for countries
-            masscan_ips_file = get_country_ips(cfg.masscan_country_list)
-        if cfg.masscan_ip_source == MasscanMethods.LIST:
-            # Load masscan IP list
-            masscan_ips_countries = load_ip_list(cfg.masscan_ip_list)
-
-        # Combine two sources of masscan IPs together
-        masscan_ips: list = masscan_ips_file + masscan_ips_countries
-    else:
-        masscan_ips: list = None
+    # TODO: Also add masscan IP list to masscan_ips
 
     # print(clr.Fore.CYAN + "Loading IPs")
     # ips = load_file()

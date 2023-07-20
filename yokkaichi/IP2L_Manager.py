@@ -3,8 +3,10 @@ import datetime
 import ipaddress
 import os
 import pathlib
+import platform
 import time
 import urllib
+from uuid import uuid4
 from zipfile import ZipFile
 
 from IP2Location import IP2Location
@@ -87,7 +89,7 @@ class IP2L_Manager:
             # Write current time in Unix secs
             f.write(str(round(time.time())))
 
-    def is_up_to_date(self) -> bool:
+    def is_up_to_date(self) -> str:
         YEAR_INDEX: int = 0
         MONTH_INDEX: int = 1
 
@@ -132,7 +134,17 @@ class IP2L_Manager:
                         ][0]
                     )
 
-        return ip_list
+        # Write the list into a temp file
+        if platform.system() == "Windows":
+            temp_dir: str = "%temp%"
+        else:
+            temp_dir: str = "/tmp"
+        ip_list_loc: str = f"{temp_dir}/{uuid4()}"
+        with open(ip_list_loc, "w") as f:
+            for ip in ip_list:
+                f.write(ip + "\n")
+
+        return ip_list_loc
 
     def download_db(self) -> None:
         if self.cfg.ip2location_token == "":

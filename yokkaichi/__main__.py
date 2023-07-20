@@ -105,7 +105,8 @@ def main():
         ip2location: None = None
 
     if cfg.use_ip2location and cfg.masscan_scan and cfg.masscan_country_scan:
-        masscan_ips: list = ip2location.get_country_cidr()
+        masscan_country_file: str = ip2location.get_country_cidr()
+        print(masscan_country_file)
 
     scan_start = time.time()
 
@@ -122,7 +123,11 @@ def main():
     # ips = load_file()
 
     scanner = ServerScan(
-        cfg=cfg, ip_list=ip_list, masscan_list=masscan_ips, ip2location=ip2location
+        cfg=cfg,
+        ip_list=ip_list,
+        masscan_list=masscan_ips,
+        masscan_country_file=masscan_country_file,
+        ip2location=ip2location,
     )
     scanner.start_scan()
 

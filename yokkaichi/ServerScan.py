@@ -20,7 +20,9 @@ from .structs import CFG, MinecraftServer
 
 
 class ServerScan:
-    def __init__(self, cfg, ip_list, masscan_list, ip2location) -> None:
+    def __init__(
+        self, cfg, ip_list, masscan_list, masscan_country_file, ip2location
+    ) -> None:
         self.cfg: CFG = cfg
 
         self.results: list = []

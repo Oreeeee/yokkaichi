@@ -70,8 +70,14 @@ class ServerScan:
         # Servers from the IP List
         if self.cfg.ip_list_scan:
             for ip in self.ip_list:
-                for port in self.cfg.ports:
-                    self.queue.put(ServerResult(ip=ip, port=port))
+                split_ip_and_port: list = ip.split(":")
+                if len(split_ip_and_port) == 2:
+                    self.queue.put(
+                        ServerResult(ip=split_ip_and_port[0], port=split_ip_and_port[1])
+                    )
+                else:
+                    for port in self.cfg.ports:
+                        self.queue.put(ServerResult(ip=ip, port=port))
 
         # Stop the scanning and wait for all threads to stop
         self.running = False

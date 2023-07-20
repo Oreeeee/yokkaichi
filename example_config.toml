@@ -19,15 +19,14 @@ masscan = true # Recommended, fast
 ip_list = false # Not recommended, slow, outdated
 
 [type.options_masscan]
-ip_source = "countries" # Availible types: "countries", "list"
 args = "" # Additional arguments for masscan
-output = false
-output_location = "masscan_out.json" # Where to output masscan's results (not required)
 
 [type.options_masscan.countries]
+enabled = true
 countries = ["US", "DE"] # Standard TOML array, use ISO 3166-1 alpha-2 codes (the 2 letter ones)
 
 [type.options_masscan.list]
+enabled = false
 list = "masscan_ips.txt" # Location to the list of IPs to scan with masscan, separated by newlines
 
 [type.options_ip_list]
@@ -35,7 +34,8 @@ list = "ips.txt" # Location to the list of IPs to scan, separated by newlines
 
 [scanner]
 ports = "25564-25566,25569" # Port list (not TOML's format! Similarly to nmap and masscan splits ports by commas and sets ranges with hyphens)
-threads = 100 # Leave this at default unless you have a lot of servers
+threads = 100 # Setting this to a higher value will make the scanning faster, but too much can crash the system or the network
+timeout = 3.0 # Timeout in seconds before assuming the server is offline
 offline_printing = "disabled" # Should the script output offline servers. "disabled" will print nothing, "offline" will print offline servers and "full_traceback" will print entire traceback
 output = "out.json" # IMPORTANT! That's where the servers go!
 

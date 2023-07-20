@@ -108,8 +108,6 @@ def main():
         masscan_country_file: str = ip2location.get_country_cidr()
         print(masscan_country_file)
 
-    scan_start = time.time()
-
     if cfg.ip_list_scan:
         console.print("Loading IPs", style="cyan")
         ip_list: list = load_ip_list(cfg.ip_list)
@@ -117,15 +115,11 @@ def main():
     else:
         ip_list: list = None
 
-    # TODO: Also add masscan IP list to masscan_ips
-
-    # print(clr.Fore.CYAN + "Loading IPs")
-    # ips = load_file()
+    scan_start = time.time()
 
     scanner = ServerScan(
         cfg=cfg,
         ip_list=ip_list,
-        masscan_list=masscan_ips,
         masscan_country_file=masscan_country_file,
         ip2location=ip2location,
     )

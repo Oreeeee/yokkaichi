@@ -9,8 +9,8 @@ import traceback
 from datetime import datetime
 from queue import Queue
 
-import pyScannerWrapper
 from mcstatus import BedrockServer, JavaServer
+from pyScannerWrapper.scanners import Masscan
 from pyScannerWrapper.structs import ServerResult
 
 from .constants import console
@@ -20,14 +20,12 @@ from .structs import CFG, MinecraftServer
 
 
 class ServerScan:
-    def __init__(
-        self, cfg, ip_list, masscan_list, masscan_country_file, ip2location
-    ) -> None:
+    def __init__(self, cfg, ip_list, masscan_country_file, ip2location) -> None:
         self.cfg: CFG = cfg
 
         self.results: list = []
         self.ip_list: list = ip_list
-        self.masscan_list: list = masscan_list
+        self.masscan_country_file: list = masscan_country_file
         self.lock: threading.Lock = threading.Lock()
         self.queue: Queue = Queue()
         self.running: bool = False
@@ -52,9 +50,12 @@ class ServerScan:
 
         # masscan
         if self.cfg.masscan_scan:
-            mas: pyScannerWrapper.scanners.Masscan = pyScannerWrapper.scanners.Masscan()
+            mas: Masscan = Masscan()
             mas.args = self.cfg.masscan_args
-            mas.input_ip_list = self.masscan_list
+            if self.cfg.masscan_ip_scan:
+                mas.args = f"{mas.args} -iL {self.cfg.masscan_ip_list}"
+            if self.cfg.masscan_country_scan:
+                mas.args = f"{mas.args} -iL {self.masscan_country_file}"
             mas.input_port_list = self.cfg.ports
             if platform.system() == "Linux":
                 mas.sudo = True

@@ -56,7 +56,11 @@ class ServerScan:
                 mas.args = f"{mas.args} -iL {self.cfg.masscan_ip_list}"
             if self.cfg.masscan_country_scan:
                 mas.args = f"{mas.args} -iL {self.masscan_country_file}"
-            mas.input_port_list = self.cfg.ports
+            # Convert ports to str
+            str_ports: list = []
+            for p in self.cfg.ports:
+                str_ports.append(str(p))
+            mas.input_port_list = str_ports
             if platform.system() == "Linux":
                 mas.sudo = True
             mas_yielder = mas.scan_yielder()

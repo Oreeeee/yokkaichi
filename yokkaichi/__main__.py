@@ -106,7 +106,6 @@ def main():
 
     if cfg.use_ip2location and cfg.masscan_scan and cfg.masscan_country_scan:
         masscan_country_file: str = ip2location.get_country_cidr()
-        print(masscan_country_file)
 
     if cfg.ip_list_scan:
         console.print("Loading IPs", style="cyan")

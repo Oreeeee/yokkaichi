@@ -1,7 +1,7 @@
 import tomli
 
 from .constants import console
-from .enums import MasscanMethods, Platforms
+from .enums import Platforms
 from .port_parser import parse_port_range
 from .structs import CFG
 
@@ -29,15 +29,14 @@ masscan = true # Recommended, fast
 ip_list = false # Not recommended, slow, outdated
 
 [type.options_masscan]
-ip_source = "countries" # Availible types: "countries", "list"
 args = "" # Additional arguments for masscan
-output = false
-output_location = "masscan_out.json" # Where to output masscan's results (not required)
 
 [type.options_masscan.countries]
+enabled = true
 countries = ["US", "DE"] # Standard TOML array, use ISO 3166-1 alpha-2 codes (the 2 letter ones)
 
 [type.options_masscan.list]
+enabled = false
 list = "masscan_ips.txt" # Location to the list of IPs to scan with masscan, separated by newlines
 
 [type.options_ip_list]
@@ -45,7 +44,8 @@ list = "ips.txt" # Location to the list of IPs to scan, separated by newlines
 
 [scanner]
 ports = "25564-25566,25569" # Port list (not TOML's format! Similarly to nmap and masscan splits ports by commas and sets ranges with hyphens)
-threads = 100 # Leave this at default unless you have a lot of servers
+threads = 100 # Setting this to a higher value will make the scanning faster, but too much can crash the system or the network
+timeout = 3.0 # Timeout in seconds before assuming the server is offline
 offline_printing = "disabled" # Should the script output offline servers. "disabled" will print nothing, "offline" will print offline servers and "full_traceback" will print entire traceback
 output = "out.json" # IMPORTANT! That's where the servers go!
 
@@ -93,28 +93,23 @@ def parse_cfg(cfg_location):
     cfg.masscan_scan = cfg_file["type"]["masscan"]
     cfg.ip_list_scan = cfg_file["type"]["ip_list"]
 
-    if (
-        cfg_file["type"]["options_masscan"]["ip_source"]
-        == MasscanMethods.COUNTRIES.value
-    ):
-        cfg.masscan_ip_source = MasscanMethods.COUNTRIES
-    elif cfg_file["type"]["options_masscan"]["ip_source"] == MasscanMethods.LIST.value:
-        cfg.masscan_ip_source = MasscanMethods.LIST
-
     cfg.masscan_args = cfg_file["type"]["options_masscan"]["args"]
-    cfg.masscan_output = cfg_file["type"]["options_masscan"]["output"]
-    cfg.masscan_output_location = cfg_file["type"]["options_masscan"]["output_location"]
 
+    cfg.masscan_country_scan = cfg_file["type"]["options_masscan"]["countries"][
+        "enabled"
+    ]
     cfg.masscan_country_list = cfg_file["type"]["options_masscan"]["countries"][
         "countries"
     ]
 
+    cfg.masscan_ip_scan = cfg_file["type"]["options_masscan"]["list"]["enabled"]
     cfg.masscan_ip_list = cfg_file["type"]["options_masscan"]["list"]["list"]
 
     cfg.ip_list = cfg_file["type"]["options_ip_list"]["list"]
 
     cfg.ports = parse_port_range(cfg_file["scanner"]["ports"])
     cfg.threads = cfg_file["scanner"]["threads"]
+    cfg.timeout = cfg_file["scanner"]["timeout"]
     cfg.offline_printing = cfg_file["scanner"]["offline_printing"]
     cfg.output = cfg_file["scanner"]["output"]
 

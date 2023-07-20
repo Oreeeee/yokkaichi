@@ -1,7 +1,7 @@
 import tomli
 
 import yokkaichi.config_loader
-from yokkaichi.enums import MasscanMethods, Platforms
+from yokkaichi.enums import Platforms
 from yokkaichi.structs import CFG
 
 DEFAULT_CFG = """
@@ -19,15 +19,14 @@ masscan = true
 ip_list = false
 
 [type.options_masscan]
-ip_source = "countries"
 args = "--rate 5000"
-output = false
-output_location = "masscan_out.json"
 
 [type.options_masscan.countries]
+enabled = true
 countries = ["US", "DE"]
 
 [type.options_masscan.list]
+enabled = true
 list = "masscan_ips.txt"
 
 [type.options_ip_list]
@@ -36,6 +35,7 @@ list = "ips.txt"
 [scanner]
 ports = "25564-25566,25569"
 threads = 100
+timeout = 3.0
 offline_printing = "disabled"
 output = "out.json"
 
@@ -62,15 +62,15 @@ def test_parse_cfg(monkeypatch):
         query_java=False,
         masscan_scan=True,
         ip_list_scan=False,
-        masscan_ip_source=MasscanMethods.COUNTRIES,
         masscan_args="--rate 5000",
-        masscan_output=False,
-        masscan_output_location="masscan_out.json",
+        masscan_country_scan=True,
         masscan_country_list=["US", "DE"],
+        masscan_ip_scan=True,
         masscan_ip_list="masscan_ips.txt",
         ip_list="ips.txt",
         ports=[25564, 25565, 25566, 25569],
         threads=100,
+        timeout=3.0,
         offline_printing="disabled",
         output="out.json",
         use_ip2location=False,

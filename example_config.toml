@@ -5,7 +5,7 @@
 # You can pass this without the file location and it will look for yokkaichi.toml in your current location.
 # Do not comment any of the config's options, it will currently cause a crash
 
-version = "1" # Changed for every change breaking config compatibility
+version = "2" # Changed for every change breaking config compatibility
 
 [platforms]
 java = true

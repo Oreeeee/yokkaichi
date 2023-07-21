@@ -5,7 +5,7 @@ from .enums import Platforms
 from .port_parser import parse_port_range
 from .structs import CFG
 
-CONFIG_VERSION = "1"
+CONFIG_VERSION = "2"
 # TODO: Bring this back to a separate file
 SAMPLE_CFG = """
 # This is an example configuration file for Yokkaichi.
@@ -15,7 +15,7 @@ SAMPLE_CFG = """
 # You can pass this without the file location and it will look for yokkaichi.toml in your current location.
 # Do not comment any of the config's options, it will currently cause a crash
 
-version = "1" # Changed for every change breaking config compatibility
+version = "2" # Changed for every change breaking config compatibility
 
 [platforms]
 java = true

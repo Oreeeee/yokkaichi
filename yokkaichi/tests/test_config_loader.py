@@ -5,7 +5,7 @@ from yokkaichi.enums import Platforms
 from yokkaichi.structs import CFG
 
 DEFAULT_CFG = """
-version = "1"
+version = "2"
 
 [platforms]
 java = true
@@ -88,7 +88,7 @@ def test_parse_cfg_config_version_check(monkeypatch):
 
     def fake_cfg(x):
         cfg = DEFAULT_CFG
-        cfg = cfg.replace('version = "1"', 'version = "0"')
+        cfg = cfg.replace('version = "2"', 'version = "0"')
         return tomli.loads(cfg)
 
     monkeypatch.setattr("builtins.exit", mockexit)

@@ -87,7 +87,7 @@ class ServerScan:
     def scan_queue(self) -> None:
         while self.running:
             try:
-                mas_result: ServerResult = self.queue.get(timeout=1)
+                mas_result: ServerResult = self.queue.get(timeout=0.01)
             except queue.Empty:
                 continue
 

@@ -20,7 +20,6 @@ class CFG:
     output: str = field(default_factory=str)
     use_ip2location: bool = field(default_factory=bool)
     ip2location_dbs: str = field(default_factory=str)
-    ip2location_token: str = field(default_factory=str)
     ip2location_db_bin: str = field(default_factory=str)
     ip2location_db_csv: str = field(default_factory=str)
     ip2location_bin_code: str = field(default_factory=str)

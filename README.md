@@ -43,6 +43,14 @@ Check out [DEVELOPMENT_INSTALL.md](https://github.com/Oreeeee/yokkaichi/blob/mas
 ### Usage
 When starting the script for the first time, `yokkaichi.toml` will get created. You will have to adjust it to your preferences. Optionally, you can also pass in `-c` to set a different name or location of the config file.
 
+### How to get geolocating to work?
+Yokkaichi uses IP2Location LITE for anything geolocation related. This includes getting the location of the server, and generating the CIDR ranges for scanning. It is a offline, free to use download, so there are no rate limits. However, the database is not redistributed with Yokkaichi, due to IP2Location updating their LITE databases every month. Instead, it will be downloaded and updated automatically everytime you run this script for the first time in the month. To get the downloading to work, you need to have an IP2Location LITE Download Token. To get one, follow these steps.
+
+1. Go to [IP2Location LITE](https://lite.ip2location.com/) website and register (or log into) an account (which is completly free forever).
+2. Click on the name in the upper right corner and select "Database Download".
+3. Copy your Download Token.
+4. Set the `IP2LOCATION_LITE_TOKEN` environment variable to your token.
+5. Now, you will be able to use the automatic downloads feature.
 
 ### Using the masscan integration
 You need to have [masscan](https://github.com/robertdavidgraham/masscan) in your PATH, or in the same directory from which you are running this software. Make sure that the binary is named `masscan` (Unix) or `masscan.exe` (Windows).

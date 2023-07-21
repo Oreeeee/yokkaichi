@@ -9,11 +9,12 @@ import tomli
 
 from yokkaichi import __version__
 
-from . import config_loader
+from . import config_loader, env_loader
 from .constants import console
 from .IP2L_Manager import IP2L_Manager
 from .port_parser import parse_port_range
 from .ServerScan import ServerScan
+from .structs import EnvVariables
 
 
 def display_version() -> None:
@@ -63,6 +64,7 @@ def main():
     if args.show_version:
         # Show the version and exit
         display_version()
+
     # Load the config file
     if args.config_file != None:
         try:
@@ -85,6 +87,9 @@ def main():
                 )
                 exit(0)
 
+    # Load environment variables
+    env_variables: EnvVariables = env_loader.load_env()
+
     # Check does output file exists
     if pathlib.Path(cfg.output).is_file():
         console.print(
@@ -100,7 +105,7 @@ def main():
 
     if cfg.use_ip2location:
         # Initialize IP2Location
-        ip2location: IP2L_Manager = IP2L_Manager(cfg)
+        ip2location: IP2L_Manager = IP2L_Manager(cfg, env_variables)
     else:
         ip2location: None = None
 

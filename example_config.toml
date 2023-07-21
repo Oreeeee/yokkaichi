@@ -42,7 +42,6 @@ output = "out.json" # IMPORTANT! That's where the servers go!
 [ip2location]
 enabled = false # Enable getting the location of the server
 databases_location = "ip2location_dbs/" # Where are the databases stored
-token = "" # Insert your download token here for automatic updates
 bin_filename = "IP2LOCATION-LITE-DB11.BIN"
 csv_filename = "IP2LOCATION-LITE-DB1.CSV"
 bin_code = "DB11LITEBIN" # Avoid changing this

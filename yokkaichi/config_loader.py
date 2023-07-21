@@ -52,7 +52,6 @@ output = "out.json" # IMPORTANT! That's where the servers go!
 [ip2location]
 enabled = false # Enable getting the location of the server
 databases_location = "ip2location_dbs/" # Where are the databases stored
-token = "" # Insert your download token here for automatic updates
 bin_filename = "IP2LOCATION-LITE-DB11.BIN"
 csv_filename = "IP2LOCATION-LITE-DB1.CSV"
 bin_code = "DB11LITEBIN" # Avoid changing this
@@ -115,7 +114,6 @@ def parse_cfg(cfg_location):
 
     cfg.use_ip2location = cfg_file["ip2location"]["enabled"]
     cfg.ip2location_dbs = cfg_file["ip2location"]["databases_location"]
-    cfg.ip2location_token = cfg_file["ip2location"]["token"]
     cfg.ip2location_db_bin = cfg_file["ip2location"]["bin_filename"]
     cfg.ip2location_db_csv = cfg_file["ip2location"]["csv_filename"]
     cfg.ip2location_bin_code = cfg_file["ip2location"]["bin_code"]

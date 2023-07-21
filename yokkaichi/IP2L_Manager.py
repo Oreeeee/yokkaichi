@@ -5,7 +5,7 @@ import os
 import pathlib
 import platform
 import time
-import urllib
+import urllib.request
 from uuid import uuid4
 from zipfile import ZipFile
 
@@ -13,14 +13,15 @@ from IP2Location import IP2Location
 
 from .constants import console
 from .enums import IP2LocDBStatus, IP2LocManagerUserAnswers
-from .structs import CFG
+from .structs import CFG, EnvVariables
 
 
 class IP2L_Manager:
-    def __init__(self, cfg: CFG) -> None:
+    def __init__(self, cfg: CFG, env: EnvVariables) -> None:
         self.cfg = cfg
 
         self.ip2l_dbs: str = self.cfg.ip2location_dbs
+        self.env: EnvVariables = env
 
         # Try to open the last updated date file
         opening_status: IP2LocDBStatus = self.open_last_updated_file()
@@ -147,9 +148,9 @@ class IP2L_Manager:
         return ip_list_loc
 
     def download_db(self) -> None:
-        if self.cfg.ip2location_token == "":
+        if self.env.ip2location_lite_token == None:
             console.print(
-                "To automatically download IP2Location database, a IP2Location LITE token must be provided! Either provide it in the config, or use manual update.",
+                "To automatically download IP2Location database, a IP2Location LITE token must be provided! Either set the IP2LOCATION_LITE_TOKEN environment variable, or use manual update.",
                 style="red",
             )
             exit(1)
@@ -161,11 +162,11 @@ class IP2L_Manager:
         )
 
         urllib.request.urlretrieve(
-            f"https://www.ip2location.com/download/?token={self.cfg.ip2location_token}&file={self.cfg.ip2location_bin_code}",
+            f"https://www.ip2location.com/download/?token={self.env.ip2location_lite_token}&file={self.cfg.ip2location_bin_code}",
             db_zips[0],
         )
         urllib.request.urlretrieve(
-            f"https://www.ip2location.com/download/?token={self.cfg.ip2location_token}&file={self.cfg.ip2location_csv_code}",
+            f"https://www.ip2location.com/download/?token={self.env.ip2location_lite_token}&file={self.cfg.ip2location_csv_code}",
             db_zips[1],
         )
 

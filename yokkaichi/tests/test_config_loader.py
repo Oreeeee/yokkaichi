@@ -42,7 +42,6 @@ output = "out.json"
 [ip2location]
 enabled = false
 databases_location = "ip2location_dbs/"
-token = "dummy"
 bin_filename = "IP2LOCATION-LITE-DB11.BIN"
 csv_filename = "IP2LOCATION-LITE-DB1.CSV"
 bin_code = "DB11LITEBIN"
@@ -75,7 +74,6 @@ def test_parse_cfg(monkeypatch):
         output="out.json",
         use_ip2location=False,
         ip2location_dbs="ip2location_dbs/",
-        ip2location_token="dummy",
         ip2location_db_bin="IP2LOCATION-LITE-DB11.BIN",
         ip2location_db_csv="IP2LOCATION-LITE-DB1.CSV",
         ip2location_bin_code="DB11LITEBIN",

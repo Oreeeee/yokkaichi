@@ -116,9 +116,9 @@ class ServerScan:
 
     def check_server(self, ip: str, port: int, server_platform: Platforms) -> None:
         if server_platform == Platforms.JAVA:
-            server_lookup = JavaServer.lookup(f"{ip}:{port}")
+            server_lookup = JavaServer.lookup(f"{ip}:{port}", timeout=self.cfg.timeout)
         if server_platform == Platforms.BEDROCK:
-            server_lookup = BedrockServer.lookup(f"{ip}:{port}")
+            server_lookup = BedrockServer.lookup(f"{ip}:{port}", timeout=self.cfg.timeout)
 
         # Get player list
         if self.cfg.query_java:

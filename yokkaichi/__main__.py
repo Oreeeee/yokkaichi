@@ -138,7 +138,7 @@ def main():
     scan_end_time = datetime.fromtimestamp(scan_end).isoformat()
     scan_time = time.strftime("%H:%M:%S", time.gmtime(scan_end - scan_start))
     console.print(
-        f"[bold white]{len(scanner.results)}[/bold white] servers found.\nStarted: [bold white]{scan_start_time}[/bold white].\nEnded: [bold white]{scan_end_time}[/bold white].\nTook [bold white]{scan_time}[/bold white].",
+        f"[bold white]{len(scanner.results_obj.results)}[/bold white] servers found.\nStarted: [bold white]{scan_start_time}[/bold white].\nEnded: [bold white]{scan_end_time}[/bold white].\nTook [bold white]{scan_time}[/bold white].",
         style="magenta",
     )
 

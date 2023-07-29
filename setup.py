@@ -29,7 +29,7 @@ setup(
         "mcstatus==11.0.0",
         "IP2Location==8.10.0",
         "tomli==2.0.1;python_version<'3.11'",
-        "pyScannerWrapper==0.2.0",
+        "pyScannerWrapper==0.2.1",
     ],
     extras_require={"testing": ["pytest"]},
     entry_points={"console_scripts": ["yokkaichi=yokkaichi.__main__:main"]},

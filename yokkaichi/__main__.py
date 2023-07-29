@@ -2,10 +2,14 @@
 import argparse
 import pathlib
 import platform
+import sys
 import time
 from datetime import datetime
 
-import tomli
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 from yokkaichi import __version__
 
@@ -69,7 +73,7 @@ def main():
     if args.config_file != None:
         try:
             cfg = config_loader.parse_cfg(args.config_file)
-        except tomli.TOMLDecodeError:
+        except tomllib.TOMLDecodeError:
             console.print(
                 "Config file is invalid! (Failed parsing TOML)", style="bold red"
             )

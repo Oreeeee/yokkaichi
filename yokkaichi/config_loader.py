@@ -1,4 +1,9 @@
-import tomli
+import sys
+
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 from .constants import console
 from .enums import Platforms
@@ -62,7 +67,7 @@ cache = true # Enable for faster speed at the cost of RAM
 
 def load_cfg(cfg_location):
     with open(cfg_location, "rb") as f:
-        cfg_file = tomli.load(f)
+        cfg_file = tomllib.load(f)
     return cfg_file
 
 

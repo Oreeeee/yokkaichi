@@ -1,4 +1,9 @@
-import tomli
+import sys
+
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 import yokkaichi.config_loader
 from yokkaichi.enums import Platforms
@@ -52,7 +57,7 @@ cache = true
 
 def test_parse_cfg(monkeypatch):
     def default_cfg(x):
-        return tomli.loads(DEFAULT_CFG)
+        return tomllib.loads(DEFAULT_CFG)
 
     monkeypatch.setattr(yokkaichi.config_loader, "load_cfg", default_cfg)
 
@@ -89,7 +94,7 @@ def test_parse_cfg_config_version_check(monkeypatch):
     def fake_cfg(x):
         cfg = DEFAULT_CFG
         cfg = cfg.replace('version = "2"', 'version = "0"')
-        return tomli.loads(cfg)
+        return tomllib.loads(cfg)
 
     monkeypatch.setattr("builtins.exit", mockexit)
     monkeypatch.setattr(yokkaichi.config_loader, "load_cfg", fake_cfg)

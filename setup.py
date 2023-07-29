@@ -49,5 +49,6 @@ setup(
         "yokkaichi.constants",
         "yokkaichi.structs",
         "yokkaichi.enums",
+        "yokkaichi_tests",
     ],
 )

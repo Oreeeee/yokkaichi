@@ -32,7 +32,12 @@ setup(
         "pyScannerWrapper==0.2.1",
     ],
     extras_require={"testing": ["pytest"]},
-    entry_points={"console_scripts": ["yokkaichi=yokkaichi.__main__:main"]},
+    entry_points={
+        "console_scripts": [
+            "yokkaichi=yokkaichi.__main__:main",
+            "yokkaichi_tests=yokkaichi_tests.__main__:main",
+        ]
+    },
     classifiers=[
         "Environment :: Console",
         "License :: OSI Approved :: MIT License",

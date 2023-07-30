@@ -7,5 +7,9 @@ except ImportError:
     sys.exit(1)
 
 
-if __name__ == "__main__":
+def main():
     sys.exit(pytest.main(["-vv"]))
+
+
+if __name__ == "__main__":
+    main()

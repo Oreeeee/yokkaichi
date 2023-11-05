@@ -10,9 +10,9 @@ from threading import Lock, Thread
 from mcstatus import BedrockServer, JavaServer
 from pyScannerWrapper.structs import ServerResult
 
-from .constants import console
 from .enums import OfflinePrintingModes, Platforms
 from .IP2L_Manager import IP2L_Manager
+from .Printer import Printer
 from .Results import Results
 from .structs import CFG, MinecraftServer
 
@@ -61,17 +61,19 @@ class Checker:
                             self.cfg.offline_printing
                             == OfflinePrintingModes.OFFLINE.value
                         ):
-                            console.print(
-                                f"[-] {mas_result.ip}:{mas_result.port} for {server_platform.value} is offline!",
-                                style="red",
+                            Printer.server_offline(
+                                ip=mas_result.ip,
+                                port=mas_result.port,
+                                platform=server_platform.value,
                             )
                         if (
                             self.cfg.offline_printing
                             == OfflinePrintingModes.FULL_TRACEBACK.value
                         ):
-                            console.print(
-                                f"[-] {mas_result.ip}:{mas_result.port} for {server_platform.value} is offline!",
-                                style="red",
+                            Printer.server_offline(
+                                ip=mas_result.ip,
+                                port=mas_result.port,
+                                platform=server_platform.value,
                             )
                             traceback.print_exc()
 
@@ -88,7 +90,7 @@ class Checker:
             try:
                 player_list = server_lookup.query().players.names
             except Exception as e:
-                console.print(f"[!] Query failed for {ip}:{port}", style="yellow")
+                Printer.query_failed(ip=ip, port=port)
                 player_list = None
         else:
             player_list = None
@@ -122,7 +124,4 @@ class Checker:
 
         self.results_obj.add_to_file(server_info)
         with self.lock:
-            console.print(
-                f"[+] {server_platform.value} server found at {ip}:{port}!",
-                style="green",
-            )
+            Printer.server_found(platform=server_platform.value, ip=ip, port=port)

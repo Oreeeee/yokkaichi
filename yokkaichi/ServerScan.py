@@ -9,8 +9,8 @@ from pyScannerWrapper.scanners import Masscan
 from pyScannerWrapper.structs import ServerResult
 
 from .Checker import Checker
-from .constants import console
 from .IP2L_Manager import IP2L_Manager
+from .Printer import Printer
 from .Results import Results
 from .structs import CFG
 
@@ -26,10 +26,7 @@ class ServerScan:
         self.ip2location: IP2L_Manager = ip2location
 
     def start_scan(self) -> None:
-        console.print(
-            f"Loading [bold white]{self.cfg.threads}[/bold white] threads!",
-            style="cyan",
-        )
+        Printer.loading_threads(thread_count=self.cfg.threads)
 
         checker_list: list = []
 

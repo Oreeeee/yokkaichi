@@ -1,4 +1,4 @@
-from .constants import console
+from .Printer import Printer
 
 
 def parse_port_range(unparsed_args: str) -> list:
@@ -6,9 +6,7 @@ def parse_port_range(unparsed_args: str) -> list:
         try:
             int(port)
         except TypeError:
-            console.print(
-                f"Couldn't parse: [bold white]{port}[/bold white]", style="red"
-            )
+            Printer.couldn_parse_port(port=port)
             exit(1)
 
     ports: list[int] = []

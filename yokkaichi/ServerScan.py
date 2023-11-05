@@ -16,9 +16,8 @@ from .structs import CFG
 
 
 class ServerScan:
-    def __init__(self, cfg, ip_list, masscan_country_file, ip2location) -> None:
+    def __init__(self, cfg, masscan_country_file, ip2location) -> None:
         self.cfg: CFG = cfg
-        self.ip_list: list = ip_list
         self.masscan_country_file: list = masscan_country_file
         self.queue: Queue = Queue()
         self.lock: Lock = Lock()
@@ -59,16 +58,26 @@ class ServerScan:
                 self.queue.put(server)
 
         # Servers from the IP List
+        # if self.cfg.ip_list_scan:
+        #     for ip in self.ip_list:
+        #         split_ip_and_port: list = ip.split(":")
+        #         if len(split_ip_and_port) == 2:
+        #             self.queue.put(
+        #                 ServerResult(ip=split_ip_and_port[0], port=split_ip_and_port[1])
+        #             )
+        #         else:
+        #             for port in self.cfg.ports:
+        #                 self.queue.put(ServerResult(ip=ip, port=port))
         if self.cfg.ip_list_scan:
-            for ip in self.ip_list:
-                split_ip_and_port: list = ip.split(":")
-                if len(split_ip_and_port) == 2:
-                    self.queue.put(
-                        ServerResult(ip=split_ip_and_port[0], port=split_ip_and_port[1])
-                    )
-                else:
-                    for port in self.cfg.ports:
-                        self.queue.put(ServerResult(ip=ip, port=port))
+            ip_list_p = open(self.cfg.ip_list, "r")
+            reading_file: bool = True
+            while reading_file:
+                line = ip_list_p.readline().strip()
+                if line == "":  # Stop reading file on EOF
+                    reading_file = False
+                for port in self.cfg.ports:
+                    self.queue.put(ServerResult(ip=line, port=port))
+            ip_list_p.close()
 
         # Stop the scanning
         stopping: bool = True

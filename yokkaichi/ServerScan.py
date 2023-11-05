@@ -1,7 +1,9 @@
 # Import modules
+import ipaddress
 import platform
 import queue
 import time
+import traceback
 from queue import Queue
 from threading import Lock
 
@@ -9,6 +11,7 @@ from pyScannerWrapper.scanners import Masscan
 from pyScannerWrapper.structs import ServerResult
 
 from .Checker import Checker
+from .enums import ScanTypes
 from .IP2L_Manager import IP2L_Manager
 from .Printer import Printer
 from .Results import Results
@@ -16,10 +19,9 @@ from .structs import CFG
 
 
 class ServerScan:
-    def __init__(self, cfg, ip_list, masscan_country_file, ip2location) -> None:
+    def __init__(self, cfg, ip_list, ip2location) -> None:
         self.cfg: CFG = cfg
         self.ip_list: list = ip_list
-        self.masscan_country_file: list = masscan_country_file
         self.queue: Queue = Queue()
         self.lock: Lock = Lock()
         self.results_obj: Results = Results(cfg)
@@ -40,13 +42,10 @@ class ServerScan:
             checker.start()
 
         # masscan
-        if self.cfg.masscan_scan:
+        if self.cfg.scan_type == ScanTypes.MASSCAN.value:
             mas: Masscan = Masscan()
             mas.args = self.cfg.masscan_args
-            if self.cfg.masscan_ip_scan:
-                mas.args = f"{mas.args} -iL {self.cfg.masscan_ip_list}"
-            if self.cfg.masscan_country_scan:
-                mas.args = f"{mas.args} -iL {self.masscan_country_file}"
+            mas.args = f"{mas.args} -iL {self.ip_list}"
             # Convert ports to str
             str_ports: list = []
             for p in self.cfg.ports:
@@ -58,17 +57,36 @@ class ServerScan:
             for server in mas_yielder:
                 self.queue.put(server)
 
-        # Servers from the IP List
-        if self.cfg.ip_list_scan:
-            for ip in self.ip_list:
-                split_ip_and_port: list = ip.split(":")
-                if len(split_ip_and_port) == 2:
-                    self.queue.put(
-                        ServerResult(ip=split_ip_and_port[0], port=split_ip_and_port[1])
-                    )
-                else:
+        # ping scan
+        if self.cfg.scan_type == ScanTypes.PING_SCAN.value:
+            ip_list_p = open(self.ip_list, "r")
+            reading_file: bool = True
+            while reading_file:
+                line = ip_list_p.readline().strip()
+                if line == "":  # Stop reading file on EOF
+                    reading_file = False
+
+                if ":" in line:  # IP:Port format
+                    ip, port = line.split(":")
+                    self.queue.put(ServerResult(ip=ip, port=port))
+                    continue
+
+                # Check is the line a valid IP address or CIDR range
+                try:
+                    ipaddress.ip_network(line)
+                except ValueError:
+                    traceback.print_exc()
+                    continue
+
+                if "/" in line:  # CIDR format
+                    for ip in ipaddress.ip_network(line).hosts():
+                        for port in self.cfg.ports:
+                            self.queue.put(ServerResult(ip=str(ip), port=port))
+                else:  # IP list format
                     for port in self.cfg.ports:
-                        self.queue.put(ServerResult(ip=ip, port=port))
+                        self.queue.put(ServerResult(ip=line, port=port))
+
+            ip_list_p.close()
 
         # Stop the scanning
         stopping: bool = True

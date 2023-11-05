@@ -22,21 +22,6 @@ from .ServerScan import ServerScan
 from .structs import EnvVariables
 
 
-def load_ip_list(ip_list_location) -> list:
-    ips = []
-    # Load file
-    try:
-        with open(ip_list_location, "r") as f:
-            ip_list = f.readlines()
-            for ip in ip_list:
-                ips.append(ip.strip())
-    except FileNotFoundError:
-        Printer.ip_list_not_found()
-        exit(1)
-
-    return ips
-
-
 def main():
     parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument(
@@ -97,25 +82,19 @@ def main():
     else:
         ip2location: None = None
 
-    if cfg.use_ip2location and cfg.masscan_scan and cfg.masscan_country_scan:
-        masscan_country_file: str = ip2location.get_country_cidr()
+    if cfg.use_ip2location and cfg.countries != []:
+        ip_list: str = ip2location.get_country_cidr()
+    elif cfg.ip_list != "":
+        ip_list: str = cfg.ip_list
     else:
-        masscan_country_file: str = ""
-
-    if cfg.ip_list_scan:
-        Printer.loading_ips()
-        ip_list: list = load_ip_list(cfg.ip_list)
-        # console.print(f"Loaded {len(ip_list)} IPs", style="green")
-        Printer.loaded_ips(ip_count=len(ip_list))
-    else:
-        ip_list: list = None
+        Printer.no_input_list_specified()
+        exit(1)
 
     scan_start = time.time()
 
     scanner = ServerScan(
         cfg=cfg,
         ip_list=ip_list,
-        masscan_country_file=masscan_country_file,
         ip2location=ip2location,
     )
     scanner.start_scan()

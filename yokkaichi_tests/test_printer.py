@@ -148,6 +148,11 @@ def test_printer():
             expected_style="cyan",
             kwargs={"thread_count": "100"},
         ),
+        PrinterTest(
+            method=Printer.no_input_list_specified,
+            expected_output="No input list specified! Choose either scanning by countries or from IP list. Quitting...",
+            expected_style="red",
+        ),
     ]
 
     for printer_test in printer_tests:

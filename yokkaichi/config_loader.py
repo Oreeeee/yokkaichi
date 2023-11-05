@@ -10,7 +10,7 @@ from .port_parser import parse_port_range
 from .Printer import Printer
 from .structs import CFG
 
-CONFIG_VERSION = "2"
+CONFIG_VERSION = "3"
 # TODO: Bring this back to a separate file
 SAMPLE_CFG = """
 # This is an example configuration file for Yokkaichi.
@@ -20,7 +20,7 @@ SAMPLE_CFG = """
 # You can pass this without the file location and it will look for yokkaichi.toml in your current location.
 # Do not comment any of the config's options, it will currently cause a crash
 
-version = "2" # Changed for every change breaking config compatibility
+version = "3" # Changed for every change breaking config compatibility
 
 [platforms]
 java = true
@@ -29,30 +29,18 @@ bedrock = false
 [platforms.additional]
 java_query = false # Use the Query protocol (more info, but a little bit broken and slow right now)
 
-[type]
-masscan = true # Recommended, fast
-ip_list = false # Not recommended, slow, outdated
-
-[type.options_masscan]
-args = "" # Additional arguments for masscan
-
-[type.options_masscan.countries]
-enabled = true
-countries = ["US", "DE"] # Standard TOML array, use ISO 3166-1 alpha-2 codes (the 2 letter ones)
-
-[type.options_masscan.list]
-enabled = false
-list = "masscan_ips.txt" # Location to the list of IPs to scan with masscan, separated by newlines
-
-[type.options_ip_list]
-list = "ips.txt" # Location to the list of IPs to scan, separated by newlines
-
 [scanner]
+type = "ping_scan" # "masscan" type is faster, but less accurate and requires root/admin, and "ping_scan" is slower but more accurate and doesn't require escalated priviledges
+countries = ["US", "DE"] # Countries to scan, standard TOML array, use ISO 3166-1 alpha-2 codes (the 2 letter ones), empty to disable
+ip_list = "" # Location to the list of IP:Port combinations / CIDR blocks / IP addresses to scan, separated by newlines, empty to disable
 ports = "25564-25566,25569" # Port list (not TOML's format! Similarly to nmap and masscan splits ports by commas and sets ranges with hyphens)
 threads = 100 # Setting this to a higher value will make the scanning faster, but too much can crash the system or the network
 timeout = 3.0 # Timeout in seconds before assuming the server is offline
 offline_printing = "disabled" # Should the script output offline servers. "disabled" will print nothing, "offline" will print offline servers and "full_traceback" will print entire traceback
 output = "out.json" # IMPORTANT! That's where the servers go!
+
+[masscan]
+args = "" # Additional arguments for masscan
 
 [ip2location]
 enabled = false # Enable getting the location of the server
@@ -84,36 +72,29 @@ def parse_cfg(cfg_location):
         exit(1)
         return True
 
+    # [platforms]
     if cfg_file["platforms"]["java"]:
         cfg.platforms.append(Platforms.JAVA)
     if cfg_file["platforms"]["bedrock"]:
         cfg.platforms.append(Platforms.BEDROCK)
 
+    # [platforms.additional]
     cfg.query_java = cfg_file["platforms"]["additional"]["java_query"]
 
-    cfg.masscan_scan = cfg_file["type"]["masscan"]
-    cfg.ip_list_scan = cfg_file["type"]["ip_list"]
-
-    cfg.masscan_args = cfg_file["type"]["options_masscan"]["args"]
-
-    cfg.masscan_country_scan = cfg_file["type"]["options_masscan"]["countries"][
-        "enabled"
-    ]
-    cfg.masscan_country_list = cfg_file["type"]["options_masscan"]["countries"][
-        "countries"
-    ]
-
-    cfg.masscan_ip_scan = cfg_file["type"]["options_masscan"]["list"]["enabled"]
-    cfg.masscan_ip_list = cfg_file["type"]["options_masscan"]["list"]["list"]
-
-    cfg.ip_list = cfg_file["type"]["options_ip_list"]["list"]
-
+    # [scanner]
+    cfg.scan_type = cfg_file["scanner"]["type"]
+    cfg.countries = cfg_file["scanner"]["countries"]
+    cfg.ip_list = cfg_file["scanner"]["ip_list"]
     cfg.ports = parse_port_range(cfg_file["scanner"]["ports"])
     cfg.threads = cfg_file["scanner"]["threads"]
     cfg.timeout = cfg_file["scanner"]["timeout"]
     cfg.offline_printing = cfg_file["scanner"]["offline_printing"]
     cfg.output = cfg_file["scanner"]["output"]
 
+    # [masscan]
+    cfg.masscan_args = cfg_file["masscan"]["args"]
+
+    # [ip2location]
     cfg.use_ip2location = cfg_file["ip2location"]["enabled"]
     cfg.ip2location_dbs = cfg_file["ip2location"]["databases_location"]
     cfg.ip2location_db_bin = cfg_file["ip2location"]["bin_filename"]

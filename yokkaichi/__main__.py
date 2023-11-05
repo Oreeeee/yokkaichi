@@ -6,6 +6,8 @@ import sys
 import time
 from datetime import datetime
 
+from .Printer import Printer
+
 if sys.version_info >= (3, 11):
     import tomllib
 else:
@@ -14,19 +16,10 @@ else:
 from yokkaichi import __version__
 
 from . import config_loader, env_loader
-from .constants import console
 from .IP2L_Manager import IP2L_Manager
 from .port_parser import parse_port_range
 from .ServerScan import ServerScan
 from .structs import EnvVariables
-
-
-def display_version() -> None:
-    console.print(
-        f"yokkaichi [bold cyan]{__version__}[/bold cyan] on [bold cyan]{platform.python_implementation()} {platform.python_version()}[/bold cyan]",
-        style="green",
-    )
-    exit()
 
 
 def load_ip_list(ip_list_location) -> list:
@@ -38,7 +31,7 @@ def load_ip_list(ip_list_location) -> list:
             for ip in ip_list:
                 ips.append(ip.strip())
     except FileNotFoundError:
-        console.print("ERROR! IP LIST/MASSCAN LIST NOT FOUND!", style="red")
+        Printer.ip_list_not_found()
         exit(1)
 
     return ips
@@ -66,29 +59,24 @@ def main():
     args = parser.parse_args()
 
     if args.show_version:
-        # Show the version and exit
-        display_version()
+        Printer.version(
+            version=__version__,
+            py_implementation=platform.python_implementation(),
+            py_version=platform.python_version(),
+        )
+        exit()
 
     # Load the config file
     if args.config_file != None:
         try:
             cfg = config_loader.parse_cfg(args.config_file)
         except tomllib.TOMLDecodeError:
-            console.print(
-                "Config file is invalid! (Failed parsing TOML)", style="bold red"
-            )
+            Printer.toml_parse_failed()
         except FileNotFoundError:
-            console.print(
-                f"[bold white]{args.config_file}[/bold white] doesn't exist. Create a sample config in this location? (y/n) ",
-                style="yellow",
-                end="",
-            )
+            Printer.cfg_doesnt_exist(cfg_name=args.config_file)
             if input().lower() == "y":
                 config_loader.write_cfg(args.config_file)
-                console.print(
-                    f"Created a new config file at [bold white]{args.config_file}[/bold white]. Adjust it to your preferences",
-                    style="green",
-                )
+                Printer.created_cfg(cfg_name=args.config_file)
                 exit(0)
 
     # Load environment variables
@@ -96,11 +84,7 @@ def main():
 
     # Check does output file exists
     if pathlib.Path(cfg.output).is_file():
-        console.print(
-            "Output file exists. Continuing will overwrite this file. Proceed? (y/n) ",
-            style="yellow",
-            end="",
-        )
+        Printer.output_exists()
         if input().lower() == "n":
             exit(0)
     else:
@@ -119,9 +103,10 @@ def main():
         masscan_country_file: str = ""
 
     if cfg.ip_list_scan:
-        console.print("Loading IPs", style="cyan")
+        Printer.loading_ips()
         ip_list: list = load_ip_list(cfg.ip_list)
-        console.print(f"Loaded {len(ip_list)} IPs", style="green")
+        # console.print(f"Loaded {len(ip_list)} IPs", style="green")
+        Printer.loaded_ips(ip_count=len(ip_list))
     else:
         ip_list: list = None
 
@@ -141,9 +126,11 @@ def main():
     scan_start_time = datetime.fromtimestamp(scan_start).isoformat()
     scan_end_time = datetime.fromtimestamp(scan_end).isoformat()
     scan_time = time.strftime("%H:%M:%S", time.gmtime(scan_end - scan_start))
-    console.print(
-        f"[bold white]{len(scanner.results_obj.results)}[/bold white] servers found.\nStarted: [bold white]{scan_start_time}[/bold white].\nEnded: [bold white]{scan_end_time}[/bold white].\nTook [bold white]{scan_time}[/bold white].",
-        style="magenta",
+    Printer.scan_complete(
+        server_count=len(scanner.results_obj.results),
+        scan_start_time=scan_start_time,
+        scan_end_time=scan_end_time,
+        scan_time=scan_time,
     )
 
 

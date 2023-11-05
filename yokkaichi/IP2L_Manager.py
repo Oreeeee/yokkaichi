@@ -11,8 +11,8 @@ from zipfile import ZipFile
 
 from IP2Location import IP2Location
 
-from .constants import console
 from .enums import IP2LocDBStatus, IP2LocManagerUserAnswers
+from .Printer import Printer
 from .structs import CFG, EnvVariables
 
 
@@ -42,7 +42,7 @@ class IP2L_Manager:
                 )
 
         # Load DB
-        console.print("Loading IP2Location database", style="cyan")
+        Printer.loading_db()
         try:
             if self.cfg.ip2location_cache:
                 self.db: IP2Location = IP2Location(
@@ -53,7 +53,7 @@ class IP2L_Manager:
                     f"{self.ip2l_dbs}/{self.cfg.ip2location_db_bin}"
                 )
         except ValueError:
-            console.print("IP2Location database is broken or corrupted!", style="red")
+            Printer.db_corrupted()
             exit(1)
 
     def get_location(self, ip: str) -> dict:
@@ -149,10 +149,7 @@ class IP2L_Manager:
 
     def download_db(self) -> None:
         if self.env.ip2location_lite_token == None:
-            console.print(
-                "To automatically download IP2Location database, a IP2Location LITE token must be provided! Either set the IP2LOCATION_LITE_TOKEN environment variable, or use manual update.",
-                style="red",
-            )
+            Printer.set_token()
             exit(1)
 
         # Download the dbs
@@ -177,7 +174,7 @@ class IP2L_Manager:
         self.create_last_updated_file()
 
     def get_user_answers(self, message: str) -> None:
-        console.print(
+        Printer.console.print(
             message,
             style="yellow",
             end="",
@@ -196,5 +193,5 @@ class IP2L_Manager:
         elif user_input == IP2LocManagerUserAnswers.EXIT.value:
             exit(1)
         else:
-            console.print("Unknown answer", style="red")
+            Printer.unknown_answer()
             exit(1)

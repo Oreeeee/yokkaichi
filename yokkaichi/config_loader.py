@@ -5,9 +5,9 @@ if sys.version_info >= (3, 11):
 else:
     import tomli as tomllib
 
-from .constants import console
 from .enums import Platforms
 from .port_parser import parse_port_range
+from .Printer import Printer
 from .structs import CFG
 
 CONFIG_VERSION = "2"
@@ -80,10 +80,7 @@ def parse_cfg(cfg_location):
     # TODO: Check if the file is a valid Yokkaichi config!
     cfg_file_ver = cfg_file["version"]
     if cfg_file_ver != CONFIG_VERSION:
-        console.print(
-            f"Wrong config version detected! Please update your config. Your config: {cfg_file_ver}. Expected: {CONFIG_VERSION}",
-            style="bold red",
-        )
+        Printer.wrong_cfg_ver(cfg_file_ver=cfg_file_ver, cfg_ver=CONFIG_VERSION)
         exit(1)
         return True
 

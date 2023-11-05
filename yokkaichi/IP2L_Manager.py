@@ -124,7 +124,7 @@ class IP2L_Manager:
         ) as f:
             ip2l_reader: csv.reader = csv.reader(f)
             for row in ip2l_reader:
-                if row[COUNTRY_CODE_INDEX] in self.cfg.masscan_country_list:
+                if row[COUNTRY_CODE_INDEX] in self.cfg.countries:
                     ip_list.append(
                         [
                             str(ipaddr)

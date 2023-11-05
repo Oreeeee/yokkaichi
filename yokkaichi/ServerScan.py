@@ -3,6 +3,7 @@ import ipaddress
 import platform
 import queue
 import time
+import traceback
 from queue import Queue
 from threading import Lock
 
@@ -65,10 +66,20 @@ class ServerScan:
                 line = ip_list_p.readline().strip()
                 if line == "":  # Stop reading file on EOF
                     reading_file = False
+
                 if ":" in line:  # IP:Port format
                     ip, port = line.split(":")
                     self.queue.put(ServerResult(ip=ip, port=port))
-                elif "/" in line:  # CIDR format
+                    continue
+
+                # Check is the line a valid IP address or CIDR range
+                try:
+                    ipaddress.ip_network(line)
+                except ValueError:
+                    traceback.print_exc()
+                    continue
+
+                if "/" in line:  # CIDR format
                     for ip in ipaddress.ip_network(line).hosts():
                         for port in self.cfg.ports:
                             self.queue.put(ServerResult(ip=str(ip), port=port))

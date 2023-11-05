@@ -82,16 +82,16 @@ def main():
     else:
         ip2location: None = None
 
-    if cfg.use_ip2location and cfg.masscan_scan and cfg.masscan_country_scan:
-        masscan_country_file: str = ip2location.get_country_cidr()
+    if cfg.use_ip2location and cfg.countries != "":
+        country_file: str = ip2location.get_country_cidr()
     else:
-        masscan_country_file: str = ""
+        country_file: str = ""
 
     scan_start = time.time()
 
     scanner = ServerScan(
         cfg=cfg,
-        masscan_country_file=masscan_country_file,
+        country_file=country_file,
         ip2location=ip2location,
     )
     scanner.start_scan()

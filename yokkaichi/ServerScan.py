@@ -11,6 +11,7 @@ from pyScannerWrapper.scanners import Masscan
 from pyScannerWrapper.structs import ServerResult
 
 from .Checker import Checker
+from .enums import ScanTypes
 from .IP2L_Manager import IP2L_Manager
 from .Printer import Printer
 from .Results import Results
@@ -18,9 +19,9 @@ from .structs import CFG
 
 
 class ServerScan:
-    def __init__(self, cfg, masscan_country_file, ip2location) -> None:
+    def __init__(self, cfg, country_file, ip2location) -> None:
         self.cfg: CFG = cfg
-        self.masscan_country_file: list = masscan_country_file
+        self.country_file: list = country_file
         self.queue: Queue = Queue()
         self.lock: Lock = Lock()
         self.results_obj: Results = Results(cfg)
@@ -41,13 +42,13 @@ class ServerScan:
             checker.start()
 
         # masscan
-        if self.cfg.masscan_scan:
+        if self.cfg.scan_type == ScanTypes.MASSCAN.value:
             mas: Masscan = Masscan()
             mas.args = self.cfg.masscan_args
-            if self.cfg.masscan_ip_scan:
-                mas.args = f"{mas.args} -iL {self.cfg.masscan_ip_list}"
-            if self.cfg.masscan_country_scan:
-                mas.args = f"{mas.args} -iL {self.masscan_country_file}"
+            if self.cfg.ip_list != "":
+                mas.args = f"{mas.args} -iL {self.cfg.ip_list}"
+            elif self.cfg.countries != []:
+                mas.args = f"{mas.args} -iL {self.country_file}"
             # Convert ports to str
             str_ports: list = []
             for p in self.cfg.ports:
@@ -59,7 +60,8 @@ class ServerScan:
             for server in mas_yielder:
                 self.queue.put(server)
 
-        if self.cfg.ip_list_scan:
+        # ping scan
+        if self.cfg.scan_type == ScanTypes.PING_SCAN.value:
             ip_list_p = open(self.cfg.ip_list, "r")
             reading_file: bool = True
             while reading_file:

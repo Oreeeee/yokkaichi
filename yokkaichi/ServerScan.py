@@ -1,4 +1,5 @@
 # Import modules
+import ipaddress
 import platform
 import queue
 import time
@@ -57,17 +58,6 @@ class ServerScan:
             for server in mas_yielder:
                 self.queue.put(server)
 
-        # Servers from the IP List
-        # if self.cfg.ip_list_scan:
-        #     for ip in self.ip_list:
-        #         split_ip_and_port: list = ip.split(":")
-        #         if len(split_ip_and_port) == 2:
-        #             self.queue.put(
-        #                 ServerResult(ip=split_ip_and_port[0], port=split_ip_and_port[1])
-        #             )
-        #         else:
-        #             for port in self.cfg.ports:
-        #                 self.queue.put(ServerResult(ip=ip, port=port))
         if self.cfg.ip_list_scan:
             ip_list_p = open(self.cfg.ip_list, "r")
             reading_file: bool = True
@@ -75,8 +65,17 @@ class ServerScan:
                 line = ip_list_p.readline().strip()
                 if line == "":  # Stop reading file on EOF
                     reading_file = False
-                for port in self.cfg.ports:
-                    self.queue.put(ServerResult(ip=line, port=port))
+                if ":" in line:  # IP:Port format
+                    ip, port = line.split(":")
+                    self.queue.put(ServerResult(ip=ip, port=port))
+                elif "/" in line:  # CIDR format
+                    for ip in ipaddress.ip_network(line).hosts():
+                        for port in self.cfg.ports:
+                            self.queue.put(ServerResult(ip=str(ip), port=port))
+                else:  # IP list format
+                    for port in self.cfg.ports:
+                        self.queue.put(ServerResult(ip=line, port=port))
+
             ip_list_p.close()
 
         # Stop the scanning

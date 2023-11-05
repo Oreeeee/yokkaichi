@@ -30,8 +30,8 @@ bedrock = false
 java_query = false # Use the Query protocol (more info, but a little bit broken and slow right now)
 
 [type]
-masscan = true # Recommended, fast
-ip_list = false # Not recommended, slow, outdated
+masscan = true # Faster, but misses a lot of servers and requires root
+ip_list = false # Slower, but more accurate and doesn't require root
 
 [type.options_masscan]
 args = "" # Additional arguments for masscan

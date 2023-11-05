@@ -19,9 +19,9 @@ from .structs import CFG
 
 
 class ServerScan:
-    def __init__(self, cfg, country_file, ip2location) -> None:
+    def __init__(self, cfg, ip_list, ip2location) -> None:
         self.cfg: CFG = cfg
-        self.country_file: list = country_file
+        self.ip_list: list = ip_list
         self.queue: Queue = Queue()
         self.lock: Lock = Lock()
         self.results_obj: Results = Results(cfg)
@@ -45,10 +45,7 @@ class ServerScan:
         if self.cfg.scan_type == ScanTypes.MASSCAN.value:
             mas: Masscan = Masscan()
             mas.args = self.cfg.masscan_args
-            if self.cfg.ip_list != "":
-                mas.args = f"{mas.args} -iL {self.cfg.ip_list}"
-            elif self.cfg.countries != []:
-                mas.args = f"{mas.args} -iL {self.country_file}"
+            mas.args = f"{mas.args} -iL {self.ip_list}"
             # Convert ports to str
             str_ports: list = []
             for p in self.cfg.ports:
@@ -62,7 +59,7 @@ class ServerScan:
 
         # ping scan
         if self.cfg.scan_type == ScanTypes.PING_SCAN.value:
-            ip_list_p = open(self.cfg.ip_list, "r")
+            ip_list_p = open(self.ip_list, "r")
             reading_file: bool = True
             while reading_file:
                 line = ip_list_p.readline().strip()

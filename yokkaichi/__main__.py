@@ -82,16 +82,19 @@ def main():
     else:
         ip2location: None = None
 
-    if cfg.use_ip2location and cfg.countries != "":
-        country_file: str = ip2location.get_country_cidr()
+    if cfg.use_ip2location and cfg.countries != []:
+        ip_list: str = ip2location.get_country_cidr()
+    elif cfg.ip_list != "":
+        ip_list: str = cfg.ip_list
     else:
-        country_file: str = ""
+        Printer.no_input_list_specified()
+        exit(1)
 
     scan_start = time.time()
 
     scanner = ServerScan(
         cfg=cfg,
-        country_file=country_file,
+        ip_list=ip_list,
         ip2location=ip2location,
     )
     scanner.start_scan()

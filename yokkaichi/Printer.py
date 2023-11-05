@@ -130,3 +130,10 @@ class Printer:
             "Loading [bold white]{thread_count}[/bold white] threads!".format(**kwargs),
             style="cyan",
         )
+
+    @classmethod
+    def no_input_list_specified(cls) -> None:
+        cls.console.print(
+            "No input list specified! Choose either scanning by countries or from IP list. Quitting...",
+            style="red",
+        )

@@ -29,4 +29,5 @@ class CFG:
     ip2location_db_csv: str = field(default_factory=str)
     ip2location_bin_code: str = field(default_factory=str)
     ip2location_csv_code: str = field(default_factory=str)
+    ip2location_check_for_updates: bool = field(default_factory=bool)
     ip2location_cache: bool = field(default_factory=bool)

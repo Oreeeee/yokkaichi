@@ -10,52 +10,7 @@ from yokkaichi.enums import Platforms
 from yokkaichi.structs import CFG
 
 DEFAULT_CFG = """
-version = "2"
-
-[platforms]
-java = true
-bedrock = false
-
-[platforms.additional]
-java_query = false
-
-[type]
-masscan = true
-ip_list = false
-
-[type.options_masscan]
-args = "--rate 5000"
-
-[type.options_masscan.countries]
-enabled = true
-countries = ["US", "DE"]
-
-[type.options_masscan.list]
-enabled = true
-list = "masscan_ips.txt"
-
-[type.options_ip_list]
-list = "ips.txt"
-
-[scanner]
-ports = "25564-25566,25569"
-threads = 100
-timeout = 3.0
-offline_printing = "disabled"
-output = "out.json"
-
-[ip2location]
-enabled = false
-databases_location = "ip2location_dbs/"
-bin_filename = "IP2LOCATION-LITE-DB11.BIN"
-csv_filename = "IP2LOCATION-LITE-DB1.CSV"
-bin_code = "DB11LITEBIN"
-csv_code = "DB1LITECSV"
-cache = true
-"""
-
-DEFAULT_CFG = """
-version = "3"
+version = "4"
 
 [platforms]
 java = true
@@ -84,6 +39,7 @@ bin_filename = "IP2LOCATION-LITE-DB11.BIN"
 csv_filename = "IP2LOCATION-LITE-DB1.CSV"
 bin_code = "DB11LITEBIN"
 csv_code = "DB1LITECSV"
+check_for_updates = true
 cache = true
 """
 
@@ -112,6 +68,7 @@ def test_parse_cfg(monkeypatch):
         ip2location_db_csv="IP2LOCATION-LITE-DB1.CSV",
         ip2location_bin_code="DB11LITEBIN",
         ip2location_csv_code="DB1LITECSV",
+        ip2location_check_for_updates=True,
         ip2location_cache=True,
     )
 
@@ -122,7 +79,7 @@ def test_parse_cfg_config_version_check(monkeypatch):
 
     def fake_cfg(x):
         cfg = DEFAULT_CFG
-        cfg = cfg.replace('version = "3"', 'version = "0"')
+        cfg = cfg.replace('version = "4"', 'version = "0"')
         return tomllib.loads(cfg)
 
     monkeypatch.setattr("builtins.exit", mockexit)

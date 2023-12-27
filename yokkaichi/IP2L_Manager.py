@@ -91,6 +91,9 @@ class IP2L_Manager:
             f.write(str(round(time.time())))
 
     def is_up_to_date(self) -> bool:
+        if not self.cfg.ip2location_check_for_updates:
+            return True
+
         YEAR_INDEX: int = 0
         MONTH_INDEX: int = 1
 

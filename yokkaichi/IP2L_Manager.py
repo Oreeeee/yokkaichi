@@ -90,7 +90,7 @@ class IP2L_Manager:
             # Write current time in Unix secs
             f.write(str(round(time.time())))
 
-    def is_up_to_date(self) -> str:
+    def is_up_to_date(self) -> bool:
         YEAR_INDEX: int = 0
         MONTH_INDEX: int = 1
 
@@ -107,7 +107,7 @@ class IP2L_Manager:
 
         if (
             last_update_time[YEAR_INDEX] < current_time[YEAR_INDEX]
-            or last_update_time[MONTH_INDEX] < last_update_time[MONTH_INDEX]
+            or last_update_time[MONTH_INDEX] < current_time[MONTH_INDEX]
         ):
             return False
         else:

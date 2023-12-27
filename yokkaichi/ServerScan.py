@@ -22,7 +22,7 @@ class ServerScan:
     def __init__(self, cfg, ip_list, ip2location) -> None:
         self.cfg: CFG = cfg
         self.ip_list: list = ip_list
-        self.queue: Queue = Queue()
+        self.queue: Queue = Queue(maxsize=cfg.threads * 3)
         self.lock: Lock = Lock()
         self.results_obj: Results = Results(cfg)
         self.ip2location: IP2L_Manager = ip2location

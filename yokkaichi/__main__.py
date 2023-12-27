@@ -83,7 +83,7 @@ def main():
         ip2location: None = None
 
     if cfg.use_ip2location and cfg.countries != []:
-        ip_list: str = ip2location.get_country_cidr()
+        ip_list: str = ip2location.get_country_cidr_file()
     elif cfg.ip_list != "":
         ip_list: str = cfg.ip_list
     else:

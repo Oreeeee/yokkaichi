@@ -116,7 +116,7 @@ class IP2L_Manager:
         else:
             return True
 
-    def get_country_cidr(self) -> list:
+    def get_country_cidr_file(self) -> str:
         IP_START_INDEX: int = 0
         IP_END_INDEX: int = 1
         COUNTRY_CODE_INDEX: int = 2

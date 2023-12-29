@@ -10,7 +10,7 @@ from .port_parser import parse_port_range
 from .Printer import Printer
 from .structs import CFG
 
-CONFIG_VERSION = "4"
+CONFIG_VERSION = "5"
 # TODO: Bring this back to a separate file
 SAMPLE_CFG = """
 # This is an example configuration file for Yokkaichi.
@@ -20,7 +20,7 @@ SAMPLE_CFG = """
 # You can pass this without the file location and it will look for yokkaichi.toml in your current location.
 # Do not comment any of the config's options, it will currently cause a crash
 
-version = "4" # Changed for every change breaking config compatibility
+version = "5" # Changed for every change breaking config compatibility
 
 [platforms]
 java = true
@@ -44,12 +44,6 @@ args = "" # Additional arguments for masscan
 
 [ip2location]
 enabled = false # Enable getting the location of the server
-databases_location = "ip2location_dbs/" # Where are the databases stored
-bin_filename = "IP2LOCATION-LITE-DB11.BIN"
-csv_filename = "IP2LOCATION-LITE-DB1.CSV"
-bin_code = "DB11LITEBIN" # Avoid changing this
-csv_code = "DB1LITECSV" # Avoid changing this
-check_for_updates = true # Will Yokkaichi check for updates to the database every month. Highly recommended to leave it on!
 cache = true # Enable for faster speed at the cost of RAM
 """.strip()
 
@@ -97,12 +91,6 @@ def parse_cfg(cfg_location):
 
     # [ip2location]
     cfg.use_ip2location = cfg_file["ip2location"]["enabled"]
-    cfg.ip2location_dbs = cfg_file["ip2location"]["databases_location"]
-    cfg.ip2location_db_bin = cfg_file["ip2location"]["bin_filename"]
-    cfg.ip2location_db_csv = cfg_file["ip2location"]["csv_filename"]
-    cfg.ip2location_bin_code = cfg_file["ip2location"]["bin_code"]
-    cfg.ip2location_csv_code = cfg_file["ip2location"]["csv_code"]
-    cfg.ip2location_check_for_updates = cfg_file["ip2location"]["check_for_updates"]
     cfg.ip2location_cache = cfg_file["ip2location"]["cache"]
 
     return cfg

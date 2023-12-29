@@ -1,0 +1,7 @@
+version: '3'
+services:
+  yokkaichi:
+    build: ./yokkaichi
+    network_mode: "host"
+    volumes:
+      - ./data:/data

@@ -5,7 +5,7 @@
 # You can pass this without the file location and it will look for yokkaichi.toml in your current location.
 # Do not comment any of the config's options, it will currently cause a crash
 
-version = "4" # Changed for every change breaking config compatibility
+version = "5" # Changed for every change breaking config compatibility
 
 [platforms]
 java = true
@@ -29,10 +29,4 @@ args = "" # Additional arguments for masscan
 
 [ip2location]
 enabled = false # Enable getting the location of the server
-databases_location = "ip2location_dbs/" # Where are the databases stored
-bin_filename = "IP2LOCATION-LITE-DB11.BIN"
-csv_filename = "IP2LOCATION-LITE-DB1.CSV"
-bin_code = "DB11LITEBIN" # Avoid changing this
-csv_code = "DB1LITECSV" # Avoid changing this
-check_for_updates = true # Will Yokkaichi check for updates to the database every month. Highly recommended to leave it on!
 cache = true # Enable for faster speed at the cost of RAM

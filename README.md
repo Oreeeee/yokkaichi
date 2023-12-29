@@ -30,4 +30,10 @@ sudo docker-compose up --force-recreate --build
 When starting the script for the first time, `yokkaichi.toml` will get created in the data directory. You will have to adjust it to your preferences. Then, you can just start the container.
 
 ### How to get geolocating to work?
-TODO
+Yokkaichi uses IP2Location LITE for anything geolocation related. This includes getting the location of the server, and generating the CIDR ranges for scanning. It is a offline, free to use download, so there are no rate limits. However, the database is not redistributed with Yokkaichi, due to IP2Location updating their LITE databases every month. Instead, you will have to update the database every month (you will get notified by Yokkaichi).
+#### Getting a token
+1. Go to IP2Location LITE website and register (or log into) an account (which is completly free forever).
+2. Click on the name in the upper right corner and select "Database Download".
+3. Copy your Download Token.
+#### Updating the database
+`python ip2l_updater.py TOKEN`

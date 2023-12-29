@@ -11,7 +11,7 @@ from zipfile import ZipFile
 
 from IP2Location import IP2Location
 
-from .enums import IP2LocDBStatus, IP2LocManagerUserAnswers
+from .enums import IP2LocDBStatus
 from .Printer import Printer
 from .structs import CFG, EnvVariables
 
@@ -26,20 +26,15 @@ class IP2L_Manager:
         # Try to open the last updated date file
         opening_status: IP2LocDBStatus = self.open_last_updated_file()
         if opening_status == IP2LocDBStatus.DOESNT_EXIST:
-            self.get_user_answers(
-                "IP2Location Database doesn't exist. [U]pdate? [M]anually Update? [E]xit?: "
-            )
+            Printer.ip2l_db_doesnt_exist()
+            self.cfg.use_ip2location = False
 
         if opening_status == IP2LocDBStatus.INCORRECT_DATE:
-            self.get_user_answers(
-                "Can't determine last update of the IP2Location database. [U]pdate? [S]kip? [E]xit?: "
-            )
+            Printer.cant_get_ip2l_last_update_date()
 
         if opening_status == IP2LocDBStatus.EXISTS:
             if not self.is_up_to_date():
-                self.get_user_answers(
-                    "Your IP2Location database is outdated. [U]pdate? [M]anually update? [S]kip? [E]xit?: "
-                )
+                Printer.ip2l_db_outdated()
 
         # Load DB
         Printer.loading_db()
@@ -54,7 +49,7 @@ class IP2L_Manager:
                 )
         except ValueError:
             Printer.db_corrupted()
-            exit(1)
+            self.cfg.use_ip2location = False
 
     def get_location(self, ip: str) -> dict:
         return self.db.get_all(ip).__dict__
@@ -175,26 +170,3 @@ class IP2L_Manager:
                 f.extractall(path=self.ip2l_dbs)
 
         self.create_last_updated_file()
-
-    def get_user_answers(self, message: str) -> None:
-        Printer.console.print(
-            message,
-            style="yellow",
-            end="",
-        )
-        user_input: str = input().upper()
-        if user_input == IP2LocManagerUserAnswers.UPDATE.value:
-            self.download_db()
-        elif user_input == IP2LocManagerUserAnswers.MANUAL_UPDATE.value:
-            self.create_last_updated_file()
-            exit(0)
-        elif user_input == IP2LocManagerUserAnswers.SKIP.value:
-            return
-        elif user_input == IP2LocManagerUserAnswers.DISABLE.value:
-            # Unused
-            self.cfg.use_ip2location = False
-        elif user_input == IP2LocManagerUserAnswers.EXIT.value:
-            exit(1)
-        else:
-            Printer.unknown_answer()
-            exit(1)

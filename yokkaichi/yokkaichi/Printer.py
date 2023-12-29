@@ -75,7 +75,9 @@ class Printer:
 
     @classmethod
     def db_corrupted(cls) -> None:
-        cls.console.print("IP2Location database is broken or corrupted!", style="red")
+        cls.console.print(
+            "IP2Location database is broken or corrupted! Disabling.", style="red"
+        )
 
     @classmethod
     def set_token(cls) -> None:
@@ -137,3 +139,19 @@ class Printer:
             "No input list specified! Choose either scanning by countries or from IP list. Quitting...",
             style="red",
         )
+
+    @classmethod
+    def ip2l_db_doesnt_exist(cls) -> None:
+        cls.console.print(
+            "IP2Location Database doesn't exist. Disabling geolocation", style="red"
+        )
+
+    @classmethod
+    def cant_get_ip2l_last_update_date(cls) -> None:
+        cls.console.print(
+            "Can't determine last update of the IP2Location database.", style="yellow"
+        )
+
+    @classmethod
+    def ip2l_db_outdated(cls) -> None:
+        cls.console.print("Your IP2Location database is outdated", style="yellow")

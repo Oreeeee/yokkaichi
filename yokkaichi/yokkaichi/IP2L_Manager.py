@@ -5,23 +5,19 @@ import os
 import pathlib
 import platform
 import time
-import urllib.request
 from uuid import uuid4
-from zipfile import ZipFile
 
 from IP2Location import IP2Location
 
 from .enums import IP2LocDBStatus
 from .Printer import Printer
-from .structs import CFG, EnvVariables
+from .structs import CFG
 
 
 class IP2L_Manager:
-    def __init__(self, cfg: CFG, env: EnvVariables) -> None:
+    def __init__(self, cfg: CFG) -> None:
         self.cfg = cfg
-
         self.ip2l_dbs: str = self.cfg.ip2location_dbs
-        self.env: EnvVariables = env
 
         # Try to open the last updated date file
         opening_status: IP2LocDBStatus = self.open_last_updated_file()
@@ -144,29 +140,3 @@ class IP2L_Manager:
                 f.write(ip + "\n")
 
         return ip_list_loc
-
-    def download_db(self) -> None:
-        if self.env.ip2location_lite_token == None:
-            Printer.set_token()
-            exit(1)
-
-        # Download the dbs
-        db_zips: tuple = (
-            f"{self.ip2l_dbs}/{self.cfg.ip2location_db_bin}.zip",
-            f"{self.ip2l_dbs}/{self.cfg.ip2location_db_csv}.zip",
-        )
-
-        urllib.request.urlretrieve(
-            f"https://www.ip2location.com/download/?token={self.env.ip2location_lite_token}&file={self.cfg.ip2location_bin_code}",
-            db_zips[0],
-        )
-        urllib.request.urlretrieve(
-            f"https://www.ip2location.com/download/?token={self.env.ip2location_lite_token}&file={self.cfg.ip2location_csv_code}",
-            db_zips[1],
-        )
-
-        for db_zip in db_zips:
-            with ZipFile(db_zip, "r") as f:
-                f.extractall(path=self.ip2l_dbs)
-
-        self.create_last_updated_file()

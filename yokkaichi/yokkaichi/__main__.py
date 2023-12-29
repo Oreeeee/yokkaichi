@@ -58,14 +58,11 @@ def main():
         except tomllib.TOMLDecodeError:
             Printer.toml_parse_failed()
 
-    # Load environment variables
-    env_variables: EnvVariables = env_loader.load_env()
-
     pathlib.Path(cfg.output).touch()
 
     if cfg.use_ip2location:
         # Initialize IP2Location
-        ip2location: IP2L_Manager = IP2L_Manager(cfg, env_variables)
+        ip2location: IP2L_Manager = IP2L_Manager(cfg)
     else:
         ip2location: None = None
 

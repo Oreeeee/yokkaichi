@@ -99,7 +99,7 @@ def test_printer():
         ),
         PrinterTest(
             method=Printer.db_corrupted,
-            expected_output="IP2Location database is broken or corrupted!",
+            expected_output="IP2Location database is broken or corrupted! Disabling.",
             expected_style="red",
         ),
         PrinterTest(
@@ -152,6 +152,21 @@ def test_printer():
             method=Printer.no_input_list_specified,
             expected_output="No input list specified! Choose either scanning by countries or from IP list. Quitting...",
             expected_style="red",
+        ),
+        PrinterTest(
+            method=Printer.ip2l_db_doesnt_exist,
+            expected_output="IP2Location Database doesn't exist. Disabling geolocation",
+            expected_style="red",
+        ),
+        PrinterTest(
+            method=Printer.cant_get_ip2l_last_update_date,
+            expected_output="Can't determine last update of the IP2Location database.",
+            expected_style="yellow",
+        ),
+        PrinterTest(
+            method=Printer.ip2l_db_outdated,
+            expected_output="Your IP2Location database is outdated",
+            expected_style="yellow",
         ),
     ]
 

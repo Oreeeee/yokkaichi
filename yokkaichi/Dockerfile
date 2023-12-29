@@ -1,7 +1,8 @@
 FROM alpine:3.19
 RUN apk update
-RUN apk add python3 py3-pip masscan
+RUN apk add python3 py3-pip masscan libpcap libpcap-dev
 WORKDIR /app
 COPY . .
 RUN pip install --break-system-packages .
-CMD ["python", "-m", "yokkaichi", "-v"]
+WORKDIR /data
+CMD ["python", "-m", "yokkaichi", "-c"]

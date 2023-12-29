@@ -57,24 +57,11 @@ def main():
             cfg = config_loader.parse_cfg(args.config_file)
         except tomllib.TOMLDecodeError:
             Printer.toml_parse_failed()
-        except FileNotFoundError:
-            Printer.cfg_doesnt_exist(cfg_name=args.config_file)
-            if input().lower() == "y":
-                config_loader.write_cfg(args.config_file)
-                Printer.created_cfg(cfg_name=args.config_file)
-                exit(0)
 
     # Load environment variables
     env_variables: EnvVariables = env_loader.load_env()
 
-    # Check does output file exists
-    if pathlib.Path(cfg.output).is_file():
-        Printer.output_exists()
-        if input().lower() == "n":
-            exit(0)
-    else:
-        # Touch the file
-        pathlib.Path(cfg.output).touch()
+    pathlib.Path(cfg.output).touch()
 
     if cfg.use_ip2location:
         # Initialize IP2Location

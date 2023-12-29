@@ -51,8 +51,6 @@ class ServerScan:
             for p in self.cfg.ports:
                 str_ports.append(str(p))
             mas.input_port_list = str_ports
-            if platform.system() == "Linux":
-                mas.sudo = True
             mas_yielder = mas.scan_yielder()
             for server in mas_yielder:
                 self.queue.put(server)

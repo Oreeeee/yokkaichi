@@ -5,10 +5,6 @@ from setuptools import setup
 
 from yokkaichi import __version__ as yokkaichi_ver
 
-# Load README from README.md
-this_directory = Path(__file__).parent
-long_description = (this_directory / "README.md").read_text()
-
 # Enforce Python version (3.8+)
 if sys.version_info[1] < 8:
     print(
@@ -19,8 +15,6 @@ setup(
     name="yokkaichi",
     version=yokkaichi_ver,
     description="Shodan-like server scanner for Minecraft (formely mcserverscanner)",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
     author="Oreeeee",
     license="MIT",
     url="https://github.com/Oreeeee/yokkaichi",

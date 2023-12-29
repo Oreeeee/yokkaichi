@@ -37,11 +37,11 @@ class IP2L_Manager:
         try:
             if self.cfg.ip2location_cache:
                 self.db: IP2Location = IP2Location(
-                    f"{self.ip2l_dbs}/{self.cfg.ip2location_db_bin}", "SHARED_MEMORY"
+                    "ip2location_dbs/IP2LOCATION-LITE-DB11.BIN", "SHARED_MEMORY"
                 )
             else:
                 self.db: IP2Location = IP2Location(
-                    f"{self.ip2l_dbs}/{self.cfg.ip2location_db_bin}"
+                    "ip2location_dbs/IP2LOCATION-LITE-DB11.BIN"
                 )
         except ValueError:
             Printer.db_corrupted()
@@ -51,32 +51,32 @@ class IP2L_Manager:
         return self.db.get_all(ip).__dict__
 
     def open_last_updated_file(self) -> IP2LocDBStatus:
-        last_updated_file_loc: str = f"{self.ip2l_dbs}/LAST_UPDATED"
+        last_updated_file_loc: str = "ip2location_dbs/LAST_UPDATED"
         try:
             with open(last_updated_file_loc, "r") as f:
                 self.last_updated: int = int(f.readline())
             # Also verify are the actual database files there
             if not os.path.isfile(
-                f"{self.ip2l_dbs}/{self.cfg.ip2location_db_bin}"
-            ) or not os.path.isfile(f"{self.ip2l_dbs}/{self.cfg.ip2location_db_csv}"):
+                "ip2location_dbs/IP2LOCATION-LITE-DB11.BIN"
+            ) or not os.path.isfile("ip2location_dbs/IP2LOCATION-LITE-DB1.CSV"):
                 return IP2LocDBStatus.DOESNT_EXIST
             return IP2LocDBStatus.EXISTS
         except FileNotFoundError:
             # When the directory wasn't created yet
-            os.makedirs(self.ip2l_dbs)
+            os.makedirs("ip2location_dbs/")
             pathlib.Path(last_updated_file_loc).touch()
             return IP2LocDBStatus.DOESNT_EXIST
         except ValueError:
             # When the directory exists, but the file is in incorrent format or doesn't exist
-            if not os.path.isfile(self.cfg.ip2location_db_bin) or not os.path.isfile(
-                self.cfg.ip2location_db_csv
+            if not os.path.isfile("IP2LOCATION-LITE-DB11.BIN") or not os.path.isfile(
+                "IP2LOCATION-LITE-DB1.CSV"
             ):
                 return IP2LocDBStatus.DOESNT_EXIST
             pathlib.Path(last_updated_file_loc).touch(exist_ok=True)
             return IP2LocDBStatus.INCORRECT_DATE
 
     def create_last_updated_file(self) -> None:
-        last_updated_file_loc: str = f"{self.ip2l_dbs}/LAST_UPDATED"
+        last_updated_file_loc: str = "ip2location_dbs/LAST_UPDATED"
         with open(last_updated_file_loc, "w") as f:
             # Write current time in Unix secs
             f.write(str(round(time.time())))
@@ -113,9 +113,7 @@ class IP2L_Manager:
         COUNTRY_CODE_INDEX: int = 2
 
         ip_list: list = []
-        with open(
-            f"{self.ip2l_dbs}/{self.cfg.ip2location_db_csv}", "r", newline=""
-        ) as f:
+        with open("ip2location_dbs/IP2LOCATION-LITE-DB1.CSV", "r", newline="") as f:
             ip2l_reader: csv.reader = csv.reader(f)
             for row in ip2l_reader:
                 if row[COUNTRY_CODE_INDEX] in self.cfg.countries:

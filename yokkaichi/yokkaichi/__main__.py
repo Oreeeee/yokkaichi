@@ -15,11 +15,10 @@ else:
 
 from yokkaichi import __version__
 
-from . import config_loader, env_loader
+from . import config_loader
 from .IP2L_Manager import IP2L_Manager
 from .port_parser import parse_port_range
 from .ServerScan import ServerScan
-from .structs import EnvVariables
 
 
 def main():

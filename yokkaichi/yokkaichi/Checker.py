@@ -26,7 +26,7 @@ class Checker:
         self,
         cfg: CFG,
         ip2location: IP2L_Manager,
-        lock: Lock,
+        print_lock: Lock,
         result_obj: Results,
         queue: Queue,
     ):
@@ -34,7 +34,7 @@ class Checker:
         self.ip2location: IP2L_Manager = ip2location
         self.queue = queue
         self.results_obj = result_obj
-        self.lock: Lock = Lock()
+        self.print_lock: Lock = Lock()
 
     def start(self) -> None:
         """
@@ -56,7 +56,7 @@ class Checker:
                 try:
                     self.check_server(mas_result.ip, mas_result.port, server_platform)
                 except Exception as e:
-                    with self.lock:
+                    with self.print_lock:
                         if (
                             self.cfg.offline_printing
                             == OfflinePrintingModes.OFFLINE.value
@@ -123,5 +123,5 @@ class Checker:
             server_info.max_players = server_lookup.status().players_max
 
         self.results_obj.add_to_file(server_info)
-        with self.lock:
+        with self.print_lock:
             Printer.server_found(platform=server_platform.value, ip=ip, port=port)

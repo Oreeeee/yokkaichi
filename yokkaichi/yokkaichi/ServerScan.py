@@ -23,7 +23,7 @@ class ServerScan:
         self.cfg: CFG = cfg
         self.ip_list: list = ip_list
         self.queue: Queue = Queue(maxsize=cfg.threads * 3)
-        self.lock: Lock = Lock()
+        self.print_lock: Lock = Lock()
         self.results_obj: Results = Results(cfg)
         self.ip2location: IP2L_Manager = ip2location
 
@@ -34,7 +34,7 @@ class ServerScan:
 
         for _ in range(self.cfg.threads):
             checker: Checker = Checker(
-                self.cfg, self.ip2location, self.lock, self.results_obj, self.queue
+                self.cfg, self.ip2location, self.print_lock, self.results_obj, self.queue
             )
             checker_list.append(checker)
 

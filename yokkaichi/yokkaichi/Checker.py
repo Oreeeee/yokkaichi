@@ -1,12 +1,12 @@
 import dataclasses
 import json
 import queue
+import socket
 import time
 import traceback
 from datetime import datetime
 from queue import Queue
 from threading import Lock, Thread
-import dataclasses
 
 from mcstatus import BedrockServer, JavaServer
 from pyScannerWrapper.structs import ServerResult
@@ -55,7 +55,7 @@ class Checker:
             for server_platform in self.cfg.platforms:
                 try:
                     self.check_server(mas_result.ip, mas_result.port, server_platform)
-                except Exception as e:
+                except socket.error as e:
                     with self.print_lock:
                         if (
                             self.cfg.offline_printing
@@ -66,16 +66,17 @@ class Checker:
                                 port=mas_result.port,
                                 platform=server_platform.value,
                             )
-                        if (
+                except Exception as e:
+                    if (
                             self.cfg.offline_printing
-                            == OfflinePrintingModes.FULL_TRACEBACK.value
+                            == OfflinePrintingModes.OFFLINE.value
                         ):
-                            Printer.server_offline(
+                            Printer.connection_exception(
                                 ip=mas_result.ip,
                                 port=mas_result.port,
                                 platform=server_platform.value,
+                                exception=e,
                             )
-                            traceback.print_exc()
 
     def check_server(self, ip: str, port: int, server_platform: Platforms) -> None:
         if server_platform == Platforms.JAVA:

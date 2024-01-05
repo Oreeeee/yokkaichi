@@ -98,7 +98,7 @@ class Printer:
         )
     
     @classmethod
-    def server_offline(cls, **kwargs) -> None:
+    def connection_exception(cls, **kwargs) -> None:
         cls.console.print(
             "[!] {ip}:{port} for {platform} exception occured! {exception}".format(**kwargs),
             style="yellow",

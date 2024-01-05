@@ -1,0 +1,11 @@
+version: '3'
+services:
+  db:
+    image: mongo
+    volumes:
+      - ./db:/data/db
+  yokkaichi:
+    build: ./yokkaichi
+    volumes:
+      - ./yokkaichi:/data
+      

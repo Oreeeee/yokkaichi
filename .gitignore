@@ -14,3 +14,4 @@ data/
 paused.conf
 yokkaichi/
 db/
+docker-compose.yml

@@ -6,6 +6,7 @@ import traceback
 from datetime import datetime
 from queue import Queue
 from threading import Lock, Thread
+import dataclasses
 
 from mcstatus import BedrockServer, JavaServer
 from pyScannerWrapper.structs import ServerResult
@@ -13,7 +14,6 @@ from pyScannerWrapper.structs import ServerResult
 from .enums import OfflinePrintingModes, Platforms
 from .IP2L_Manager import IP2L_Manager
 from .Printer import Printer
-from .Results import Results
 from .structs import CFG, MinecraftServer
 
 
@@ -27,14 +27,14 @@ class Checker:
         cfg: CFG,
         ip2location: IP2L_Manager,
         print_lock: Lock,
-        result_obj: Results,
         queue: Queue,
+        results_collection
     ):
         self.cfg: CFG = cfg
         self.ip2location: IP2L_Manager = ip2location
         self.queue = queue
-        self.results_obj = result_obj
         self.print_lock: Lock = Lock()
+        self.results_collection = results_collection
 
     def start(self) -> None:
         """
@@ -124,4 +124,5 @@ class Checker:
 
         self.results_obj.add_to_file(server_info)
         with self.print_lock:
-            Printer.server_found(platform=server_platform.value, ip=ip, port=port)
+            self.results_collection.insert_one(dataclasses.as_dict(server_info))
+

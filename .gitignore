@@ -12,3 +12,5 @@ dist/
 # Yokkaichi data
 data/
 paused.conf
+yokkaichi/
+db/

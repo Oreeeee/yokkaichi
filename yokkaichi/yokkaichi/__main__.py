@@ -60,7 +60,7 @@ def main():
             Printer.toml_parse_failed()
 
     #pathlib.Path(cfg.output).touch()
-    mongo_client: MongoClient = MongoClient()
+    mongo_client: MongoClient = MongoClient("db:27017")
     results_collection = mongo_client.yokkaichi.results
 
     if cfg.use_ip2location:

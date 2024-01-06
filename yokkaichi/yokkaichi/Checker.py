@@ -51,7 +51,7 @@ class Checker:
                 self.checking = True  # We got a server, that means we are checking
             except queue.Empty:
                 continue
-
+            
             for server_platform in self.cfg.platforms:
                 try:
                     self.check_server(mas_result.ip, mas_result.port, server_platform)
@@ -123,6 +123,7 @@ class Checker:
             server_info.online_players = server_lookup.status().players_online
             server_info.max_players = server_lookup.status().players_max
 
+        self.results_collection.insert_one(dataclasses.asdict(server_info))
         with self.print_lock:
-            self.results_collection.insert_one(dataclasses.asdict(server_info))
+            Printer.server_found(platform=server_platform.value, ip=ip, port=port)
 

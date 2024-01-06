@@ -7,7 +7,7 @@ services:
   yokkaichi:
     build: ./yokkaichi
     volumes:
-      - ./yokkaichi:/data
+      - ./data:/data
     environment:
       - WAIT_HOSTS=db:27017
       

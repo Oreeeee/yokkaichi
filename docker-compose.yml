@@ -3,9 +3,9 @@ services:
   db:
     image: mongo
     volumes:
-      - ./db:/data/db
+      - ./data/db:/data/db
   yokkaichi:
     build: ./yokkaichi
     volumes:
-      - ./yokkaichi:/data
+      - ./data:/data
       

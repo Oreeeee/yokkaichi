@@ -123,7 +123,6 @@ class Checker:
             server_info.online_players = server_lookup.status().players_online
             server_info.max_players = server_lookup.status().players_max
 
-        self.results_obj.add_to_file(server_info)
         with self.print_lock:
-            self.results_collection.insert_one(dataclasses.as_dict(server_info))
+            self.results_collection.insert_one(dataclasses.asdict(server_info))
 

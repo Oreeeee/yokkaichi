@@ -23,7 +23,6 @@ class ServerScan:
         self.ip_list: list = ip_list
         self.queue: Queue = Queue(maxsize=cfg.threads * 3)
         self.print_lock: Lock = Lock()
-        self.results_obj: Results = Results(cfg)
         self.ip2location: IP2L_Manager = ip2location
         self.results_collection = results_collection
 

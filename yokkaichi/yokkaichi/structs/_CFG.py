@@ -17,7 +17,6 @@ class CFG:
     threads: int = field(default_factory=int)
     timeout: float = field(default_factory=float)
     offline_printing: str = field(default_factory=str)
-    output: str = field(default_factory=str)
 
     # [masscan]
     masscan_args: str = field(default_factory=str)

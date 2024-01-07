@@ -14,18 +14,17 @@ from .Checker import Checker
 from .enums import ScanTypes
 from .IP2L_Manager import IP2L_Manager
 from .Printer import Printer
-from .Results import Results
 from .structs import CFG
 
 
 class ServerScan:
-    def __init__(self, cfg, ip_list, ip2location) -> None:
+    def __init__(self, cfg, ip_list, ip2location, results_collection) -> None:
         self.cfg: CFG = cfg
         self.ip_list: list = ip_list
         self.queue: Queue = Queue(maxsize=cfg.threads * 3)
-        self.lock: Lock = Lock()
-        self.results_obj: Results = Results(cfg)
+        self.print_lock: Lock = Lock()
         self.ip2location: IP2L_Manager = ip2location
+        self.results_collection = results_collection
 
     def start_scan(self) -> None:
         Printer.loading_threads(thread_count=self.cfg.threads)
@@ -34,7 +33,7 @@ class ServerScan:
 
         for _ in range(self.cfg.threads):
             checker: Checker = Checker(
-                self.cfg, self.ip2location, self.lock, self.results_obj, self.queue
+                self.cfg, self.ip2location, self.print_lock, self.queue, self.results_collection
             )
             checker_list.append(checker)
 

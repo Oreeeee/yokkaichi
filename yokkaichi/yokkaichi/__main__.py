@@ -6,6 +6,8 @@ import sys
 import time
 from datetime import datetime
 
+from pymongo import MongoClient
+
 from .Printer import Printer
 
 if sys.version_info >= (3, 11):
@@ -57,7 +59,9 @@ def main():
         except tomllib.TOMLDecodeError:
             Printer.toml_parse_failed()
 
-    pathlib.Path(cfg.output).touch()
+    #pathlib.Path(cfg.output).touch()
+    mongo_client: MongoClient = MongoClient("db:27017")
+    results_collection = mongo_client.yokkaichi.results
 
     if cfg.use_ip2location:
         # Initialize IP2Location
@@ -79,21 +83,22 @@ def main():
         cfg=cfg,
         ip_list=ip_list,
         ip2location=ip2location,
+        results_collection=results_collection,
     )
     scanner.start_scan()
 
     scan_end = time.time()
 
     # Show results
-    scan_start_time = datetime.fromtimestamp(scan_start).isoformat()
-    scan_end_time = datetime.fromtimestamp(scan_end).isoformat()
-    scan_time = time.strftime("%H:%M:%S", time.gmtime(scan_end - scan_start))
-    Printer.scan_complete(
-        server_count=len(scanner.results_obj.results),
-        scan_start_time=scan_start_time,
-        scan_end_time=scan_end_time,
-        scan_time=scan_time,
-    )
+    # scan_start_time = datetime.fromtimestamp(scan_start).isoformat()
+    # scan_end_time = datetime.fromtimestamp(scan_end).isoformat()
+    # scan_time = time.strftime("%H:%M:%S", time.gmtime(scan_end - scan_start))
+    # Printer.scan_complete(
+    #     server_count=len(scanner.results_obj.results),
+    #     scan_start_time=scan_start_time,
+    #     scan_end_time=scan_end_time,
+    #     scan_time=scan_time,
+    # )
 
 
 if __name__ == "__main__":

@@ -96,6 +96,13 @@ class Printer:
             "[-] {ip}:{port} for {platform} is offline!".format(**kwargs),
             style="red",
         )
+    
+    @classmethod
+    def connection_exception(cls, **kwargs) -> None:
+        cls.console.print(
+            "[!] {ip}:{port} for {platform} exception occured! {exception}".format(**kwargs),
+            style="yellow",
+        )
 
     @classmethod
     def query_failed(cls, **kwargs) -> None:

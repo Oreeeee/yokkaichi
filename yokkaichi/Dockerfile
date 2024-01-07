@@ -5,4 +5,6 @@ WORKDIR /app
 COPY . .
 RUN pip install --break-system-packages .
 WORKDIR /data
-CMD ["python", "-m", "yokkaichi", "-c"]
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /wait
+RUN chmod +x /wait
+CMD /wait && python -m yokkaichi -c

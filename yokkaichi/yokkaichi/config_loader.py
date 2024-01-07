@@ -37,7 +37,6 @@ ports = "25564-25566,25569" # Port list (not TOML's format! Similarly to nmap an
 threads = 100 # Setting this to a higher value will make the scanning faster, but too much can crash the system or the network
 timeout = 3.0 # Timeout in seconds before assuming the server is offline
 offline_printing = "disabled" # Should the script output offline servers. "disabled" will print nothing, "offline" will print offline servers and "full_traceback" will print entire traceback
-output = "out.json" # IMPORTANT! That's where the servers go!
 
 [masscan]
 args = "" # Additional arguments for masscan
@@ -84,7 +83,6 @@ def parse_cfg(cfg_location):
     cfg.threads = cfg_file["scanner"]["threads"]
     cfg.timeout = cfg_file["scanner"]["timeout"]
     cfg.offline_printing = cfg_file["scanner"]["offline_printing"]
-    cfg.output = cfg_file["scanner"]["output"]
 
     # [masscan]
     cfg.masscan_args = cfg_file["masscan"]["args"]

@@ -24,6 +24,7 @@ setup(
         "IP2Location==8.10.0",
         "tomli==2.0.1;python_version<'3.11'",
         "pyScannerWrapper==0.2.1",
+        "pymongo==4.6.1",
     ],
     extras_require={"testing": ["pytest"]},
     entry_points={

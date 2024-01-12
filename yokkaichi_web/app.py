@@ -3,6 +3,6 @@ from litestar.static_files.config import StaticFilesConfig
 
 app = Litestar(
     static_files_config=[
-        StaticFilesConfig(directories=["www"], path="/", html_mode=True)
+        StaticFilesConfig(directories=["dist"], path="/", html_mode=True)
     ]
 )

@@ -12,6 +12,7 @@
     "vite": "^5.0.8"
   },
   "dependencies": {
-    "@picocss/pico": "^1.5.11"
+    "@picocss/pico": "^1.5.11",
+    "leaflet": "^1.9.4"
   }
 }

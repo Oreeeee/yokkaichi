@@ -1,0 +1,1 @@
+executable('yokkaichi', 'main.c')

@@ -1,1 +1,1 @@
-executable('yokkaichi', 'main.c')
+executable('yokkaichi', 'main.c', 'checker.c')

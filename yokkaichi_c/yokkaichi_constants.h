@@ -1,0 +1,7 @@
+#ifndef YOKKAICHI_CONSTANTS_H
+#define YOKKAICHI_CONSTANTS_H
+
+#define MAX_IP_LINE_LEN 255
+#define IP_LENGHT 16
+
+#endif

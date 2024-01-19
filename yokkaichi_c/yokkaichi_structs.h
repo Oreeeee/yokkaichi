@@ -3,9 +3,15 @@
 
 #include "yokkaichi_constants.h"
 
+
 typedef struct {
     char ip[IP_LENGHT];
     int port;
-} MinecraftServer;
+} MinecraftServer; /* TODO: Rename this struct, a different struct will use this name in the future */
+
+typedef struct {
+    int threadId;
+    MinecraftServer *server;
+} ThreadArgs;
 
 #endif

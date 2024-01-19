@@ -3,5 +3,6 @@
 
 #define MAX_IP_LINE_LEN 255
 #define IP_LENGHT 16
+#define THREAD_COUNT 5
 
 #endif

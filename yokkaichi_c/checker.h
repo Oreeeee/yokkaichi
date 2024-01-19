@@ -4,5 +4,6 @@
 #include "yokkaichi_structs.h"
 
 void checkServer(MinecraftServer server);
+void *checkerThread(void *argsRaw);
 
 #endif

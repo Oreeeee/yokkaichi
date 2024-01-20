@@ -3,7 +3,8 @@
 
 #include "yokkaichi_structs.h"
 
+int getThreadId();
 void checkServer(MinecraftServer server);
-void *checkerThread(void *argsRaw);
+void *checkerThread(void *args);
 
 #endif

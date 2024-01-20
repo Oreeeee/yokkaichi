@@ -7,22 +7,8 @@
 #include "checker.h"
 
 int main() {
-    int ports[] = {25565, 25566};
     char ipLine[MAX_IP_LINE_LEN];
-
-    /* Example values */
-    MinecraftServer srv;
-    strcpy(srv.ip, "127.0.0.1");
-    srv.port = 25565;
-    ThreadArgs tA;
-    tA.threadId = 0;
-    tA.server = &srv;
-
-    // pthread_t *threads = malloc(THREAD_COUNT * sizeof(pthread_t));
-    // ThreadArgs *threadArgs = malloc(THREAD_COUNT * sizeof(ThreadArgs));
-    // MinecraftServer *serversPending = calloc(THREAD_COUNT, sizeof(MinecraftServer));
-    // MinecraftServer srv;
-    
+    Thread *threads = calloc(THREAD_COUNT, sizeof(Thread));
     FILE *ipList;
 
     printf("Loading IP List\n");
@@ -33,9 +19,13 @@ int main() {
         return 1;
     }
 
-    pthread_t thread;
-    pthread_create(&thread, NULL, checkerThread, &tA);
-    pthread_join(thread, NULL);
+    for (int i = 0; i < THREAD_COUNT; i++) {
+        pthread_create(&threads[i].t, NULL, checkerThread, &threads[i].server);
+    }
+
+    for (int i = 0; i < THREAD_COUNT; i++) {
+        pthread_join(threads[i].t, NULL);
+    }
 
     /*  TODO: Add spawning threads logic here:
         - create heap array for multiple threads

@@ -2,14 +2,28 @@
 #include <stdbool.h>
 #include "yokkaichi_structs.h"
 
+#ifdef __unix__
+#include <unistd.h>
+#include <sys/syscall.h>
+#endif
+
+int getThreadId() {
+    #ifdef __unix__
+    int threadId = syscall(SYS_gettid) - syscall(SYS_getpid);
+    #else
+    int threadId = 0;
+    #endif
+
+    return threadId;
+}
 
 void checkServer(MinecraftServer server) {
     printf("Got: IP: %s, Port: %d\n", server.ip, server.port);
 }
 
-void *checkerThread(void *argsRaw) {
-    ThreadArgs *args = (ThreadArgs*)argsRaw;
-    MinecraftServer *srv = args->server;
+void *checkerThread(void *args) {
+    MinecraftServer *server = (MinecraftServer*)args;
+    int threadId = getThreadId();
     /* TODO: Add scanning logic here:
         - run a loop
         - check is a srv pointer NULL
@@ -17,6 +31,6 @@ void *checkerThread(void *argsRaw) {
         - if it isn't, pass the server to checkServer()
         - then, set srv pointer to NULL
      */
-    printf("[THREAD-%d] Hello World from Thread!\nReceived: %s %d\n", args->threadId, srv->ip, srv->port);
+    printf("[THREAD-%d] Hello World from Thread!\nReceived: %s %d\n", threadId, server->ip, server->port);
     return NULL;
 }

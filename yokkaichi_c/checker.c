@@ -9,7 +9,7 @@
 
 int getThreadId() {
     #ifdef __unix__
-    int threadId = syscall(SYS_gettid) - syscall(SYS_getpid);
+    int threadId = (syscall(SYS_gettid) - syscall(SYS_getpid)) - 1;
     #else
     int threadId = 0;
     #endif

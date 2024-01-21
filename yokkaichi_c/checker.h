@@ -4,7 +4,7 @@
 #include "yokkaichi_structs.h"
 
 int getThreadId();
-void checkServer(MinecraftServer server);
+void checkServer(char *ip, uint16_t port);
 void *checkerThread(void *args);
 
 #endif

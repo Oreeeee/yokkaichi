@@ -20,7 +20,7 @@ int main() {
     }
 
     for (int i = 0; i < THREAD_COUNT; i++) {
-        pthread_create(&threads[i].t, NULL, checkerThread, &threads[i].server);
+        pthread_create(&threads[i].t, NULL, checkerThread, &threads[i].threadData);
     }
 
     for (int i = 1; i <= THREAD_COUNT; i++) {

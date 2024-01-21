@@ -11,11 +11,11 @@ typedef struct {
     char ip[IP_LENGHT];
     uint16_t port;
     bool scanning;
-} MinecraftServer; /* TODO: Rename this struct, a different struct will use this name in the future */
+} ThreadData;
 
 typedef struct {
     pthread_t t;
-    MinecraftServer server;
+    ThreadData threadData;
 } Thread;
 
 #endif

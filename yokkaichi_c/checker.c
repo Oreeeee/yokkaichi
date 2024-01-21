@@ -22,7 +22,8 @@ void checkServer(MinecraftServer server) {
 }
 
 void *checkerThread(void *args) {
-    MinecraftServer *server = (MinecraftServer*)args;
+    MinecraftServer *pServer = (MinecraftServer*)args;
+    MinecraftServer server = *pServer;
     int threadId = getThreadId();
     /* TODO: Add scanning logic here:
         - run a loop
@@ -31,6 +32,9 @@ void *checkerThread(void *args) {
         - if it isn't, pass the server to checkServer()
         - then, set srv pointer to NULL
      */
-    printf("[THREAD-%d] Hello World from Thread!\nReceived: %s %d\n", threadId, server->ip, server->port);
+    printf("[THREAD-%d] Hello World from Thread!\nReceived: %s %d\n", threadId, server.ip, server.port);
+    while (server.scanning) {
+        printf("[THREAD-%d] Scanning currently...\n", threadId);
+    }
     return NULL;
 }

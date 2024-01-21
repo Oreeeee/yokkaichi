@@ -23,7 +23,7 @@ int main() {
         pthread_create(&threads[i].t, NULL, checkerThread, &threads[i].server);
     }
 
-    for (int i = 0; i < THREAD_COUNT; i++) {
+    for (int i = 1; i <= THREAD_COUNT; i++) {
         pthread_join(threads[i].t, NULL);
     }
 

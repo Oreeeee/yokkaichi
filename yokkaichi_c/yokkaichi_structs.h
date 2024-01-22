@@ -10,7 +10,8 @@
 typedef struct {
     char ip[IP_LENGHT];
     uint16_t port;
-    bool scanning;
+    bool isWorking;
+    bool isBusy;
 } ThreadData;
 
 typedef struct {

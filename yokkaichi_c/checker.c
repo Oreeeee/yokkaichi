@@ -23,7 +23,6 @@ void checkServer(char *ip, uint16_t port) {
 
 void *checkerThread(void *args) {
     ThreadData *pSelf = (ThreadData*)args;
-    ThreadData self = *pSelf;
     int threadId = getThreadId();
     /* TODO: Add scanning logic here:
         - run a loop
@@ -32,9 +31,12 @@ void *checkerThread(void *args) {
         - if it isn't, pass the server to checkServer()
         - then, set srv pointer to NULL
      */
-    printf("[THREAD-%d] Hello World from Thread!\nReceived: %s %d\n", threadId, self.ip, self.port);
-    while (self.scanning) {
-        printf("[THREAD-%d] Scanning currently...\n", threadId);
+    printf("[THREAD-%d] Hello World from Thread!\nReceived: %s %d\n", threadId, pSelf->ip, pSelf->port);
+    while (pSelf->isWorking) {
+        if (pSelf->isBusy) {
+            printf("[THREAD-%d] I'm busy rn\n", threadId);
+            pSelf->isBusy = false;
+        }
     }
     return NULL;
 }

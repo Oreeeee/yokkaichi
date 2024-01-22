@@ -20,11 +20,19 @@ int main() {
     }
 
     for (int i = 0; i < THREAD_COUNT; i++) {
+        threads[i].threadData.isWorking = true;
         pthread_create(&threads[i].t, NULL, checkerThread, &threads[i].threadData);
     }
 
-    for (int i = 0; i <= THREAD_COUNT; i++) {
+    for (int i = 0; i < THREAD_COUNT; i++) {
+        ThreadData *threadContext = &threads[i].threadData;
         printf("[THREAD-MAIN] Joining thread ID %d\n", i);
+        while (true) {
+            if (!threadContext->isBusy) {
+                threadContext->isWorking = false;
+                break;
+            }
+        }
         pthread_join(threads[i].t, NULL);
     }
 

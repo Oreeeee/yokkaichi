@@ -11,11 +11,11 @@ int main() {
     Thread *threads = calloc(THREAD_COUNT, sizeof(Thread));
     FILE *ipList;
 
-    printf("Loading IP List\n");
+    printf("[THREAD-MAIN] Loading IP List\n");
 
     ipList = fopen("data/ips.txt", "r");
     if (ipList == NULL) {
-        printf("Error opening file\n");
+        printf("[THREAD-MAIN] Error opening file\n");
         return 1;
     }
 
@@ -23,7 +23,8 @@ int main() {
         pthread_create(&threads[i].t, NULL, checkerThread, &threads[i].threadData);
     }
 
-    for (int i = 1; i <= THREAD_COUNT; i++) {
+    for (int i = 0; i <= THREAD_COUNT; i++) {
+        printf("[THREAD-MAIN] Joining thread ID %d\n", i);
         pthread_join(threads[i].t, NULL);
     }
 

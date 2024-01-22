@@ -2,13 +2,13 @@
 #include <stdbool.h>
 #include "yokkaichi_structs.h"
 
-#ifdef __unix__
+#ifdef __linux__
 #include <unistd.h>
 #include <sys/syscall.h>
 #endif
 
 int getThreadId() {
-    #ifdef __unix__
+    #ifdef __linux__
     int threadId = (syscall(SYS_gettid) - syscall(SYS_getpid)) - 1;
     #else
     int threadId = 0;

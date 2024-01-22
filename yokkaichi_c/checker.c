@@ -17,8 +17,8 @@ int getThreadId() {
     return threadId;
 }
 
-void checkServer(char *ip, uint16_t port) {
-    printf("Got: IP: %s, Port: %d\n", ip, port);
+void checkServer(char *ip, uint16_t port, int threadId) {
+    printf("[THREAD-%d] Got: IP: %s, Port: %d\n", threadId, ip, port);
 }
 
 void *checkerThread(void *args) {
@@ -34,7 +34,8 @@ void *checkerThread(void *args) {
     printf("[THREAD-%d] Hello World from Thread!\nReceived: %s %d\n", threadId, pSelf->ip, pSelf->port);
     while (pSelf->isWorking) {
         if (pSelf->isBusy) {
-            printf("[THREAD-%d] I'm busy rn\n", threadId);
+            printf("[THREAD-%d] Got a server to check \n", threadId);
+            checkServer(pSelf->ip, pSelf->port, threadId);
             pSelf->isBusy = false;
         }
     }

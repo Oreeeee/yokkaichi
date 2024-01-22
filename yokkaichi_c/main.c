@@ -26,6 +26,7 @@ int main() {
         return 1;
     }
 
+    printf("[THREAD-MAIN] Starting up threads\n");
     for (int i = 0; i < THREAD_COUNT; i++) {
         threads[i].threadData.isWorking = true;
         pthread_create(&threads[i].t, NULL, checkerThread, &threads[i].threadData);

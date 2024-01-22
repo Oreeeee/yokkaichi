@@ -31,7 +31,6 @@ void *checkerThread(void *args) {
         - if it isn't, pass the server to checkServer()
         - then, set srv pointer to NULL
      */
-    printf("[THREAD-%d] Hello World from Thread!\nReceived: %s %d\n", threadId, pSelf->ip, pSelf->port);
     while (pSelf->isWorking) {
         if (pSelf->isBusy) {
             printf("[THREAD-%d] Got a server to check \n", threadId);

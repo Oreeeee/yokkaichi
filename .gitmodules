@@ -1,0 +1,6 @@
+[submodule "submodules/varint.c"]
+	path = submodules/varint.c
+	url = https://github.com/sorribas/varint.c
+[submodule "submodules/varint.c/varint.c"]
+	path = submodules/varint.c/varint.c
+	url = https://github.com/sorribas/varint.c

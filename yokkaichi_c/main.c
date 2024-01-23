@@ -7,10 +7,19 @@
 #include "yokkaichi_structs.h"
 #include "checker.h"
 
-void assignScanJob(ThreadData *tD, char *ip, uint16_t port) {
-    strncpy(tD->ip, ip, IP_LENGHT);
-    tD->port = port;
-    tD->isBusy = true;
+void assignScanJob(Thread *threads, OpenPort openPort) {
+    /* Assign the scanning job for the first free thread */
+    ThreadData *threadContext;
+    while (true) {
+        for (int i = 0; i < THREAD_COUNT; i++) {
+            threadContext = &threads[i].threadData;
+            if (!threadContext->isBusy) {
+                threadContext->openPort = openPort;
+                threadContext->isBusy = true;
+                return;
+            }
+        }
+    }
 }
 
 int main() {
@@ -34,7 +43,11 @@ int main() {
 
     /* Pretend we find a open port here */
     sleep(3);
-    assignScanJob(&threads[0].threadData, "127.0.0.1", 25565);
+    OpenPort p;
+    strncpy(p.ip, "127.0.0.1", IP_LENGHT);
+    p.port = 25565;
+    assignScanJob(threads, p);
+    sleep(3);
 
     for (int i = 0; i < THREAD_COUNT; i++) {
         ThreadData *threadContext = &threads[i].threadData;

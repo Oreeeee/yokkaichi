@@ -6,10 +6,13 @@
 #include <pthread.h>
 #include "yokkaichi_constants.h"
 
-
 typedef struct {
     char ip[IP_LENGHT];
     uint16_t port;
+} OpenPort;
+
+typedef struct {
+    OpenPort openPort;
     bool isWorking;
     bool isBusy;
 } ThreadData;

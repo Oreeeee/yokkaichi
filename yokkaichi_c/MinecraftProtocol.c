@@ -1,4 +1,5 @@
 #include "../submodules/varint.c/varint.h"
+#include "MinecraftProtocol.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
